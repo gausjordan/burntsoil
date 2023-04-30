@@ -1,0 +1,26 @@
+* {
+    padding: 0;
+    margin: 0;
+}
+
+canvas {
+    position: absolute;
+}
+
+body {
+    overflow: hidden;
+}
+
+canvas #background {
+    z-index: 10;
+}
+
+canvas #foreground {
+    z-index: 20;
+}
+
+h1 {
+    padding: 0.25em;
+    background-color: teal;
+    color: white;
+}
