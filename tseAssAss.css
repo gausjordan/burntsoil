@@ -7,6 +7,16 @@ canvas {
     position: absolute;
 }
 
+canvas#background {
+    /* background-color: red;
+    opacity: 1; */
+}
+
+canvas#foreground {
+    /* background-color: blue;
+    opacity: 0.4; */
+}
+
 body {
     overflow: hidden;
 }

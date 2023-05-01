@@ -1,39 +1,36 @@
-// Initial Styling
-let naslov = document.querySelector("h1");
+// Canvas(es) size setup and initialization
+let header = document.querySelector("h1");
 let bgCanvas = document.getElementById("background");
 let fgCanvas = document.getElementById("foreground");
 
-bgCanvas.height = window.innerHeight - naslov.getBoundingClientRect().height;
-fgCanvas.height = window.innerHeight - naslov.getBoundingClientRect().height;
-bgCanvas.width = window.innerWidth;
-fgCanvas.width = window.innerWidth;
+let cvHeight = window.innerHeight - header.getBoundingClientRect().height;
+let cvWidth = window.innerWidth;
+
+bgCanvas.height = fgCanvas.height = cvHeight;
+bgCanvas.width = fgCanvas.width= cvWidth;
+
+let bC = bgCanvas.getContext('2d');
+let fC = fgCanvas.getContext('2d');
 
 
-// Initialization
-var bC = bgCanvas.getContext('2d');
-var fC = fgCanvas.getContext('2d');
+// Get (relative) mouse coordinates on a canvas
 let posX = 0;
 let posY = 0;
 
-
-// Get relative mouse coordinates on canvas(es)
 function getMousePos(canvas, ev) {
     var rect = canvas.getBoundingClientRect();
     return { x: ev.clientX - rect.left, y: ev.clientY - rect.top }
 }
+
 window.addEventListener("mousemove", (ev) => {
     posX = getMousePos(bgCanvas, ev).x;
     posY = getMousePos(bgCanvas, ev).y;
 });
 
 
-// Bullshit functions
-function f1(x) {
-    return Math.sin(x);
-}
-function f2(x) {
-    return Math.sin(3.7*x);
-}
+// Terrain generator functions
+function f1(x) { return Math.sin(x); }
+function f2(x) { return Math.sin(2*x); }
 
 
 // Drawing
@@ -45,20 +42,22 @@ bC.font = "16px sans-serif";
 
 function doDraw() {
     bC.fillStyle = "rgb(0,255,0)";
-    for (let i=20; i<window.innerWidth-20; i++) {
-        bC.fillRect(i, (2+f1(i/100))*200, 40, 40);
+    let f1Arr = [];
+    let f2Arr = [];
+    for (let i = 0; i < cvWidth; i++) {
+        bC.fillRect(i, 0.7*cvHeight * f1(i/cvWidth*3) + (0.3)*cvHeight, 4, 4)
+        //console.log(cvWidth);
     }
 
-    fC.fillStyle = "rgb(255,0,0)";
-    for (let i=20; i<window.innerWidth-20; i++) {
-        fC.fillRect(i, (2+f2(i/100))*200, 40, 40);
-    }
+    // fC.fillStyle = "rgb(255,0,0)";
+    // for (let i=20; i<window.innerWidth-20; i++) {
+    //     fC.fillRect(i, (2+f2(i/100))*200, 40, 40);
+    // }
 
     fC.fillStyle = "rgb(0,0,0)";
     bC.fillStyle = "rgb(0,0,0)";
     fC.fillText(bColorValue, 10, 30);
     bC.fillText(fColorValue, 410, 30);
-
 }
 
 
