@@ -1,0 +1,81 @@
+* {
+    padding: 0;
+    margin: 0;
+}
+
+
+:root {
+    --up-bord-color: rgb(220,220,220);
+    --right-bord-color: rgb(20,20,20);
+    --bottom-bord-color: rgb(60,60,60);
+    --left-bord-color: rgb(252,252,252);
+}
+
+
+html, body {
+    height: 100%;
+    border: 2px outset;
+    box-sizing: border-box;
+    border-color:   var(--up-bord-color)
+                    var(--right-bord-color)
+                    var(--bottom-bord-color)
+                    var(--left-bord-color);
+}
+
+
+.whole-flex {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+
+.menu-and-canvas {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    background-color: darkcyan;
+    flex-basis: 100%;
+}
+
+.common-element {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+nav {
+    background-color:darkkhaki;
+    flex: 1 1 20%;
+}
+
+main {
+    background-color: sienna;
+    flex: 1 1 80%;
+}
+
+footer {
+    background-color: steelblue;
+    height:max-content;
+    padding: 1em 1em 1em 20%;
+    text-align: center;
+}
+
+canvas {
+    position: absolute;
+    border: 5px double silver;
+    border: 8px double blue;
+}
+
+
+@media (orientation: landscape) {
+
+}
+
+
+@media (orientation: portrait) {
+    .menu-and-canvas {
+        flex-direction: column;
+    }
+    
+}
