@@ -1,19 +1,19 @@
 // Canvas(es) size setup and initialization
-let header = document.querySelector("h1");
+let flexMain = document.querySelector("main");
 let bgCanvas = document.getElementById("background");
 let fgCanvas = document.getElementById("foreground");
-let cvHeight = window.innerHeight - header.getBoundingClientRect().height;
-let cvWidth = window.innerWidth;
+let cvHeight = flexMain.clientHeight - 10;
+let cvWidth = flexMain.clientWidth - 10;
 bgCanvas.height = fgCanvas.height = cvHeight;
-bgCanvas.width = fgCanvas.width= cvWidth;
+bgCanvas.width = fgCanvas.width = cvWidth;
 let bC = bgCanvas.getContext('2d');
 let fC = fgCanvas.getContext('2d');
-
 
 
 // Globals
 let bColorValueAtPosition = "-";
 let fColorValueAtPosition = "-";
+
 
 // Setup event listeners
 window.addEventListener("click", (ev) => {
@@ -24,7 +24,7 @@ window.addEventListener("click", (ev) => {
 });
 
 
-// Current mouse position variable (on canvas)
+// Current mouse position variable (on canvas), to be calculated
 let posX = 0;
 let posY = 0;
 
@@ -48,26 +48,57 @@ function randomCoeffs(n) {
 }
 
 
-// Compute pseudo-random sinusoidal terrain
+// Get random integer in "0" to "X" range
+function randomInteger(x) {
+    return Math.round(Math.random()*x);
+}
+
+
+// Compute jagged terrain outline only
+function jaggedTerrain() {
+    let curveOutline = [];
+    let sum = 0;
+    let step = 0;
+    let randomAngle = 1;
+    curveOutline[0] = 0;
+
+    while (sum < innerWidth) {
+        step = randomInteger(innerWidth/12);
+        do {
+            randomAngle = Math.random()-0.5;
+        } while (randomAngle == 0);
+        
+        for (let i=0; i<step; i++) {
+            curveOutline[sum+1] = curveOutline[sum] + randomAngle*4;
+            sum++;
+        }
+    }
+    return curveOutline;
+}
+
+
+// Compute sinusoidal terrain outline only
 function computeTerrain(coeffsNumber) {
     let result;
-    // let cffs = randomCoeffs(coeffsNumber);
-     for (let i = 0; i < innerWidth; i++) {
+    let jagged = jaggedTerrain();
+    let jaggedness = Math.random();
+    for (let i = 0; i < innerWidth; i++) {
         result = 0;
+
         for (let j = 0; j < coeffsNumber; j++) {
             result +=
             + ((innerHeight-10*Math.random()) * cffs[j][0]*(j/1000+1)
             * Math.sin(j+Math.sin(cffs[j][0]) * j * i * 0.0015
             + j*Math.sin(j)*cffs[j][1]*0.15) / coeffsNumber );
-        }
-        for (let j = 0; j < coeffsNumber; j++) {
+
             result +=
             + ((innerHeight-10*Math.random()) * cffs[j][0]/50
             * Math.sin(j+Math.sin(cffs[j][0]*15) * j * i * 0.0035
             + j*Math.sin(j)*cffs[j][1]*0.15) / coeffsNumber );
         }
+        
         bC.fillStyle = "rgb(120,155,250)";
-        bC.fillRect(i, result+0.5*innerHeight, 1, innerHeight);
+        bC.fillRect(i, (result+0.6*innerHeight)+jagged[i]*jaggedness, 1, innerHeight);
     }
 }
 

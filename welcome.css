@@ -63,8 +63,18 @@ footer {
 
 canvas {
     position: absolute;
-    border: 5px double silver;
-    border: 8px double blue;
+    border: 0px double silver;
+    border: 0px double blue;
+}
+
+canvas#background {
+    background-color: red;
+    opacity: 0.4;
+}
+
+canvas#foreground {
+    background-color: blue;
+    opacity: 0.45;
 }
 
 
