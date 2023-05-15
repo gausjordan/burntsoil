@@ -67,12 +67,12 @@ canvas {
     border: 0px double blue;
 }
 
-canvas#background {
+qcanvas#background {
     background-color: red;
     opacity: 0.4;
 }
 
-canvas#foreground {
+qcanvas#foreground {
     background-color: blue;
     opacity: 0.45;
 }

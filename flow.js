@@ -1,33 +1,38 @@
-// Canvas(es) size setup and initialization
+//  Get HTML element references, setup both canvases
 let flexMain = document.querySelector("main");
 let bgCanvas = document.getElementById("background");
 let fgCanvas = document.getElementById("foreground");
-let cvHeight = flexMain.clientHeight - 10;
-let cvWidth = flexMain.clientWidth - 10;
-bgCanvas.height = fgCanvas.height = cvHeight;
-bgCanvas.width = fgCanvas.width = cvWidth;
+let cvHeight = flexMain.clientHeight;
+let cvWidth = flexMain.clientWidth;
 let bC = bgCanvas.getContext('2d');
 let fC = fgCanvas.getContext('2d');
+bgCanvas.height = fgCanvas.height = cvHeight;
+bgCanvas.width = fgCanvas.width = cvWidth;
 
 
 // Globals
-let bColorValueAtPosition = "-";
-let fColorValueAtPosition = "-";
+let bColorValueAtPos = "-";
+let fColorValueAtPos = "-";
 
 
-// Setup event listeners
+// Get pixel color values at mouse position, on click event
+let posX = 0;
+let posY = 0;
 window.addEventListener("click", (ev) => {
     posX = getMousePos(bgCanvas, ev).x;
     posY = getMousePos(bgCanvas, ev).y;
-    bColorValueAtPosition = bC.getImageData(posX, posY, 1, 1).data;
-    fColorValueAtPosition = fC.getImageData(posX, posY, 1, 1).data;
+    bColorValueAtPos = bC.getImageData(posX, posY, 1, 1).data;
+    fColorValueAtPos = fC.getImageData(posX, posY, 1, 1).data;
 });
 
 
-// Current mouse position variable (on canvas), to be calculated
-let posX = 0;
-let posY = 0;
-
+window.addEventListener("resize", (ev) => {
+    cvHeight = flexMain.clientHeight;
+    cvWidth = flexMain.clientWidth;
+    bgCanvas.height = fgCanvas.height = cvHeight;
+    bgCanvas.width = fgCanvas.width = cvWidth;
+    drawTerrain();
+});
 
 // Get realtime relative mouse coordinates on a canvas
 function getMousePos(canvas, ev) {
@@ -38,9 +43,9 @@ function getMousePos(canvas, ev) {
 }
 
 
-// Get 'n' pairs of random coefficients
-let cffs = [];
+// Get 'n' pairs of random numbers
 function randomCoeffs(n) {
+    let cffs = [];
     for (let i = 0; i < n; i++) {
         cffs[i] = [ Math.random(), Math.random() ];
     }
@@ -48,28 +53,67 @@ function randomCoeffs(n) {
 }
 
 
-// Get random integer in "0" to "X" range
-function randomInteger(x) {
-    return Math.round(Math.random()*x);
+// Get a random integer in a given range
+function randomInteger(lower, upper) {
+    lower = Math.ceil(lower);
+    upper  = Math.floor(upper);
+    return Math.floor(Math.random() * (upper - lower + 1)) + lower;
 }
 
 
-// Compute jagged terrain outline only
-function jaggedTerrain() {
+// Generate random data used by the jagged terrain generator
+function randomJaggedData(existingSpans, existingAngles) {
+    let stepSpans = [];
+    let stepAngles = [];
+    let maxWidth = window.screen.availWidth;
+    if (existingSpans != undefined && existingAngles != undefined) {
+        stepSpans = existingSpans;
+        stepAngles = existingAngles;
+    } else {
+        stepSpans[0] = 0;
+        stepAngles[0] = 0;
+        
+        let doRewrite = true;
+        for (let i = 1; i < maxWidth; i++) {
+            stepSpans[i] = randomInteger(innerWidth/10, innerWidth/20);
+            if (doRewrite) {
+                newAngle = Math.random() - 0.5;
+            }
+            doRewrite = true;
+            if (( stepAngles[i-1] < 0 && newAngle > 0 )
+                || (stepAngles[i-1] > 0 && newAngle < 0 )) {
+                    stepAngles[i] = 0;
+                    doRewrite = false;
+            } else {
+                stepAngles[i] = newAngle;
+            }
+        }
+    }
+    console.log(stepAngles);
+}
+
+randomJaggedData();
+//randomJaggedData([11,22,33],[44,55,66]);
+
+
+// Generate jagged terrain, outline only
+function generateJaggedTerrain() {
     let curveOutline = [];
     let sum = 0;
     let step = 0;
     let randomAngle = 1;
+    let randomStep = randomInteger(0, innerWidth/12);
     curveOutline[0] = 0;
 
+
     while (sum < innerWidth) {
-        step = randomInteger(innerWidth/12);
+        step = randomStep;
         do {
             randomAngle = Math.random()-0.5;
-        } while (randomAngle == 0);
+        } while (randomAngle == 0.00);
         
-        for (let i=0; i<step; i++) {
-            curveOutline[sum+1] = curveOutline[sum] + randomAngle*4;
+        for (let i = 0; i < step; i++) {
+            curveOutline[sum+1] = curveOutline[sum] + randomAngle*5;
             sum++;
         }
     }
@@ -77,34 +121,81 @@ function jaggedTerrain() {
 }
 
 
-// Compute sinusoidal terrain outline only
-function computeTerrain(coeffsNumber) {
+// Generate sinusoidal terrain, outline only
+function generateSmoothTerrain() {
+    let complexity = 20;
     let result;
-    let jagged = jaggedTerrain();
-    let jaggedness = Math.random();
+    let cffs = randomCoeffs(complexity);
+    let curveOutline = [];
+
+    // For each pixel of width
     for (let i = 0; i < innerWidth; i++) {
         result = 0;
 
-        for (let j = 0; j < coeffsNumber; j++) {
-            result +=
-            + ((innerHeight-10*Math.random()) * cffs[j][0]*(j/1000+1)
-            * Math.sin(j+Math.sin(cffs[j][0]) * j * i * 0.0015
-            + j*Math.sin(j)*cffs[j][1]*0.15) / coeffsNumber );
+        // iterate through "complexity" no. of sine functions, and sum up
+        for (let j = 0; j < cffs.length; j++) {
 
-            result +=
-            + ((innerHeight-10*Math.random()) * cffs[j][0]/50
-            * Math.sin(j+Math.sin(cffs[j][0]*15) * j * i * 0.0035
-            + j*Math.sin(j)*cffs[j][1]*0.15) / coeffsNumber );
+            result += (
+                // the lower the frequency, the higher the amplitude
+                    (cffs.length-j) * 10
+                // times random amplitude coeficient
+                    * cffs[j][0]
+                // Sine function
+                    * Math.sin(
+                // a fraction of the X axis as an argument, width-dependent
+                    i / (innerWidth/100)
+                // random frequency multiplier
+                    * cffs[j][1] * j*j / 1000
+                // random phase shift coefficient
+                    + cffs[j][0] * cffs[j][1] * 10)
+                );
         }
-        
-        bC.fillStyle = "rgb(120,155,250)";
-        bC.fillRect(i, (result+0.6*innerHeight)+jagged[i]*jaggedness, 1, innerHeight);
+        curveOutline[i] = result;
+    }
+    return curveOutline;
+}
+
+
+// Combine two point arrays, representing terrain outline, into one
+function combineTerrain(smoothTerrGenerator, jaggedTerrGenerator) {
+    let curveOutline = [];
+    let smooth = smoothTerrGenerator();
+    let jagged = jaggedTerrGenerator();
+    let smoothToJaggedRatio = Math.random();
+
+    for (let i=0; i<innerWidth; i++) {
+        curveOutline[i] = 0 * (1/smoothToJaggedRatio) * smooth[i]  // DEBUG
+                        + jagged[i] * smoothToJaggedRatio;
+    }
+    return curveOutline;
+}
+
+
+// Draws terrain. Takes in two generator functions
+function drawTerrain(reRandomize, heightLimit) {
+    let raw = combineTerrain(generateSmoothTerrain, generateJaggedTerrain);
+    let max = Math.max(...raw);
+    let min = Math.min(...raw);
+    console.log("Max: " + max);
+    console.log("Min: " + min);
+
+    let curveOutline = [];
+    curveOutline = raw.map(v => {
+        return (
+            (v - min) / (max-min) * innerHeight
+        );
+    });
+
+    bC.fillStyle = "rgb(120,155,250)";
+
+    for (let i = 0; i < innerWidth; i++) {
+        bC.fillRect(i, curveOutline[i], 1, innerHeight);
     }
 }
 
-const terrainComplexity = 14;
-randomCoeffs(terrainComplexity)
-computeTerrain(terrainComplexity);
+drawTerrain(true);
+
+
 
 // Drawing
 fC.font = "16px sans-serif";
@@ -116,22 +207,12 @@ function doDraw() {
     
     bC.fillStyle = "rgb(0,255,0)";
 
-    for (let i = 0; i < cvWidth; i++) {
-          //bC.fillRect(i, 0.7*cvHeight * functionSet[0](i/cvWidth*3), 5, 5)
-          //bC.fillRect(i, 0.3*cvHeight * functionSet[0](i/cvWidth*20) + (0.3)*cvHeight, 5, 5)
-        // bC.fillRect(i, 0.3*cvHeight * functionSum(i/cvWidth*20) + (0.3)*cvHeight, 5, 5)
-          // bC.fillRect(i, 0.7*cvHeight * f1(i/cvWidth*3) + (0.3)*cvHeight, 5, 5)
-          // console.log(cvWidth);
-
-    }
-
-
     fC.fillStyle = "rgb(0,0,0)";
     bC.fillStyle = "rgb(0,0,0)";
     //bColorValue = bC.getImageData(posX, posY, 1, 1).data;
     //fColorValue = fC.getImageData(posX, posY, 1, 1).data;
-    fC.fillText(bColorValueAtPosition, 10, 30);
-    bC.fillText(fColorValueAtPosition, 410, 30);
+    fC.fillText(bColorValueAtPos, 10, 30);
+    bC.fillText(fColorValueAtPos, 410, 30);
 }
 
 
