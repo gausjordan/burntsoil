@@ -31,7 +31,7 @@ window.addEventListener("resize", (ev) => {
     cvWidth = flexMain.clientWidth;
     bgCanvas.height = fgCanvas.height = cvHeight;
     bgCanvas.width = fgCanvas.width = cvWidth;
-    drawTerrain();
+    drawTerrain(false, innerHeight/3);
 });
 
 // Get realtime relative mouse coordinates on a canvas
@@ -44,7 +44,7 @@ function getMousePos(canvas, ev) {
 
 
 // Get 'n' pairs of random numbers
-function randomCoeffs(n) {
+function randomSineData(n) {
     let cffs = [];
     for (let i = 0; i < n; i++) {
         cffs[i] = [ Math.random(), Math.random() ];
@@ -61,71 +61,62 @@ function randomInteger(lower, upper) {
 }
 
 
-// Generate random data used by the jagged terrain generator
-function randomJaggedData(existingSpans, existingAngles) {
+// Generate random data to be used by the jagged terrain generator
+function randomJaggedData() {
     let stepSpans = [];
     let stepAngles = [];
     let maxWidth = window.screen.availWidth;
-    if (existingSpans != undefined && existingAngles != undefined) {
-        stepSpans = existingSpans;
-        stepAngles = existingAngles;
-    } else {
-        stepSpans[0] = 0;
-        stepAngles[0] = 0;
-        
-        let doRewrite = true;
-        for (let i = 1; i < maxWidth; i++) {
-            stepSpans[i] = randomInteger(innerWidth/10, innerWidth/20);
-            if (doRewrite) {
-                newAngle = Math.random() - 0.5;
-            }
-            doRewrite = true;
-            if (( stepAngles[i-1] < 0 && newAngle > 0 )
-                || (stepAngles[i-1] > 0 && newAngle < 0 )) {
-                    stepAngles[i] = 0;
-                    doRewrite = false;
-            } else {
-                stepAngles[i] = newAngle;
-            }
+
+    stepSpans[0] = 0;
+    stepAngles[0] = 0;
+    
+    let doRewrite = true;
+    for (let i = 1; i < maxWidth; i++) {
+        stepSpans[i] = randomInteger(innerWidth/5, innerWidth/200);
+        if (doRewrite) {
+            newAngle = Math.random() - 0.5;
+        }
+        doRewrite = true;
+        if (( stepAngles[i-1] < 0 && newAngle > 0 )
+            || (stepAngles[i-1] > 0 && newAngle < 0 )) {
+                stepAngles[i] = 0;
+                doRewrite = false;
+        } else {
+            stepAngles[i] = newAngle;
         }
     }
-    console.log(stepAngles);
+    return {
+        spans: stepSpans,
+        angles: stepAngles
+    }
 }
-
-randomJaggedData();
-//randomJaggedData([11,22,33],[44,55,66]);
 
 
 // Generate jagged terrain, outline only
-function generateJaggedTerrain() {
+function generateJaggedTerrain(jaggedInputData) {
+    let span;
+    let i = 1;
+    let j = 1;
     let curveOutline = [];
-    let sum = 0;
-    let step = 0;
-    let randomAngle = 1;
-    let randomStep = randomInteger(0, innerWidth/12);
     curveOutline[0] = 0;
-
-
-    while (sum < innerWidth) {
-        step = randomStep;
-        do {
-            randomAngle = Math.random()-0.5;
-        } while (randomAngle == 0.00);
-        
-        for (let i = 0; i < step; i++) {
-            curveOutline[sum+1] = curveOutline[sum] + randomAngle*5;
-            sum++;
+    
+    while ( i < innerWidth ) {
+        for (let g = 0; g < jaggedInputData.spans[j]; g++) {
+            if (jaggedInputData.angles[j] == 0 && g == 0) {
+                g = Math.round(jaggedInputData.spans[j] / 2);
+            }
+            curveOutline[i] = curveOutline[i-1] + 1*jaggedInputData.angles[j];
+            i++;
         }
-    }
-    return curveOutline;
+        j++;
+    }        
+    return curveOutline.map(v => v * 5);
 }
 
 
 // Generate sinusoidal terrain, outline only
-function generateSmoothTerrain() {
-    let complexity = 20;
+function generateSmoothTerrain(sineInputData) {
     let result;
-    let cffs = randomCoeffs(complexity);
     let curveOutline = [];
 
     // For each pixel of width
@@ -133,21 +124,19 @@ function generateSmoothTerrain() {
         result = 0;
 
         // iterate through "complexity" no. of sine functions, and sum up
-        for (let j = 0; j < cffs.length; j++) {
+        for (let j = 0; j < sineInputData.length; j++) {
 
             result += (
                 // the lower the frequency, the higher the amplitude
-                    (cffs.length-j) * 10
+                    (sineInputData.length-j) * 10
                 // times random amplitude coeficient
-                    * cffs[j][0]
+                    * sineInputData[j][0]
                 // Sine function
                     * Math.sin(
-                // a fraction of the X axis as an argument, width-dependent
-                    i / (innerWidth/100)
-                // random frequency multiplier
-                    * cffs[j][1] * j*j / 1000
+                // a fraction of the X axis as an argument
+                    i / 12 * sineInputData[j][1] * j*j / 1000
                 // random phase shift coefficient
-                    + cffs[j][0] * cffs[j][1] * 10)
+                    + sineInputData[j][0] * sineInputData[j][1] * 10)
                 );
         }
         curveOutline[i] = result;
@@ -159,30 +148,39 @@ function generateSmoothTerrain() {
 // Combine two point arrays, representing terrain outline, into one
 function combineTerrain(smoothTerrGenerator, jaggedTerrGenerator) {
     let curveOutline = [];
-    let smooth = smoothTerrGenerator();
-    let jagged = jaggedTerrGenerator();
-    let smoothToJaggedRatio = Math.random();
+    let smooth = smoothTerrGenerator(sineInputData);
+    let jagged = jaggedTerrGenerator(jaggedInputData);
 
     for (let i=0; i<innerWidth; i++) {
-        curveOutline[i] = 0 * (1/smoothToJaggedRatio) * smooth[i]  // DEBUG
-                        + jagged[i] * smoothToJaggedRatio;
+        curveOutline[i] = (1-smoothToJaggedRatio) * smooth[i] * 1
+                        + jagged[i] * smoothToJaggedRatio * 1;
     }
     return curveOutline;
 }
 
-
 // Draws terrain. Takes in two generator functions
-function drawTerrain(reRandomize, heightLimit) {
+let sineInputData;
+let jaggedInputData;
+let smoothToJaggedRatio;
+function drawTerrain(randomize, heightLimit) {
+    if (heightLimit == undefined) {
+        heightLimit = 0;
+    }
+    if (randomize) {
+        sineInputData = randomSineData(20);
+        jaggedInputData = randomJaggedData();
+        smoothToJaggedRatio = Math.random();
+    }
     let raw = combineTerrain(generateSmoothTerrain, generateJaggedTerrain);
     let max = Math.max(...raw);
     let min = Math.min(...raw);
-    console.log("Max: " + max);
-    console.log("Min: " + min);
 
     let curveOutline = [];
     curveOutline = raw.map(v => {
         return (
-            (v - min) / (max-min) * innerHeight
+            //(v - min) + heightLimit / (max-min+heightLimit) * innerHeight
+            //v + heightLimit
+            (v-min) + heightLimit
         );
     });
 
@@ -193,7 +191,23 @@ function drawTerrain(reRandomize, heightLimit) {
     }
 }
 
-drawTerrain(true);
+function backdrop() {
+    let r = 52;
+    let g = 52;
+    let b = 148;
+    for (let i = 0; i < innerHeight; i = i + (innerHeight/28)) {
+        bC.fillStyle = `rgb(${r},${g},${b}`;
+        bC.fillRect(innerHeight/28, i, 4, 4);
+        r++;
+        g++;
+        b++;
+    }
+        
+}
+
+backdrop();
+
+drawTerrain(true, innerHeight/3);
 
 
 
@@ -209,8 +223,7 @@ function doDraw() {
 
     fC.fillStyle = "rgb(0,0,0)";
     bC.fillStyle = "rgb(0,0,0)";
-    //bColorValue = bC.getImageData(posX, posY, 1, 1).data;
-    //fColorValue = fC.getImageData(posX, posY, 1, 1).data;
+
     fC.fillText(bColorValueAtPos, 10, 30);
     bC.fillText(fColorValueAtPos, 410, 30);
 }
