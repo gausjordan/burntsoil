@@ -50,7 +50,7 @@ nav {
 }
 
 main {
-    background-color: sienna;
+    /* background-color: sienna; */
     flex: 1 1 80%;
 }
 
@@ -65,17 +65,10 @@ canvas {
     position: absolute;
     border: 0px double silver;
     border: 0px double blue;
-}
-
-qcanvas#background {
     background-color: red;
-    opacity: 0.4;
+    opacity: 0.5;
 }
 
-qcanvas#foreground {
-    background-color: blue;
-    opacity: 0.45;
-}
 
 
 @media (orientation: landscape) {
