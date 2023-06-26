@@ -48,16 +48,43 @@ function randomInteger(lower, upper) {
 let landOutline = [];
 landOutline[0] =  randomInteger(0, canvasRef.height);
 
+
+// Returns a single slope coefficient, current-height dependant
 function generateSlopeCoeffs(relHeight) {
-    let signedPercentage = 2 * (relHeight / canvasRef.height - 0.5);
-    return (Math.random()-0.5) * signedPercentage;
+
+    // signedPercentage can take on values in range [-1, 1]
+    let signedPercentage = (relHeight / canvasRef.height - 0.5) * 2;
+    
+    // The higher we are, the less likely it is we'll keep climbing
+    if (signedPercentage > 0.8 || signedPercentage < -0.8) {
+        return - ( 2 * (Math.random()-0.5) + signedPercentage );
+    }
+    else {
+        return 20 * (Math.random()-0.5);
+    }
+
 }
 
 function createLandscapeOutline() {
-
-    for (let i=1; i<canvasRef.width; i++) {
-        landOutline[i] = landOutline[i-1] + landOutline[i-1] * generateSlopeCoeffs(landOutline[i-1])/10;
+    let step = Math.round(canvasRef.width / 5);
+    let bigCoeff = null;
+    for (let i=1; i<canvasRef.width; i+=step) {
+        bigCoeff = Math.round( generateSlopeCoeffs(landOutline[i-1]) );
+        console.log(bigCoeff);
+        for (let j=i; j<i*step+step; j++) {
+            landOutline[j] = Math.round( landOutline[j-1] + bigCoeff );
+        }
     }
+    let a = 3;
+    let b = 5;
+    
+
+    /*
+    for (let i=1; i<canvasRef.width; i++) {
+        landOutline[i] = Math.round( landOutline[i-1] + generateSlopeCoeffs(landOutline[i-1]) );
+    }
+    */
+
 
 }
 
@@ -68,6 +95,10 @@ function drawTerrain() {
         canvasCtx.fillRect(horiz, canvasRef.height-i, 1, canvasRef.height - (canvasRef.height-i) );
         horiz += 1;
     });
+
+    console.log(landOutline);
+
+
     
     // for (let i=0, j=0; i<1800; i++) {
     //     j = Math.sin(i/55)*600;
