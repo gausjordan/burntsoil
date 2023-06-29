@@ -44,69 +44,40 @@ function randomInteger(lower, upper) {
     return Math.floor(Math.random() * (upper - lower + 1)) + lower;
 }
 
-// Initial terrain is defined by an outline
-let landOutline = [];
-landOutline[0] =  randomInteger(0, canvasRef.height);
 
-
-// Returns a single slope coefficient, current-height dependant
-function generateSlopeCoeffs(relHeight) {
-
-    // signedPercentage can take on values in range [-1, 1]
-    let signedPercentage = (relHeight / canvasRef.height - 0.5) * 2;
-    
-    // The higher we are, the less likely it is we'll keep climbing
-    if (signedPercentage > 0.8 || signedPercentage < -0.8) {
-        return - ( 2 * (Math.random()-0.5) + signedPercentage );
-    }
-    else {
-        return 20 * (Math.random()-0.5);
-    }
-
-}
-
-function createLandscapeOutline() {
-    let step = Math.round(canvasRef.width / 5);
-    let bigCoeff = null;
-    for (let i=1; i<canvasRef.width; i+=step) {
-        bigCoeff = Math.round( generateSlopeCoeffs(landOutline[i-1]) );
-        console.log(bigCoeff);
-        for (let j=i; j<i*step+step; j++) {
-            landOutline[j] = Math.round( landOutline[j-1] + bigCoeff );
-        }
-    }
-    let a = 3;
-    let b = 5;
-    
-
-    /*
-    for (let i=1; i<canvasRef.width; i++) {
-        landOutline[i] = Math.round( landOutline[i-1] + generateSlopeCoeffs(landOutline[i-1]) );
-    }
-    */
-
-
-}
 
 function drawTerrain() {
-    canvasCtx.fillStyle = "rgb(255,255,255)";
-    let horiz = 0;
-    landOutline.forEach(i => {
-        canvasCtx.fillRect(horiz, canvasRef.height-i, 1, canvasRef.height - (canvasRef.height-i) );
-        horiz += 1;
-    });
 
-    console.log(landOutline);
-
-
-    
-    // for (let i=0, j=0; i<1800; i++) {
-    //     j = Math.sin(i/55)*600;
-    //     canvasCtx.fillRect(i, j+800, 2, 2);
-    // }
+    var bezierPoints=[{x:250,y: 120},{x:290,y:-40},{x:300,y:350},{x:400,y:150},
+                      {x:500,y:150}, {x:600,y:90}, {x:700,y:100}, {x:800,y:300},
+                      {x:900,y:450}, {x:950,y:90}, {x:1000,y:100}, {x:1050,y:300}];
+    drawBez(bezierPoints);
 }
 
-createLandscapeOutline();
+function drawBez(b){
+
+    canvasCtx.lineWidth=7;
+    canvasCtx.beginPath();
+
+    for (let i = 0; i < b.length; i = i + 3) {
+        canvasCtx.moveTo(b[i].x, b[i].y)
+        canvasCtx.bezierCurveTo(b[i+1].x, b[i+1].y,
+                                b[i+2].x, b[i+2].y,
+                                b[i+3].x, b[i+3].y
+                                );
+        canvasCtx.stroke();
+    }
+
+
+    // canvasCtx.moveTo(b[0].x,b[0].y);
+    // canvasCtx.bezierCurveTo(b[1].x,b[1].y, b[2].x,b[2].y, b[3].x,b[3].y);
+    // canvasCtx.stroke();
+}
+
+
+
+
+
 drawTerrain();
 
 // Drawing
