@@ -53,11 +53,24 @@ function drawTerrain() {
         canvasCtx.fillRect(j, bezierPoints[i], 4, 4);
     }
 
+    for (let i=0, j=0; i<1; i += 0.01, j++) {
+        let currentPixel = null;
+        canvasCtx.fillStyle = "rgb(255,255,255)";
+        currentPixel = catmullRom(bezierPoints[0], bezierPoints[1], bezierPoints[2], bezierPoints[3], i);
+        canvasCtx.fillRect(j, currentPixel, 2, 2);
+
+    }
+
     drawBez(bezierPoints);
 }
 
 function catmullRom(p0, p1, p2, p3, t) {
-    
+    return (
+        2 * p1 +
+        t * (-p0 + p2) +
+        t*t * (2*p0 - 5*p1 + 4*p2 - p3) +
+        t*t*t * (-p0 + 3*p1 - 3*p2 + p3)
+    ) * 0.5;
 }
 
 
