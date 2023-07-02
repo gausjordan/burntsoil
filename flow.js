@@ -49,6 +49,10 @@ function drawTerrain() {
 
     var bezierPoints = [200, 300, 100, 50, 700, 200, 20, 200, 600, 300, 500, 600, 50, 500, 50, 300, 200];
 
+    for (let i=0; i < 32; i++) {
+        bezierPoints[i] = randomInteger(50, 600);
+    }
+
     canvasCtx.fillStyle = "rgb(255,0,255)";
     canvasCtx.fillRect(canvasRef.width-1, canvasRef.height-1, 1, 1);
     canvasCtx.stroke();
