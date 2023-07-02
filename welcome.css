@@ -34,7 +34,7 @@ html, body {
     display: flex;
     flex-wrap: wrap;
     flex-direction: row;
-    background-color: darkcyan;
+    /* background-color: darkcyan; */
     flex-basis: 100%;
 }
 
@@ -65,8 +65,8 @@ canvas {
     position: absolute;
     border: 0px double silver;
     border: 0px double blue;
-    background-color: red;
-    opacity: 0.5;
+    /* background-color: rgb(160,60,60); */
+    opacity: 1.0;
 }
 
 

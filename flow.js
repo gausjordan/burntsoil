@@ -6,11 +6,12 @@ let canvasCtx = canvasRef.getContext('2d');
 canvasRef.height = flexMain.clientHeight;
 canvasRef.width = flexMain.clientWidth;
 
-
 // Get pixel color values at mouse position, on click event
 let posX = 0;
 let posY = 0;
 window.addEventListener("click", (ev) => {
+    canvasCtx.fillStyle = "rgb(255,255,255)";
+    canvasCtx.fillRect(0, 0, 200, 50);
     posX = getMousePos(canvasRef, ev).x;
     posY = getMousePos(canvasRef, ev).y;
     colorValueAtPos = canvasCtx.getImageData(posX, posY, 1, 1).data;
@@ -19,10 +20,8 @@ window.addEventListener("click", (ev) => {
 
 // On resize - reset
 window.addEventListener("resize", (ev) => {
-    canvasHeight = flexMain.clientHeight;
-    canvasWidth = flexMain.clientWidth;
-    canvasRef.height = canvasCtx.height = canvasHeight;
-    canvasRef.width = canvasCtx.width = canvasWidth;
+    canvasRef.height = flexMain.clientHeight;
+    canvasRef.width = flexMain.clientWidth;
     drawTerrain();
 });
 
@@ -46,22 +45,49 @@ function randomInteger(lower, upper) {
 
 function drawTerrain() {
 
+    canvasCtx.moveTo(0,0);
+
     var bezierPoints = [200, 300, 100, 50, 700, 200, 20, 200, 600, 300, 500, 600, 50, 500, 50, 300, 200];
 
-    for (let i=0, j=10; i<bezierPoints.length; i++, j+=60) {
-        canvasCtx.fillStyle = "rgb(255,255,255)";
-        canvasCtx.fillRect(j, bezierPoints[i], 4, 4);
+    canvasCtx.fillStyle = "rgb(255,0,255)";
+    canvasCtx.fillRect(canvasRef.width-1, canvasRef.height-1, 1, 1);
+    canvasCtx.stroke();
+
+    stepsNumber = Math.ceil(canvasRef.width / bezierPoints.length);
+
+    let currentPixel = 0;
+
+    for (let g = 0; g < bezierPoints.length; g++) {
+
+        for (let i = 0; i < 1; i += 0.01) {
+            
+            canvasCtx.fillStyle = "rgb(0,0,0)";
+            currentPixel = catmullRom(bezierPoints[g+0], bezierPoints[g+1], bezierPoints[g+2], bezierPoints[g+3], i);
+            canvasCtx.fillRect(i*100+(g*100), currentPixel, 2, 2);
+           
+        } 
     }
 
+    /*
+    for (let i=0, j=100; i<1; i += 0.01, j++) {
+        
+        canvasCtx.fillStyle = "rgb(0,0,0)";
+        currentPixel = catmullRom(bezierPoints[1], bezierPoints[2], bezierPoints[3], bezierPoints[4], i);
+        canvasCtx.fillRect(j, currentPixel, 2, 2);
+    } 
+    */
+      
+    
+    /*
     for (let i=0, j=0; i<1; i += 0.01, j++) {
         let currentPixel = null;
         canvasCtx.fillStyle = "rgb(255,255,255)";
         currentPixel = catmullRom(bezierPoints[0], bezierPoints[1], bezierPoints[2], bezierPoints[3], i);
         canvasCtx.fillRect(j, currentPixel, 2, 2);
+    } */
 
-    }
-
-    drawBez(bezierPoints);
+    // drawBez(bezierPoints);
+    
 }
 
 function catmullRom(p0, p1, p2, p3, t) {
@@ -91,13 +117,10 @@ function drawBez(b){
 
     }
 
-
     // canvasCtx.moveTo(b[0].x,b[0].y);
     // canvasCtx.bezierCurveTo(b[1].x,b[1].y, b[2].x,b[2].y, b[3].x,b[3].y);
     // canvasCtx.stroke();
 }
-
-
 
 drawTerrain();
 
