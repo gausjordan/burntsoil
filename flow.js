@@ -47,10 +47,12 @@ function drawTerrain() {
 
     canvasCtx.moveTo(0,0);
 
-    var bezierPoints = [200, 300, 100, 50, 700, 200, 20, 200, 600, 300, 500, 600, 50, 500, 50, 300, 200];
+    var bezierPoints = [];
 
     for (let i=0; i < 32; i++) {
         bezierPoints[i] = randomInteger(50, 600);
+        //console.log(bezierPoints);
+        var bezierPoints = [360,75,241,128,109,503,261,274,419,499,188,194,494,158,80,557,158,471,336,118,435,63,475,322,439,460,177,331,224,204,556,327];
     }
 
     canvasCtx.fillStyle = "rgb(255,0,255)";
@@ -72,25 +74,6 @@ function drawTerrain() {
         } 
     }
 
-    /*
-    for (let i=0, j=100; i<1; i += 0.01, j++) {
-        
-        canvasCtx.fillStyle = "rgb(0,0,0)";
-        currentPixel = catmullRom(bezierPoints[1], bezierPoints[2], bezierPoints[3], bezierPoints[4], i);
-        canvasCtx.fillRect(j, currentPixel, 2, 2);
-    } 
-    */
-      
-    
-    /*
-    for (let i=0, j=0; i<1; i += 0.01, j++) {
-        let currentPixel = null;
-        canvasCtx.fillStyle = "rgb(255,255,255)";
-        currentPixel = catmullRom(bezierPoints[0], bezierPoints[1], bezierPoints[2], bezierPoints[3], i);
-        canvasCtx.fillRect(j, currentPixel, 2, 2);
-    } */
-
-    // drawBez(bezierPoints);
     
 }
 
@@ -121,9 +104,6 @@ function drawBez(b){
 
     }
 
-    // canvasCtx.moveTo(b[0].x,b[0].y);
-    // canvasCtx.bezierCurveTo(b[1].x,b[1].y, b[2].x,b[2].y, b[3].x,b[3].y);
-    // canvasCtx.stroke();
 }
 
 drawTerrain();
