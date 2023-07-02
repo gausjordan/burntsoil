@@ -36,7 +36,6 @@ function getMousePos(canvas, ev) {
 }
 
 
-
 // Get a random integer in a given range
 function randomInteger(lower, upper) {
     lower = Math.ceil(lower);
@@ -45,27 +44,38 @@ function randomInteger(lower, upper) {
 }
 
 
-
 function drawTerrain() {
 
-    var bezierPoints=[{x:250,y: 120},{x:290,y:-40},{x:300,y:350},{x:400,y:150},
-                      {x:500,y:150}, {x:600,y:90}, {x:700,y:100}, {x:800,y:300},
-                      {x:900,y:450}, {x:950,y:90}, {x:1000,y:100}, {x:1050,y:300}];
+    var bezierPoints = [200, 300, 100, 50, 700, 200, 20, 200, 600, 300, 500, 600, 50, 500, 50, 300, 200];
+
+    for (let i=0, j=10; i<bezierPoints.length; i++, j+=60) {
+        canvasCtx.fillStyle = "rgb(255,255,255)";
+        canvasCtx.fillRect(j, bezierPoints[i], 4, 4);
+    }
+
     drawBez(bezierPoints);
 }
 
+function catmullRom(p0, p1, p2, p3, t) {
+    
+}
+
+
 function drawBez(b){
 
-    canvasCtx.lineWidth=7;
     canvasCtx.beginPath();
+    canvasCtx.moveTo(0, 300);
 
-    for (let i = 0; i < b.length; i = i + 3) {
-        canvasCtx.moveTo(b[i].x, b[i].y)
-        canvasCtx.bezierCurveTo(b[i+1].x, b[i+1].y,
-                                b[i+2].x, b[i+2].y,
-                                b[i+3].x, b[i+3].y
+    for (let i = 0, j = 0; i < b.length; i += 3, j += 200) {
+        
+        canvasCtx.bezierCurveTo(j+50, b[i],
+                                j+100, b[i+1],
+                                j+150, b[i+2],
                                 );
+        
         canvasCtx.stroke();
+        canvasCtx.moveTo(j+150, b[i+2]);
+
     }
 
 
@@ -73,8 +83,6 @@ function drawBez(b){
     // canvasCtx.bezierCurveTo(b[1].x,b[1].y, b[2].x,b[2].y, b[3].x,b[3].y);
     // canvasCtx.stroke();
 }
-
-
 
 
 
