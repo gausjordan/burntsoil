@@ -22,7 +22,7 @@ window.addEventListener("click", (ev) => {
 window.addEventListener("resize", (ev) => {
     canvasRef.height = flexMain.clientHeight;
     canvasRef.width = flexMain.clientWidth;
-    drawTerrain();
+    drawTerrain(terrain);
 });
 
 
@@ -42,39 +42,74 @@ function randomInteger(lower, upper) {
     return Math.floor(Math.random() * (upper - lower + 1)) + lower;
 }
 
+// Creates random landscape data
+function createTerrain() {
+    var bezierPoints = generatePoints();
+    return bezierPoints;
+}
 
-function drawTerrain() {
-
-    canvasCtx.moveTo(0,0);
-
-    var bezierPoints = [];
-
-    for (let i=0; i < 32; i++) {
+// Generates random curve control points (landscape)
+function generatePoints() {
+    let bezierPoints = [];
+    for (let i=0; i < 12; i++) {
         bezierPoints[i] = randomInteger(50, 600);
-        //console.log(bezierPoints);
-        var bezierPoints = [360,75,241,128,109,503,261,274,419,499,188,194,494,158,80,557,158,471,336,118,435,63,475,322,439,460,177,331,224,204,556,327];
+        
+        // var bezierPoints = [360,75,241,128,109,503,261,274,
+        //                     419,499,188,194,494,158,80,557,
+        //                     158,471,336,118,435,63,475,322,
+        //                     439,460,177,331,224,204,556,327];
     }
+    return bezierPoints;
+}
+
+
+function generateContour(terrain) {
+    let screenBuffer = new Array(canvasRef.width).fill(0);
+    let pxPerSeg = Math.ceil((canvasRef.width) / (terrain.length-4));
+    let stepPerPx = 1 / ((canvasRef.width) / (terrain.length-4));
+    console.log("pxPerSegment: " + pxPerSeg);
+    console.log("StepsPerPx: " + stepPerPx);
+
+    for (let seg=0; seg < terrain.length-4; seg++) {
+        for (let px=0, step=0; px<pxPerSeg, step<1; px++, step += stepPerPx) {
+            screenBuffer[(seg * pxPerSeg) + px] =
+                Math.round(
+                    catmullRom(
+                        terrain[seg],
+                        terrain[seg+1],
+                        terrain[seg+2],
+                        terrain[seg+3],
+                        step)
+                );
+        }
+    }
+    return screenBuffer;    
+}
+
+
+function drawPixelData(pixelData) {
+    canvasCtx.fillStyle = "rgba(0,0,255,1)";
+    for (let i = 0; i < pixelData.length; i++) {
+        canvasCtx.fillRect(i, pixelData[i], 2, 2000);
+    }
+}
+
+
+function drawTerrain(bezierPoints) {
 
     canvasCtx.fillStyle = "rgb(255,0,255)";
     canvasCtx.fillRect(canvasRef.width-1, canvasRef.height-1, 1, 1);
     canvasCtx.stroke();
 
-    stepsNumber = Math.ceil(canvasRef.width / bezierPoints.length);
-
     let currentPixel = 0;
 
     for (let g = 0; g < bezierPoints.length; g++) {
-
         for (let i = 0; i < 1; i += 0.01) {
-            
-            canvasCtx.fillStyle = "rgb(0,0,0)";
+            canvasCtx.fillStyle = "rgba(0,0,0,0.2)";
             currentPixel = catmullRom(bezierPoints[g+0], bezierPoints[g+1], bezierPoints[g+2], bezierPoints[g+3], i);
             canvasCtx.fillRect(i*100+(g*100), currentPixel, 2, 2);
-           
         } 
     }
-
-    
 }
 
 function catmullRom(p0, p1, p2, p3, t) {
@@ -87,26 +122,13 @@ function catmullRom(p0, p1, p2, p3, t) {
 }
 
 
-function drawBez(b){
 
-    canvasCtx.beginPath();
-    canvasCtx.moveTo(0, 300);
 
-    for (let i = 0, j = 0; i < b.length; i += 3, j += 200) {
-        
-        canvasCtx.bezierCurveTo(j+50, b[i],
-                                j+100, b[i+1],
-                                j+150, b[i+2],
-                                );
-        
-        canvasCtx.stroke();
-        canvasCtx.moveTo(j+150, b[i+2]);
+let terrain = createTerrain();
+let pixelData = generateContour(terrain);
+drawTerrain(terrain);
+drawPixelData(pixelData);
 
-    }
-
-}
-
-drawTerrain();
 
 // Drawing
 canvasCtx.font = "16px sans-serif";
