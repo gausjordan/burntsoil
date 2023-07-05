@@ -49,10 +49,19 @@ function randomInteger(lower, upper) {
 function generateControlPoints() {
     let points = [];
     for (let i=0; i < 12; i++) {
-        points[i] = randomInteger(50, 600);
+        points[i] = randomInteger(80, 600);
     }
+    // hardcoded debug points
+    points = [50, 200, 100, 350, 50, 300, 600, 500, 400, 90, 200, 40];
     return points;
 }
+
+
+// Splits a number (sum) into an array of 'n' inequal parts
+function inequalizer(sum, parts) {
+
+}
+
 
 // Takes control points in, returns an array of heights (landscape contour)
 function generateContour(cPts) {
