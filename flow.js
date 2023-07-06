@@ -48,19 +48,13 @@ function randomInteger(lower, upper) {
 // Create random (landscape) curve control points
 function generateControlPoints() {
     let points = [];
-    for (let i=0; i < 12; i++) {
+    for (let i=0; i < randomInteger(4,12); i++) {
         points[i] = randomInteger(80, 600);
     }
-    // hardcoded debug points
-    points = [50, 200, 100, 350, 50, 300, 600, 500, 400, 90, 200, 40];
+    
     return points;
 }
 
-
-// Splits a number (sum) into an array of 'n' inequal parts
-function inequalizer(sum, parts) {
-
-}
 
 
 // Takes control points in, returns an array of heights (landscape contour)
@@ -70,7 +64,7 @@ function generateContour(cPts) {
     let pxPerSeg = Math.ceil((canvasRef.width) / (cPts.length-4));
     let stepPerPx = 1 / ((canvasRef.width) / (cPts.length-4));
 
-    for (let seg=0; seg < cPts.length-4; seg++) {
+    for (let seg=0; seg < cPts.length-4; seg += 1) {
         for (let px=0, step=0; px<pxPerSeg, step<1; px++, step += stepPerPx) {
             contour[(seg * pxPerSeg) + px] =
                 Math.round(
@@ -101,10 +95,21 @@ function catmullRom(p0, p1, p2, p3, t) {
     ) * 0.5;
 }
 
+let cPoints = [];
+let pixelData = [];
+let finalData = [];
 
-let cPoints = generateControlPoints();
-let pixelData = generateContour(cPoints);
-drawPixelData(pixelData);
+for (let i = 0; i < 10; i++) {
+    cPoints[i] = generateControlPoints();
+    pixelData[i] = generateContour(cPoints[i]);
+    console.log(finalData)
+    for (let g = 0; g < pixelData[0].length; g++) {
+        finalData[g] = finalData[g] + pixelData[i][g];
+    }
+}
+
+drawPixelData(finalData);
+
 
 
 // Drawing
