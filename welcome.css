@@ -80,5 +80,8 @@ canvas {
     .menu-and-canvas {
         flex-direction: column;
     }
+    footer {
+        padding: 1em 1em 1em 1em;
+    }
     
 }
