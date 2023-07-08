@@ -5,6 +5,8 @@ let canvasRef = document.getElementById("canvas");
 let canvasCtx = canvasRef.getContext('2d');
 canvasRef.height = flexMain.clientHeight;
 canvasRef.width = flexMain.clientWidth;
+let canvasWidth = canvasRef.width;
+let canvasHeigth = canvasRef.height;
 
 
 // Get pixel color values at mouse position, on click event
@@ -47,46 +49,139 @@ function randomInteger(lower, upper) {
 
 // Create random (landscape) curve control points
 function generateControlPoints() {
-    let points = [];
+    let pointPositions = [];
+    let pointHeights = [];
+
     for (let i=0; i < 12; i++) {
-        points[i] = randomInteger(80, 600);
+        // points[i] = randomInteger(80, 600);
     }
     // hardcoded debug points
-    points = [50, 200, 100, 350, 50, 300, 600, 500, 400, 90, 200, 40];
+    pointPositions = [10, 5, 10, 15, 18, 2, 10, 15, 5, 10];
+    pointHeights = [50, 200, 100, 350, 50, 300, 600, 500, 400, 90];
+
+    let points = pointPositions.map((currentValue, index) => {
+        return {
+            y: pointPositions[index],
+            x: pointHeights[index]
+        }
+    });
+
     return points;
 }
 
-
-// Splits a number (sum) into an array of 'n' inequal parts
-function inequalizer(sum, parts) {
-
-}
 
 
 // Takes control points in, returns an array of heights (landscape contour)
 function generateContour(cPts) {
 
-    let contour = new Array(canvasRef.width).fill(0);
-    let pxPerSeg = Math.ceil((canvasRef.width) / (cPts.length-4));
-    let stepPerPx = 1 / ((canvasRef.width) / (cPts.length-4));
+    // weights = [10, 5, 10, 15, 18, 2, 10, 15, 5, 10];
 
-    for (let seg=0; seg < cPts.length-4; seg++) {
-        for (let px=0, step=0; px<pxPerSeg, step<1; px++, step += stepPerPx) {
-            contour[(seg * pxPerSeg) + px] =
-                Math.round(
-                    catmullRom( cPts[seg], cPts[seg+1],
-                    cPts[seg+2], cPts[seg+3], step)
-                );
-        }
-    }
+    let contour = new Array(canvasRef.width).fill(0);
+    
     return contour;    
 }
+
+
+controlPoints = generateControlPoints();
+
+let proba = catmullRomSolver(controlPoints, 0.5, 0.5, 0.5);
+
+
+function catmullRomSolver(cPts, alpha, tension, position) {
+    
+    for (let point = 0; point < cPts.length-3; point++) {
+
+        let dist01 = Math.sqrt(
+                     Math.pow( (cPts[point+1].x - cPts[point].x), 2) +
+                     Math.pow( (cPts[point+1].y - cPts[point].y), 2) );
+        let dist12 = Math.sqrt(
+                     Math.pow( (cPts[point+2].x - cPts[point+1].x), 2) +
+                     Math.pow( (cPts[point+2].y - cPts[point+1].y), 2) );
+        let dist23 = Math.sqrt(
+                     Math.pow( (cPts[point+3].x - cPts[point+2].x), 2) +
+                     Math.pow( (cPts[point+3].y - cPts[point+2].y), 2) );
+
+        let t01 = Math.pow(dist01, alpha);
+        let t12 = Math.pow(dist12, alpha);
+        let t23 = Math.pow(dist23, alpha);
+
+        let m1 = {
+            x:  (1 - tension) *
+                ( 2 - cPts[point+2].x - cPts[point+1].x + t12 *
+                    ( (cPts[point+1].x - cPts[point].x) / t01 -
+                    (cPts[point+2].x - cPts[point].x) / (t01 + t12)
+                    )
+                ),
+            y:  (1 - tension) *
+                ( 2 - cPts[point+2].y - cPts[point+1].y + t12 *
+                    ( (cPts[point+1].y - cPts[point].y) / t01 -
+                    (cPts[point+2].y - cPts[point].y) / (t01 + t12)
+                    )
+                )
+        };
+
+        let m2 = {
+            x:  (1 - tension) *
+                ( 2 - cPts[point+2].x - cPts[point+1].x + t12 *
+                    ( (cPts[point+3].x - cPts[point+2].x) / t23 -
+                    (cPts[point+3].x - cPts[point+1].x) / (t12 + t23)
+                    )
+                ),
+            y:  (1 - tension) *
+                ( 2 - cPts[point+2].y - cPts[point+1].y + t12 *
+                    ( (cPts[point+3].y - cPts[point+2].y) / t23 -
+                    (cPts[point+3].y - cPts[point+1].y) / (t12 + t23)
+                    )
+                )
+        };
+
+        let a = {
+            x: 2 * (cPts[point+1].x - cPts[point+2].x) + m1.x + m2.x,
+            y: 2 * (cPts[point+1].y - cPts[point+2].y) + m1.y + m2.y
+        };
+
+        let b = {
+            x: -3 * (cPts[point+1].x - cPts[point+2].x) - m1.x -m1.x -m2.x,
+            y: -3 * (cPts[point+1].y - cPts[point+2].y) - m1.y -m1.y -m2.y,
+        };
+        
+        let c = { x: m1.x, y: m1.y };
+
+        let d = { x: cPts[point+1].x, y: cPts[point+1].y };
+
+        return {
+            x:  a.x * Math.pow(position, 3) +
+                b.x * Math.pow(position, 2) +
+                c.x * position +
+                d.x,
+            y:  a.y * Math.pow(position, 3) +
+                b.y * Math.pow(position, 2) +
+                c.y * position +
+                d.y,
+        };
+    }
+}
+
+canvasCtx.fillStyle = "rgba(255,0,0,255)";
+for (let i=0; i < 1; i+= 0.01) {
+    let temp = catmullRomSolver(controlPoints, 0.5, -2, i);
+    canvasCtx.fillRect(temp.x*3, temp.y*3, 3, 3);
+}
+  
+
+
+testDraw();
+
+function testDraw() {
+
+}
+
 
 
 function drawPixelData(pixelData) {
     canvasCtx.fillStyle = "rgba(0,0,255,1)";
     for (let i = 0; i < pixelData.length; i++) {
-        canvasCtx.fillRect(i, pixelData[i], 2, 2000);
+        // canvasCtx.fillRect(i, pixelData[i], 2, 2000);
     }
 }
 
