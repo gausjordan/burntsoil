@@ -1,11 +1,15 @@
+// Returns a 4-point-curve segment value at position "t"
+
 function catmullRom(p0, p1, p2, p3, alpha, tension, position) {
     
     let dist01 = Math.sqrt(
                     Math.pow( (p1.x - p0.x), 2) +
                     Math.pow( (p1.y - p0.y), 2) );
+
     let dist12 = Math.sqrt(
                     Math.pow( (p2.x - p1.x), 2) +
                     Math.pow( (p2.y - p1.y), 2) );
+
     let dist23 = Math.sqrt(
                     Math.pow( (p3.x - p2.x), 2) +
                     Math.pow( (p3.y - p2.y), 2) );
