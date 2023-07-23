@@ -132,12 +132,21 @@ let y = 0;
 for (let seg = 0; seg < controlPoints.length-3; seg+=1) {
     
     for (let t=0; t<1; t+=0.01) {
-        // This sorty worked, shifted
+        // This sorta worked, shifted
         // y = cubic_interpolate(controlPoints[seg+0].y, controlPoints[seg+1].y, controlPoints[seg+2].y, controlPoints[seg+3].y, t);
         // canvasCtx.fillRect( px + (controlPoints[seg+1].x-controlPoints[seg+0].x) * t , (canvasRef.height-y), 3, 3);
 
-        x = cubic_interpolate(controlPoints[seg+0].x, controlPoints[seg+1].x, controlPoints[seg+2].x, controlPoints[seg+3].x, t);
-        y = cubic_interpolate(controlPoints[seg+0].y, controlPoints[seg+1].y, controlPoints[seg+2].y, controlPoints[seg+3].y, t);
+        if (seg == 0) {
+            x = cubic_interpolate(controlPoints[seg+0].x, controlPoints[seg+0].x, controlPoints[seg+1].x, controlPoints[seg+2].x, t);
+            y = cubic_interpolate(controlPoints[seg+0].y, controlPoints[seg+0].y, controlPoints[seg+1].y, controlPoints[seg+2].y, t);
+            canvasCtx.fillRect( x, y, 3, 3);
+            x = cubic_interpolate(controlPoints[seg+0].x, controlPoints[seg+1].x, controlPoints[seg+2].x, controlPoints[seg+3].x, t);
+            y = cubic_interpolate(controlPoints[seg+0].y, controlPoints[seg+1].y, controlPoints[seg+2].y, controlPoints[seg+3].y, t);
+            canvasCtx.fillRect( x, y, 3, 3);
+        } else {
+            x = cubic_interpolate(controlPoints[seg+0].x, controlPoints[seg+1].x, controlPoints[seg+2].x, controlPoints[seg+3].x, t);
+            y = cubic_interpolate(controlPoints[seg+0].y, controlPoints[seg+1].y, controlPoints[seg+2].y, controlPoints[seg+3].y, t);
+        }
         canvasCtx.fillRect( x, y, 3, 3);
     }
     px += controlPoints[seg+1].y-controlPoints[seg+0].y;
