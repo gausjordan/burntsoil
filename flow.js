@@ -47,40 +47,22 @@ function randomInteger(lower, upper) {
 
 // Create random (landscape) curve control points
 function generateControlPoints() {
-    let pointPositions = [];
-    let pointHeights = [];
-
-    // for (let i=0; i < 10; i++) {
-    //     pointHeights[i] = randomInteger(80, 600);
-    // }
-    
-    // hardcoded debug points
-    // pointPositions = [100, 300, 400, 600, 700, 800, 900, 1000, 1100, 1200];
-    // pointHeights = [100, 200, 100, 200, 100, 200, 100, 200];
-
-    // let points = pointPositions.map((currentValue, index) => {
-    //     return {
-    //         y: pointPositions[index],
-    //         x: pointHeights[index]
-    //     }
-    // });
-
 
     let widthInPx = 0;
     let points = [];
     let newPosition = 0;
     let newHeight = 0;
 
-    while (widthInPx <= flexMain.clientWidth) {
+    do {
         
-        newHeight = randomInteger(100, 820);
+        newHeight = randomInteger(500, 620);
         points.push ({
             x: widthInPx + newPosition,
             y: newHeight
         });
-        newPosition = randomInteger(100, 250);
+        newPosition = randomInteger(100, 140);
         widthInPx += newPosition;
-    }
+    } while (widthInPx <= flexMain.clientWidth+400)
 
     return points;
 }
