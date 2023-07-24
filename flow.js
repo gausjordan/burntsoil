@@ -1,4 +1,4 @@
-//  Get HTML element references, setup a canvas
+ /* Sets HTML element references & sets up a canvas */
 let colorValueAtPos = null;
 let flexMain = document.querySelector("main");
 let canvasRef = document.getElementById("canvas");
@@ -7,7 +7,7 @@ canvasRef.height = flexMain.clientHeight;
 canvasRef.width = flexMain.clientWidth;
 
 
-// Get pixel color value at a given mouse position, on click
+/* Gets a pixel color value at a given mouse position - on click */
 let posX = 0;
 let posY = 0;
 window.addEventListener("click", (ev) => {
@@ -19,7 +19,7 @@ window.addEventListener("click", (ev) => {
 });
 
 
-// On resize - reset
+/* On resize - reset */
 window.addEventListener("resize", (ev) => {
     canvasRef.height = flexMain.clientHeight;
     canvasRef.width = flexMain.clientWidth;
@@ -28,7 +28,7 @@ window.addEventListener("resize", (ev) => {
 });
 
 
-// Get realtime relative mouse coordinates on a canvas
+/* Gets relative mouse coordinates on a canvas - on click */
 function getMousePos(canvas, ev) {
     var rect = canvas.getBoundingClientRect();
     return {
@@ -37,7 +37,7 @@ function getMousePos(canvas, ev) {
 }
 
 
-// Get a random integer in a given range
+/* Gets a random integer in a given range */
 function randomInteger(lower, upper) {
     lower = Math.ceil(lower);
     upper  = Math.floor(upper);
@@ -45,25 +45,20 @@ function randomInteger(lower, upper) {
 }
 
 
-// Create random (landscape) curve control points
-function generateControlPoints() {
-
-    let widthInPx = 0;
+/* Generates random curve control points to build landscape with */
+function generateControlPoints(minDist, maxDist, minHeight, maxHeight) {
+    let widthInPx = -2*maxDist;
     let points = [];
     let newPosition = 0;
-    let newHeight = 0;
-
+    let newHeight = (maxHeight-minHeight)/2;
     do {
-        
-        newHeight = randomInteger(500, 620);
         points.push ({
             x: widthInPx + newPosition,
-            y: newHeight
-        });
-        newPosition = randomInteger(100, 140);
+            y: newHeight });
+        newPosition = randomInteger(minDist, maxDist);
+        newHeight = randomInteger(minHeight, maxHeight);
         widthInPx += newPosition;
-    } while (widthInPx <= flexMain.clientWidth+400)
-
+    } while (widthInPx <= flexMain.clientWidth + 2 * maxDist);
     return points;
 }
 
@@ -78,73 +73,45 @@ function generateContour(cPts) {
 }
 
 
+controlPoints = generateControlPoints(100, 150, 100, 650);
+debugDraw();
 
 
-
-controlPoints = generateControlPoints();
-// controlPoints.length = 5;
-
-// controlPoints[0].x = 0;
-// controlPoints[1].x = 200;
-// controlPoints[2].x = 400;
-// controlPoints[3].x = 600;
-// controlPoints[4].x = 800;
-
-// controlPoints[0].y = 200;
-// controlPoints[1].y = 600;
-// controlPoints[2].y = 400;
-// controlPoints[3].y = 100;
-// controlPoints[4].y = 200;
-
-console.log(controlPoints.length);
-
-
-// DEBUG draw
-
-canvasCtx.fillStyle = "rgba(0,0,255,255)";
-for (let i=0; i < controlPoints.length; i++) {
-    canvasCtx.fillRect(controlPoints[i].x, controlPoints[i].y, 6, 6);
-}
-
-canvasCtx.fillStyle = "rgba(255,0,0,255)";
-  
-let px = 0;
-let y = 0;
-
-for (let seg = 0; seg < controlPoints.length-3; seg+=1) {
-    
-    for (let t=0; t<1; t+=0.01) {
-        // This sorta worked, shifted
-        // y = cubic_interpolate(controlPoints[seg+0].y, controlPoints[seg+1].y, controlPoints[seg+2].y, controlPoints[seg+3].y, t);
-        // canvasCtx.fillRect( px + (controlPoints[seg+1].x-controlPoints[seg+0].x) * t , (canvasRef.height-y), 3, 3);
-
-        if (seg == 0) {
-            x = cubic_interpolate(controlPoints[seg+0].x, controlPoints[seg+0].x, controlPoints[seg+1].x, controlPoints[seg+2].x, t);
-            y = cubic_interpolate(controlPoints[seg+0].y, controlPoints[seg+0].y, controlPoints[seg+1].y, controlPoints[seg+2].y, t);
-            canvasCtx.fillRect( x, y, 3, 3);
-            x = cubic_interpolate(controlPoints[seg+0].x, controlPoints[seg+1].x, controlPoints[seg+2].x, controlPoints[seg+3].x, t);
-            y = cubic_interpolate(controlPoints[seg+0].y, controlPoints[seg+1].y, controlPoints[seg+2].y, controlPoints[seg+3].y, t);
-            canvasCtx.fillRect( x, y, 3, 3);
-        } else {
-            x = cubic_interpolate(controlPoints[seg+0].x, controlPoints[seg+1].x, controlPoints[seg+2].x, controlPoints[seg+3].x, t);
-            y = cubic_interpolate(controlPoints[seg+0].y, controlPoints[seg+1].y, controlPoints[seg+2].y, controlPoints[seg+3].y, t);
-        }
-        canvasCtx.fillRect( x, y, 3, 3);
+/* Debug draw function - to be deleted */
+function debugDraw() {
+    canvasCtx.fillStyle = "rgba(0,0,255,255)";
+    for (let i=0; i < controlPoints.length; i++) {
+        canvasCtx.fillRect(controlPoints[i].x, controlPoints[i].y, 6, 6);
     }
-    px += controlPoints[seg+1].y-controlPoints[seg+0].y;
-    
+
+    canvasCtx.fillStyle = "rgba(255,0,0,255)";
+
+    for (let seg = 0; seg < controlPoints.length-3; seg+=1) {
+        let px = 0;
+        let step = 1 / (controlPoints[seg+2].x-controlPoints[seg+1].x);
+        for (let t=0; t<1; t+=step/4) {
+
+                let x = cubicInterpolate(controlPoints[seg+0].x, controlPoints[seg+1].x, controlPoints[seg+2].x, controlPoints[seg+3].x, t);
+                let y = cubicInterpolate(controlPoints[seg+0].y, controlPoints[seg+1].y, controlPoints[seg+2].y, controlPoints[seg+3].y, t);
+                canvasCtx.fillRect( x, y, 1, 100);
+        }
+        px += controlPoints[seg+1].y-controlPoints[seg+0].y;
+        
+    }
 }
 
 
 
-function cubic_interpolate(y0, y1, y2, y3, mu) {
-    let a0, a1, a2, a3, mu2;
-    mu2 = mu*mu;
-    a0 = y3 - y2 - y0 + y1; //p
+
+/* Returns an interpolated function value on a segment location 't' */
+function cubicInterpolate(y0, y1, y2, y3, t) {
+    let a0, a1, a2, a3, t2;
+    t2 = t * t;
+    a0 = y3 - y2 - y0 + y1;
     a1 = y0 - y1 - a0;
     a2 = y2 - y0;
     a3 = y1;
-    return ( a0*mu*mu2 + a1*mu2 + a2*mu + a3 );
+    return a0 * t * t2 + a1 * t2 + a2 * t + a3;
 }
 
 
