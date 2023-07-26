@@ -23,8 +23,31 @@ function debugDrawCurves() {
         for (let t = 0; t < 1; t += step) {
                 let x = cubicInterpolate(controlPoints[seg+0].x, controlPoints[seg+1].x, controlPoints[seg+2].x, controlPoints[seg+3].x, t);
                 let y = cubicInterpolate(controlPoints[seg+0].y, controlPoints[seg+1].y, controlPoints[seg+2].y, controlPoints[seg+3].y, t);
-                canvasCtx.fillRect( Math.round(x), Math.round(y), 1, 11);
+                canvasCtx.fillRect( Math.round(x), Math.round(y), 1, 30);
         }
         px += controlPoints[seg+1].x-controlPoints[seg+0].x;
     }
+
+    let px = -200;
+    for (let seg = 0; seg < controlPoints.length-3; seg+=1) {
+        let c1 = randomInteger(0,235);
+        let c2 = randomInteger(0,235);
+        let c3 = randomInteger(0,235);
+        
+        //let string = "rgb(" + c1 + "," + c2 + "," + c3 + ")";
+           // canvasCtx.fillRect(controlPoints[seg+0].x, controlPoints[seg+0].y, 6, 6);
+        //canvasCtx.fillStyle = string;
+        
+        let step = 1 / Math.abs(controlPoints[seg+1].x - controlPoints[seg+0].x);
+        for (let t = 0; t < 1; t += step) {
+                //let x = px;
+                let y = cubicInterpolate(controlPoints[seg+0].y, controlPoints[seg+1].y, controlPoints[seg+2].y, controlPoints[seg+3].y, t);
+                y = y + y*step;
+                canvasCtx.fillRect( Math.round(px), Math.round(y), 1, 30);
+                px = px + 1;
+        }
+        // px += controlPoints[seg+1].x-controlPoints[seg+0].x;
+    }
+
+
 }

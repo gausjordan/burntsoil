@@ -41,7 +41,7 @@ function controlPointsToPixelHeights(cps) {
         let px = 0;
         let oldx = -1;
         let step = 1 / Math.abs(cps[seg+1].x - cps[seg+0].x);
-        console.log("Segment " + seg + " je širok " + (cps[seg+1].x - cps[seg+0].x) + " piksela. Jedan korak je: " + step);
+        // console.log("Segment " + seg + " je širok " + (cps[seg+1].x - cps[seg+0].x) + " piksela. Jedan korak je: " + step);
         for (let t = 0; t < 1; t += step) {
             
             let x = Math.round(cubicInterpolate(cps[seg+0].x, cps[seg+1].x, cps[seg+2].x, cps[seg+3].x, t));
@@ -56,7 +56,7 @@ function controlPointsToPixelHeights(cps) {
         }
         
     }
-    console.log(arrayOfHeights);
+    // console.log(arrayOfHeights);
 }
 
 
