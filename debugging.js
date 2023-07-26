@@ -16,15 +16,15 @@ function debugDrawCurves() {
         let c2 = randomInteger(0,235);
         let c3 = randomInteger(0,235);
         let string = "rgb(" + c1 + "," + c2 + "," + c3 + ")";
-        // canvasCtx.fillRect(controlPoints[seg+0].x, controlPoints[seg+0].y, 6, 6);
+           // canvasCtx.fillRect(controlPoints[seg+0].x, controlPoints[seg+0].y, 6, 6);
         canvasCtx.fillStyle = string;
         let px = 0;
-        let step = 1 / Math.abs(controlPoints[seg+3].x - controlPoints[seg+0].x);
+        let step = 1 / Math.abs(controlPoints[seg+1].x - controlPoints[seg+0].x);
         for (let t = 0; t < 1; t += step) {
                 let x = cubicInterpolate(controlPoints[seg+0].x, controlPoints[seg+1].x, controlPoints[seg+2].x, controlPoints[seg+3].x, t);
                 let y = cubicInterpolate(controlPoints[seg+0].y, controlPoints[seg+1].y, controlPoints[seg+2].y, controlPoints[seg+3].y, t);
-                canvasCtx.fillRect( Math.round(x), Math.round(y), 2, 2);
+                canvasCtx.fillRect( Math.round(x), Math.round(y), 1, 11);
         }
-        px += controlPoints[seg+1].y-controlPoints[seg+0].y;
+        px += controlPoints[seg+1].x-controlPoints[seg+0].x;
     }
 }

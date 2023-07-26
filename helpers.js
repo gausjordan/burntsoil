@@ -14,8 +14,8 @@ window.addEventListener("click", (ev) => {
 window.addEventListener("resize", (ev) => {
     canvasRef.height = flexMain.clientHeight;
     canvasRef.width = flexMain.clientWidth;
-    let pixelData = generateContour(cPoints);
-    drawPixelData(pixelData);
+    // let pixelData = generateContour(cPoints);
+    // drawPixelData(pixelData);
 });
 
 
