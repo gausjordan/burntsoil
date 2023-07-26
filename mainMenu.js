@@ -20,7 +20,7 @@ function generateControlPoints(minDist, maxDist, minHeight, maxHeight) {
         widthInPx += newPosition;
         newPosition = randomInteger(minDist, maxDist);
         newHeight = randomInteger(minHeight, maxHeight);
-    } while (widthInPx <= flexMain.clientWidth + maxDist);
+    } while (widthInPx <= flexMain.clientWidth + 2 * maxDist);
 
     return points;
 
@@ -30,19 +30,30 @@ function generateControlPoints(minDist, maxDist, minHeight, maxHeight) {
 /* Convert control points to a 1D array of landscape pixel heights */
 function controlPointsToPixelHeights(cps) {
 
+    // Mozda nije potrebno racunati X-eve?
+    // Povecati gustocu koraka
+    // Zaokruziti X na cijeli broj (px)
+
     let arrayOfHeights = [];
+    console.log(canvasRef.width);
     for (let seg = 0; seg < cps.length-3; seg+=1) {
         let px = 0;
+        let oldx = -1;
         let step = 1 / Math.abs(cps[seg+1].x - cps[seg+0].x);
+        console.log("Segment " + seg + " je dug " + (cps[seg+1].x - cps[seg+0].x) + " piksela. Jedan korak je: " + step);
         for (let t = 0; t < 1; t += step) {
-            let x = cubicInterpolate(cps[seg+0].x, cps[seg+1].x, cps[seg+2].x, cps[seg+3].x, t);
-            let y = cubicInterpolate(cps[seg+0].y, cps[seg+1].y, cps[seg+2].y, cps[seg+3].y, t);
-                // canvasCtx.fillRect( cps[], Math.round(y), 1, 1); // DEBUG
-            if ( (x >= 0) && (x <= canvasRef.width)) {
+            
+            let x = Math.round(cubicInterpolate(cps[seg+0].x, cps[seg+1].x, cps[seg+2].x, cps[seg+3].x, t));
+            let y = Math.round(cubicInterpolate(cps[seg+0].y, cps[seg+1].y, cps[seg+2].y, cps[seg+3].y, t));
+            
+            if (x >= 0 && x < canvasRef.width && x != oldx) {
                 arrayOfHeights.push(y);
             }
+
+            oldx = x;
+
         }
-        px += controlPoints[seg+1].y-controlPoints[seg+0].y;
+        
     }
     console.log(arrayOfHeights);
 }
