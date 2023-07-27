@@ -10,12 +10,14 @@ window.addEventListener("click", (ev) => {
 });
 
 
+
 /* On resize - reset */
 window.addEventListener("resize", (ev) => {
     canvasRef.height = flexMain.clientHeight;
     canvasRef.width = flexMain.clientWidth;
-    // let pixelData = generateContour(cPoints);
-    // drawPixelData(pixelData);
+    testDraw2(landscapeArray1D);
+            // let pixelData = generateContour(cPoints);
+            // drawPixelData(pixelData);
 });
 
 
