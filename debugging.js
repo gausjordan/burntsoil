@@ -2,7 +2,7 @@
 function debugDrawPoints() {
     canvasCtx.fillStyle = "rgba(0,0,255,255)";
     for (let i=0; i < controlPoints.length; i++) {
-        //canvasCtx.fillRect(controlPoints[i].x, controlPoints[i].y, 6, 6);
+        canvasCtx.fillRect(controlPoints[i].x, controlPoints[i].y, 6, 6);
     }
 }
 

@@ -10,18 +10,37 @@ document.getElementsByTagName('h1')[0].innerHTML =
     "Width: " + canvasRef.width + ", Height: " + canvasRef.height;
 
 
-function testDraw2(landscapeArray1D) {
-    for (let i = 0; i < landscapeArray1D.length; i++) {
-        canvasCtx.fillRect(i, landscapeArray1D[i], 1, 10);
+
+// let controlPoints = generateCps(100, 250, 100, 650);
+let controlPoints1 = generateCps(canvasRef.width/3, canvasRef.width/1, canvas.height - canvas.height*0.6, canvas.height*0.85);
+let controlPoints2 = generateCps(canvasRef.width/6, canvasRef.width/4, canvas.height - canvas.height*0.7, canvas.height*0.75);
+let landscapeArray1D1 = cpsToPxs(controlPoints1, canvasRef.width);
+let landscapeArray1D2 = cpsToPxs(controlPoints2, canvasRef.width);
+// debugDrawPoints();
+
+canvasCtx.fillStyle = "rgba(0,0,255,255)";
+testDraw2(landscapeArray1D1);
+
+canvasCtx.fillStyle = "rgba(255,0,0,255)";
+testDraw2(landscapeArray1D2);
+
+
+function buildCpsLayers(width, height, detailsLevel) {
+    let controlPoints = generateCps(100, 250, 100, 650);
+    for (let i = 0; i < detailsLevel; i++) {
+        
+
+
     }
 }
 
 
-let controlPoints = generateCps(100, 250, 100, 650);
-let landscapeArray1D = cpsToPxs(controlPoints);
-debugDrawPoints();
-debugDrawCurves();
-testDraw2(landscapeArray1D);
+function testDraw2(landscapeArray1D) {
+    for (let i = 0; i < landscapeArray1D.length; i++) {
+        canvasCtx.fillRect(i, landscapeArray1D[i], 1, 1);
+    }
+}
+
 
 
 // Drawing

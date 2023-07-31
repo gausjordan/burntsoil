@@ -64,7 +64,7 @@ function cubicInterpolate(y0, y1, y2, y3, t) {
 * */
 function generateCps(minDist, maxDist, minHeight, maxHeight) {
     let newHeight = (maxHeight-minHeight) / 2;
-    let widthInPx = -1 * maxDist;
+    let widthInPx = -2 * maxDist;
     let newPosition = 0;
     let points = [];    
     
@@ -86,32 +86,34 @@ function generateCps(minDist, maxDist, minHeight, maxHeight) {
  * @param {Array} cps An array of curve control point objects (x and y coordinates)
  * @returns {(Array)} A "screen-width long" array of absolute pixel hight values
 */
-function cpsToPxs(cps) {
+function cpsToPxs(cps, screenWidth) {
 
     let oldX = 0;
     const pixels = new Array();
 
-    // For each segment defined by four points, but only two points long
+    // For each segment, defined by four points, but only two points long
     for (let seg = 0; seg < cps.length-3; seg+=1) {
         let step = 1 / Math.abs(cps[seg+1].x - cps[seg+0].x);
         
-        // Compute interpolated curve coordinates
+        // Compute interpolated coordinates at location 't' in range [0-1]
         for (let t = 0; t < 1; t += step/5) {
 
             let x = Math.round(cubicInterpolate(
                     cps[seg+0].x, cps[seg+1].x,cps[seg+2].x, cps[seg+3].x, t));
 
-            // Skip repeating values, this could be optimized further
+            // Skip repeating values
             if (x == oldX) { continue; }
 
             let y = Math.round(cubicInterpolate(
                     cps[seg+0].y, cps[seg+1].y, cps[seg+2].y, cps[seg+3].y, t));
 
-            if (x >= 0 && x <= canvasRef.width) {
-                pixels[x] = y;
-                oldX = x;
+            // Array starts at 0, screen positions start at 1
+            if (x > 0 && x <= screenWidth) {
+                pixels[x-1] = y;
+                oldX = x-1;
             }
         }
     }
+    console.log(pixels);
     return pixels;
 }
