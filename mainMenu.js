@@ -46,6 +46,7 @@ function cpsToPxs(cps) {
         // Compute interpolated curve coordinates
         for (let t = 0; t < 1; t += step/5) {
             
+            console.log("Iter");
             let x = Math.round(cubicInterpolate(
                     cps[seg+0].x, cps[seg+1].x,cps[seg+2].x, cps[seg+3].x, t));
 
@@ -57,9 +58,6 @@ function cpsToPxs(cps) {
             if (x >= 0 && x <= canvasRef.width) {
                 pixels[x] = y;
                 oldX = x;
-                console.log("Iter");
-
-
             }
         }
     }
@@ -80,7 +78,7 @@ function testDraw2(landscapeArray1D) {
         c3++;
         let string = "rgb(" + c1 + "," + c2 + "," + c3 + ")";
         canvasCtx.fillStyle = string;
-        canvasCtx.fillRect(i, landscapeArray1D[i], 1, 100);
+        canvasCtx.fillRect(i, landscapeArray1D[i], 1, 10);
     }
 }
 
