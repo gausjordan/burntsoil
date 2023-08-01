@@ -6,6 +6,13 @@ function debugDrawPoints() {
     }
 }
 
+/* Draws outline off of a pixel array */
+function testDraw2(landscapeArray1D) {
+    for (let i = 0; i < landscapeArray1D.length; i++) {
+        canvasCtx.fillRect(i, landscapeArray1D[i], 1, 10);
+    }
+}
+
 
 /* Debug draw curves function - not to be used */
 function debugDrawCurves() {
@@ -34,8 +41,6 @@ function debugDrawCurves() {
         px += controlPoints[seg+1].x-controlPoints[seg+0].x;
     }
 
-
-
     let px = -200;
     for (let seg = 0; seg < controlPoints.length-3; seg+=1) {
         let c1 = randomInteger(0,235);
@@ -56,6 +61,5 @@ function debugDrawCurves() {
         }
         // px += controlPoints[seg+1].x-controlPoints[seg+0].x;
     }
-    
 
 }
