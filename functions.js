@@ -39,7 +39,7 @@ function randomInteger(lower, upper) {
 
 /**
  * Returns an interpolated function value on a segment location 't'
- * TODO: this can be optimized by splitting into two correlated functions
+ * TODO: can be optimized by splitting the work in two correlated functions
  */
 function cubicInterpolate(y0, y1, y2, y3, t) {
     let a0, a1, a2, a3, t2;
@@ -81,13 +81,13 @@ function generateCps(minDist, maxDist, minHeight, maxHeight) {
 }
 
 
-
-/** Converts an array of control points to an array of pixel height values.
- * @param {Array} cps An array of curve control point objects (x and y coordinates)
- * @returns {(Array)} A "screen-width long" array of absolute pixel hight values
-*/
+/**
+ * Converts an array of control points to an array of pixel height values.
+ * @param {*} cps An array of curve control point objects (x and y coordinates)
+ * @param {*} screenWidth Screen (canvas) width in pixels
+ * @returns A "screen-width long" array of absolute pixel hight values
+ */
 function cpsToPxs(cps, screenWidth) {
-
     let oldX = 0;
     const pixels = new Array();
 
@@ -114,6 +114,38 @@ function cpsToPxs(cps, screenWidth) {
             }
         }
     }
-    console.log(pixels);
     return pixels;
+}
+
+
+/**
+ * Builds random terrain out of an array of control point objects (x and y
+ * coordinates) by adding up two curves, containing low and high frequency
+ * content respectively.
+ * @param {*} width - canvas width (in pixels)
+ * @param {*} height - canvas height (in pixels)
+ * @param {*} isLow - if 'true', terrain gets lowered to show more background
+ * @returns an array of pixel height values, one for each vertical line
+ */
+function buildTerrain(width, height, isLow) {
+    let magicNums = isLow ? [4, 2, 0.5, 0.1,   7, 5, 0.15, 0.5]
+                          : [4, 2, 0.1, 0.3,   10, 8, 0.75, 0.6];
+    //alert(magicNums);
+    let loResCps = generateCps( width / magicNums[0],
+                                width / magicNums[1],
+                                height * magicNums[2],
+                                height - height * magicNums[3]);
+    let hiResCps = generateCps( width / magicNums[4],
+                                width / magicNums[5],
+                                height * magicNums[6],
+                                height - height * magicNums[7]);
+    let loResArr = cpsToPxs(loResCps, width);
+    let hiResArr = cpsToPxs(hiResCps, width);
+
+    let landscapeArrayMix = loResArr.map( (n, i) => n + 0.4 * hiResArr[i] );
+
+    canvasCtx.fillStyle = "rgba(0,255,0,255)";
+    testDraw2(landscapeArrayMix);
+
+    return landscapeArrayMix;
 }
