@@ -12,15 +12,6 @@ document.getElementsByTagName('h1')[0].innerHTML =
 let terrain = buildTerrain(canvasRef.width, canvasRef.height, false);
 
 
-
-function testDraw2(landscapeArray1D) {
-    for (let i = 0; i < landscapeArray1D.length; i++) {
-        canvasCtx.fillRect(i, landscapeArray1D[i], 1, 1);
-    }
-}
-
-
-
 // Drawing
 canvasCtx.font = "16px sans-serif";
 
