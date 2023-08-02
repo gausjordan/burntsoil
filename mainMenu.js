@@ -9,7 +9,9 @@ canvasRef.width = flexMain.clientWidth * window.devicePixelRatio;
 document.getElementsByTagName('h1')[0].innerHTML =
     "Width: " + canvasRef.width + ", Height: " + canvasRef.height;
 
-let terrain = buildTerrain(canvasRef.width, canvasRef.height, false);
+backdrop(canvasRef.width, canvasRef.height);
+
+let terrain = buildTerrain(canvasRef.width, canvasRef.height, true);
 
 
 // Drawing

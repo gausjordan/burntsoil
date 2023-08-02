@@ -9,7 +9,7 @@ function debugDrawPoints() {
 /* Draws outline off of a pixel array */
 function testDraw2(landscapeArray1D) {
     for (let i = 0; i < landscapeArray1D.length; i++) {
-        canvasCtx.fillRect(i, landscapeArray1D[i], 1, 10);
+        canvasCtx.fillRect(i, landscapeArray1D[i], 1, 1000);
     }
 }
 

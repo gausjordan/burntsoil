@@ -149,3 +149,19 @@ function buildTerrain(width, height, isLow) {
 
     return landscapeArrayMix;
 }
+
+
+function backdrop(width, height) {
+    let r = 52;
+    let g = 52;
+    let b = 148;
+    for (let i = 0; i < height; i = Math.round(i + height/28)) {
+        let string = "rgb(" + r + "," + g + "," + b + ")";
+        r -= 8;
+        g -= 8;
+        b += 12;
+        canvasCtx.fillStyle = string;
+        canvasCtx.fillRect(0, i, width, height/28);
+        
+    }
+} 
