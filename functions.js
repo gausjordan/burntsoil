@@ -10,14 +10,19 @@ window.addEventListener("click", (ev) => {
 });
 
 
+document.addEventListener('DOMContentLoaded', function() {
+
+  });
+
+
 /** On resize - reset */
-window.addEventListener("resize", (ev) => {
-    canvasRef.height = flexMain.clientHeight;
-    canvasRef.width = flexMain.clientWidth;
-    testDraw2(landscapeArray1D);
-            // let pixelData = generateContour(cPoints);
-            // drawPixelData(pixelData);
-});
+// window.addEventListener("resize", (ev) => {
+//     canvasRef.height = flexMain.clientHeight;
+//     canvasRef.width = flexMain.clientWidth;
+//     testDraw2(landscapeArray1D);
+//             // let pixelData = generateContour(cPoints);
+//             // drawPixelData(pixelData);
+// });
 
 
 /** Gets relative mouse coordinates on a canvas, on click */
