@@ -153,7 +153,7 @@ function buildTerrain(width, height, isLow) {
 
 function backdrop(width, height) {
     let r = 42;
-    let g = 45;
+    let g = 40;
     let b = 140;
     let string;
     let step = Math.round(height/28);
@@ -163,25 +163,28 @@ function backdrop(width, height) {
         
         if (i <= 8*step) {
             g += 8;
+            b += 14;
         } else if (i > 8*step && i <= 17 * step) {
             g -= 4;
+            b -= 14;
         } else if (i > 19 * step) {
             g += 14;
-        }
-
-        if (i <= 8*step) {
-            b += 14;
-        } else {
             b -= 14;
         }
-
-        // g = 0;
-        // r = 0;
-        // b = 0;
 
         string = "rgb(" + r + "," + g + "," + b + ")";
         canvasCtx.fillStyle = string;
         canvasCtx.fillRect(0, i, width, Math.round(height/28));
-        
     }
+    
+    // Drawing a centered sun, slightly to the left, filling half the screen
+        let horizSunPos = width / 2.2;
+        let vertSunPos = height;
+        let sunSize = width < height ? width / 2 : height / 2;
+        canvasCtx.fillStyle = "#FFFF00";
+        canvasCtx.beginPath();
+        canvasCtx.arc(horizSunPos, vertSunPos, sunSize, Math.PI, 0);
+        canvasCtx.fill();
+    
+
 } 
