@@ -12,10 +12,8 @@ document.getElementsByTagName('h1')[0].innerHTML =
     + "... a DPR je: " + window.devicePixelRatio;
 
 backdrop(canvasRef.width, canvasRef.height);
-
 let terrain = buildTerrain(canvasRef.width, canvasRef.height, true);
-
-testDraw2(terrain);
+draw(terrain);
 
 
 

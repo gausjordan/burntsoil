@@ -10,19 +10,22 @@ window.addEventListener("click", (ev) => {
 });
 
 
+/**
+ * Things to do once the document is fully loaded
+ */
 document.addEventListener('DOMContentLoaded', function() {
 
-  });
+});
 
 
 /** On resize - reset */
-// window.addEventListener("resize", (ev) => {
-//     rect = canvasRef.parentElement.getBoundingClientRect();
-//     canvasRef.height = flexMain.clientHeight;
-//     canvasRef.width = flexMain.clientWidth;
-//     backdrop(canvasRef.width, canvasRef.height);
-//     testDraw2(terrain);
-// });
+window.addEventListener("resize", (ev) => {
+    rect = canvasRef.parentElement.getBoundingClientRect();
+    canvasRef.height = flexMain.clientHeight - 8;
+    canvasRef.width = flexMain.clientWidth - 8;
+    backdrop(canvasRef.width, canvasRef.height);
+    testDraw2(buildTerrain(canvasRef.width, canvasRef.height, true));
+});
 
 
 /** Gets relative mouse coordinates on a canvas, on click */
@@ -151,16 +154,21 @@ function buildTerrain(width, height, isLow) {
 }
 
 
-function backdrop(width, height) {
+/**
+ * Draws a passive, more or less colorful, backdrop/background
+ * @param {*} width canvas width in pixels
+ * @param {*} height canvas height in pixels
+ * @param {*} typeOf several styles to choose from (TODO)
+ */
+function backdrop(width, height, typeOf) {
     let r = 42;
     let g = 40;
     let b = 140;
     let string;
     let step = Math.round(height/28);
     for (let i = 0; i < height; i += step) {
-        
         r += 9;
-        
+
         if (i <= 8*step) {
             g += 8;
             b += 14;
@@ -178,12 +186,20 @@ function backdrop(width, height) {
     }
     
     // Drawing a centered sun, slightly to the left, filling half the screen
-        let horizSunPos = width / 2.2;
-        let vertSunPos = height;
-        let sunSize = width < height ? width / 2 : height / 2;
-        canvasCtx.fillStyle = "#FFFF00";
-        canvasCtx.beginPath();
-        canvasCtx.arc(horizSunPos, vertSunPos, sunSize, Math.PI, 0);
-        canvasCtx.fill();
+    let horizSunPos = width / 2.2;
+    let vertSunPos = height;
+    let sunSize = width < height ? width / 2 : height / 2;
+    canvasCtx.fillStyle = "#FFFF00";
+    canvasCtx.beginPath();
+    canvasCtx.arc(horizSunPos, vertSunPos, sunSize, Math.PI, 0);
+    canvasCtx.fill();
+}
 
+
+
+function draw(landscapeArray1D) {
+    canvasCtx.fillStyle = "rgba(0,255,0,255)";
+    for (let i = 0; i < landscapeArray1D.length; i++) {
+        canvasCtx.fillRect(i, landscapeArray1D[i], 1, 1000);
+    }
 }

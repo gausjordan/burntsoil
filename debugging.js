@@ -17,10 +17,6 @@ function testDraw2(landscapeArray1D) {
 
 /* Debug draw curves function - not to be used */
 function debugDrawCurves() {
-    try { return; }
-    catch {
-        return;
-    }
     
     canvasCtx.fillStyle = "rgba(255,0,0,160)";
 
