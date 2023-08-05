@@ -185,6 +185,5 @@ function backdrop(width, height) {
         canvasCtx.beginPath();
         canvasCtx.arc(horizSunPos, vertSunPos, sunSize, Math.PI, 0);
         canvasCtx.fill();
-    
 
-} 
+}

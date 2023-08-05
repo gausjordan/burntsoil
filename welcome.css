@@ -55,18 +55,21 @@ nav {
 main {
     /* background-color: sienna; */
     flex: 1 1 80%;
+    padding: -20px;
 }
 
 footer {
-    height:max-content;
-    padding: 1em 1em 1em 20%;
+    height: max-content;
+    padding: 1em 1em 0.95em 20%;
     text-align: center;
 }
 
 canvas {
     position: absolute;
-    border: 0px double silver;
-    border: 0px double blue;
+    border-width: 1px;
+    border-style: solid;
+    border-color: black white white black;
+    /* border: 0px double silver; */
     /* background-color: rgb(160,60,60); */
     opacity: 1.0;
 }
