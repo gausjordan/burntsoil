@@ -44,7 +44,7 @@ html, body {
     overflow: hidden;
 }
 
-nav, footer {
+nav, footer, main {
     background-color:rgb(180,180,180);
 }
 
@@ -55,7 +55,6 @@ nav {
 main {
     /* background-color: sienna; */
     flex: 1 1 80%;
-    padding: -20px;
 }
 
 footer {
@@ -66,6 +65,7 @@ footer {
 
 canvas {
     position: absolute;
+    margin: 4px;
     border-width: 1px;
     border-style: solid;
     border-color: black white white black;

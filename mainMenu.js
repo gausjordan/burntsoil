@@ -3,8 +3,8 @@ let flexMain = document.querySelector("main");
 let canvasRef = document.getElementById("canvas");
 let canvasCtx = canvasRef.getContext('2d');
 let rect = canvasRef.parentElement.getBoundingClientRect();
-canvasRef.width = rect.width;
-canvasRef.height = rect.height;
+canvasRef.width = rect.width -8;
+canvasRef.height = rect.height -8;
 
 // DEBUG for mobile
 document.getElementsByTagName('h1')[0].innerHTML =

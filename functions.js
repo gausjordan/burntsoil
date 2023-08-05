@@ -17,11 +17,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
 /** On resize - reset */
 // window.addEventListener("resize", (ev) => {
+//     rect = canvasRef.parentElement.getBoundingClientRect();
 //     canvasRef.height = flexMain.clientHeight;
 //     canvasRef.width = flexMain.clientWidth;
-//     testDraw2(landscapeArray1D);
-//             // let pixelData = generateContour(cPoints);
-//             // drawPixelData(pixelData);
+//     backdrop(canvasRef.width, canvasRef.height);
+//     testDraw2(terrain);
 // });
 
 
