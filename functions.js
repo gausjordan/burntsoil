@@ -81,7 +81,7 @@ function generateCps(minDist, maxDist, minHeight, maxHeight) {
         newPosition = randomInteger(minDist, maxDist);
         newHeight = randomInteger(minHeight, maxHeight);
     } while (widthInPx <= canvasRef.width + 2 * maxDist);
-
+    
     return points;
 }
 
@@ -135,7 +135,6 @@ function cpsToPxs(cps, screenWidth) {
 function buildTerrain(width, height, isLow) {
     let magicNums = isLow ? [4, 2, 0.5, 0.1,   7, 5, 0.15, 0.5]
                           : [4, 2, 0.1, 0.3,   10, 8, 0.75, 0.6];
-    //alert(magicNums);
     let loResCps = generateCps( width / magicNums[0],
                                 width / magicNums[1],
                                 height * magicNums[2],
@@ -148,25 +147,41 @@ function buildTerrain(width, height, isLow) {
     let hiResArr = cpsToPxs(hiResCps, width);
 
     let landscapeArrayMix = loResArr.map( (n, i) => n + 0.4 * hiResArr[i] );
-
-    canvasCtx.fillStyle = "rgba(0,255,0,255)";
-    testDraw2(landscapeArrayMix);
-
     return landscapeArrayMix;
 }
 
 
 function backdrop(width, height) {
-    let r = 52;
-    let g = 52;
-    let b = 148;
-    for (let i = 0; i < height; i = Math.round(i + height/28)) {
-        let string = "rgb(" + r + "," + g + "," + b + ")";
-        r -= 8;
-        g -= 8;
-        b += 12;
+    let r = 42;
+    let g = 45;
+    let b = 140;
+    let string;
+    let step = Math.round(height/28);
+    for (let i = 0; i < height; i += step) {
+        
+        r += 9;
+        
+        if (i <= 8*step) {
+            g += 8;
+        } else if (i > 8*step && i <= 17 * step) {
+            g -= 4;
+        } else if (i > 19 * step) {
+            g += 14;
+        }
+
+        if (i <= 8*step) {
+            b += 14;
+        } else {
+            b -= 14;
+        }
+
+        // g = 0;
+        // r = 0;
+        // b = 0;
+
+        string = "rgb(" + r + "," + g + "," + b + ")";
         canvasCtx.fillStyle = string;
-        canvasCtx.fillRect(0, i, width, height/28);
+        canvasCtx.fillRect(0, i, width, Math.round(height/28));
         
     }
 } 
