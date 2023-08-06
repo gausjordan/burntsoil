@@ -10,9 +10,6 @@ window.addEventListener("click", (ev) => {
 });
 
 
-
-
-
 /**
  * Things to do once the document is fully loaded
  */
@@ -27,7 +24,7 @@ window.addEventListener("resize", (ev) => {
     canvasRef.height = flexMain.clientHeight - 8;
     canvasRef.width = flexMain.clientWidth - 8;
     backdrop(canvasRef.width, canvasRef.height);
-    testDraw2(buildTerrain(canvasRef.width, canvasRef.height, true));
+    draw(canvasRef.width, terrain);
 });
 
 
@@ -93,6 +90,38 @@ function generateCps(minDist, maxDist, minHeight, maxHeight) {
 
 
 /**
+ * Invokes the generateCps function to generate random control points
+ * Uses hardcoded magic numbers which tend to yield good aesthetics
+ * @param {*} width canvas width in pixels
+ * @param {*} height canvas height in pixels
+ * @param {*} isLow if set to 'true' the terrain gets lower and flatter
+ * @param {*} isHiFreq if set to 'true' the terrain gets more curvy
+ * @returns an array of control point objects {x, y}
+ */
+function buildCps(width, height, isLow, isHiFreq) {
+    let num1, num2, num3, num4;                      
+
+    if (isLow) {
+        if (isHiFreq) {
+            num1 = 7; num2 = 5;  num3 = 0.15; num4 = 0.5;
+        } else {
+            num1 = 4; num2 = 2; num3 = 0.5; num4 = 0.1;
+        }
+    } else {
+        if (isHiFreq) {
+            num1 = 10; num2 = 8; num3 = 0.75; num4 = 0.6;
+        } else {
+            num1 = 4; num2 = 2; num3 = 0.1; num4 = 0.3;
+        }
+    }
+    return generateCps( width / num1,
+                        width / num2,
+                        height * num3,
+                        height - height * num4 );
+}
+
+
+/**
  * Converts an array of control points to an array of pixel height values.
  * @param {*} cps An array of curve control point objects (x and y coordinates)
  * @param {*} screenWidth Screen (canvas) width in pixels
@@ -130,30 +159,16 @@ function cpsToPxs(cps, screenWidth) {
 
 
 /**
- * Builds random terrain out of an array of control point objects (x and y
- * coordinates) by adding up two curves, containing low and high frequency
- * content respectively.
- * @param {*} width - canvas width (in pixels)
- * @param {*} height - canvas height (in pixels)
- * @param {*} isLow - if 'true', terrain gets lowered to show more background
+ * Combines two arrays of control points and converts them into pixel heights
+ * @param {*} loResCps array of control points defining a low-frequency curve
+ * @param {*} hiResCps array of control points defining a high-frequency curve
+ * @param {*} width canvas width in pixels
  * @returns an array of pixel height values, one for each vertical line
  */
-function buildTerrain(width, height, isLow) {
-    let magicNums = isLow ? [4, 2, 0.5, 0.1,   7, 5, 0.15, 0.5]
-                          : [4, 2, 0.1, 0.3,   10, 8, 0.75, 0.6];
-    let loResCps = generateCps( width / magicNums[0],
-                                width / magicNums[1],
-                                height * magicNums[2],
-                                height - height * magicNums[3]);
-    let hiResCps = generateCps( width / magicNums[4],
-                                width / magicNums[5],
-                                height * magicNums[6],
-                                height - height * magicNums[7]);
+function combineCps(loResCps, hiResCps, width) {
     let loResArr = cpsToPxs(loResCps, width);
     let hiResArr = cpsToPxs(hiResCps, width);
-
-    let landscapeArrayMix = loResArr.map( (n, i) => n + 0.4 * hiResArr[i] );
-    return landscapeArrayMix;
+    return loResArr.map( (n, i) => n + 0.4 * hiResArr[i] );
 }
 
 
@@ -199,10 +214,16 @@ function backdrop(width, height, typeOf) {
 }
 
 
-
-function draw(landscapeArray1D) {
+function draw(width, array) {
+    let scalFct = array.length / width;
+    console.log(scalFct);
     canvasCtx.fillStyle = "rgba(0,255,0,255)";
-    for (let i = 0; i < landscapeArray1D.length; i++) {
-        canvasCtx.fillRect(i, landscapeArray1D[i], 1, 1000);
+    
+    for (let i = 0; i < width; i++) {
+        canvasCtx.fillRect(i, array[Math.round(i*scalFct)], 1, 1000);
     }
+
+    // for (let i = 0; i < landscapeArray1D.length; i++) {
+    //     canvasCtx.fillRect(i, landscapeArray1D[i], 1, 1000);
+    // }
 }

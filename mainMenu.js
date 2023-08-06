@@ -18,10 +18,10 @@ document.getElementsByTagName('h1')[0].innerHTML =
 
 
 backdrop(canvasRef.width, canvasRef.height);
-let terrain = buildTerrain(canvasRef.width, canvasRef.height, true);
-console.log(terrain);
-draw(terrain);
-
+let loResCps = buildCps(canvasRef.width, canvasRef.height, false, false);
+let hiResCps = buildCps(canvasRef.width, canvasRef.height, false, true);
+let terrain = combineCps(loResCps, hiResCps, canvasRef.width);
+draw(canvasRef.width, terrain);
 
 
 // Drawing
@@ -42,4 +42,3 @@ function opa() {
 }
 
 opa();
-

@@ -6,14 +6,6 @@ function debugDrawPoints() {
     }
 }
 
-/* Draws outline off of a pixel array */
-function testDraw2(landscapeArray1D) {
-    canvasCtx.fillStyle = "rgba(0,255,0,255)";
-    for (let i = 0; i < landscapeArray1D.length; i++) {
-        canvasCtx.fillRect(i, landscapeArray1D[i], 1, 1000);
-    }
-}
-
 
 /* Debug draw curves function - not to be used */
 function debugDrawCurves() {
