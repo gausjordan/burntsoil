@@ -19,6 +19,7 @@ document.getElementsByTagName('h1')[0].innerHTML =
 
 backdrop(canvasRef.width, canvasRef.height);
 let terrain = buildTerrain(canvasRef.width, canvasRef.height, true);
+console.log(terrain);
 draw(terrain);
 
 
