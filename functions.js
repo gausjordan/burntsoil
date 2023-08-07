@@ -1,81 +1,3 @@
-/** Gets a pixel color value at a given mouse position, on click */
-let posX = 0;
-let posY = 0;
-window.addEventListener("click", (ev) => {
-    canvasCtx.fillStyle = "rgb(255,255,255)";
-    canvasCtx.fillRect(0, 0, 200, 50);
-    posX = getMousePos(canvRef, ev).x;
-    posY = getMousePos(canvRef, ev).y;
-    colorValueAtPos = canvasCtx.getImageData(posX, posY, 1, 1).data;
-});
-
-
-/**
- * Things to do once the document is fully loaded
- */
-document.addEventListener('DOMContentLoaded', function() {
-});
-
-
-/** On resize - reset */
-window.addEventListener("resize", (ev) => {
-    canvRef.width = getCanvasSize(canvRef, 8, 8)[0] * ratio;
-    canvRef.height = getCanvasSize(canvRef, 8, 8)[1] * ratio;
-    canvRef.style.width = canvRef.width / ratio + "px";
-    canvRef.style.height = canvRef.height / ratio + "px";
-    drawBackdrop(canvRef.width, canvRef.height);
-    drawTerrain(canvRef.width, canvRef.height, terrain, oldWidth, oldHeight);
-});
-
-
-/**
- * Calculate canvas' parent size before it's drawn
- * @param {*} canvas canvas reference
- * @param {*} hMargin sum of horizontal border widths
- * @param {*} vMargin sum of vertical border widths
- * @returns an array of two values: width and height
- */
-function getCanvasSize(canvas, hMargin, vMargin) {
-    let rect = canvas.parentElement.getBoundingClientRect();
-    return [
-        (rect.width - hMargin),
-        (rect.height - vMargin)];
-    }
-
-
-/** Gets relative mouse coordinates on a canvas, on click */
-function getMousePos(canvas, ev) {
-    var rect = canvas.getBoundingClientRect();
-    return {
-        x: ev.clientX - rect.left,
-        y: ev.clientY - rect.top }
-}
-
-
-/** Gets a random integer in a given range */
-function randomInteger(lower, upper) {
-    lower = Math.ceil(lower);
-    upper  = Math.floor(upper);
-    return Math.floor(Math.random() * (upper - lower + 1)) + lower;
-}
-
-
-/**
- * Returns an interpolated function value on a segment location 't'
- * TODO: can be optimized by splitting the work in two correlated functions
- */
-function cubicInterpolate(y0, y1, y2, y3, t) {
-    let a0, a1, a2, a3, t2;
-    t2 = t * t;
-    a0 = y3 - y2 - y0 + y1;
-    a1 = y0 - y1 - a0;
-    a2 = y2 - y0;
-    a3 = y1;
-    return a0 * t * t2 + a1 * t2 + a2 * t + a3;
-}
-
-
-
 /* TODO:
 
 - generator ide od -500 do 1500
@@ -252,25 +174,18 @@ function drawTerrain(width, height, array, oldWidth, oldHeight) {
     let oldAbsoluteHeight = oldHeight - array[0];
     let newAbsoluteHeight = height - array[0];
 
-    
-
     canvasCtx.fillStyle = "rgba(0,255,0,255)";
     
     for (let i = 0; i < width; i++) {
         canvasCtx.fillRect(
             i,
             (
-
                 //(array[Math.round(i*hScalFct)] / hScalFct)
                 (array[Math.round(i*hScalFct)])
-            
             ),
             1,
             100000
         );
     }
 
-    // for (let i = 0; i < landscapeArray1D.length; i++) {
-    //     canvasCtx.fillRect(i, landscapeArray1D[i], 1, 1000);
-    // }
 }
