@@ -2,9 +2,9 @@ let colorValueAtPos = null;
 let flexMain = document.querySelector("main");
 let canvasRef = document.getElementById("canvas");
 let canvasCtx = canvasRef.getContext('2d');
-let rect = canvasRef.parentElement.getBoundingClientRect();
-canvasRef.width = rect.width -8;
-canvasRef.height = rect.height -8;
+canvasRef.width = getCanvasSize(canvasRef, 8, 8)[0];
+canvasRef.height = getCanvasSize(canvasRef, 8, 8)[1];
+
 
 
 // TODO: Portrait mode: Navbar does not stretch to fit
@@ -16,12 +16,12 @@ document.getElementsByTagName('h1')[0].innerHTML =
     + "<br>Height: " + canvasRef.height
     + "<br>DPR: " + window.devicePixelRatio;
 
-
-backdrop(canvasRef.width, canvasRef.height);
 let loResCps = buildCps(canvasRef.width, canvasRef.height, false, false);
 let hiResCps = buildCps(canvasRef.width, canvasRef.height, false, true);
 let terrain = combineCps(loResCps, hiResCps, canvasRef.width);
-draw(canvasRef.width, terrain);
+
+drawBackdrop(canvasRef.width, canvasRef.height);
+drawTerrain(canvasRef.width, terrain);
 
 
 // Drawing

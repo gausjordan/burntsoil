@@ -20,12 +20,26 @@ document.addEventListener('DOMContentLoaded', function() {
 
 /** On resize - reset */
 window.addEventListener("resize", (ev) => {
-    rect = canvasRef.parentElement.getBoundingClientRect();
-    canvasRef.height = flexMain.clientHeight - 8;
-    canvasRef.width = flexMain.clientWidth - 8;
-    backdrop(canvasRef.width, canvasRef.height);
-    draw(canvasRef.width, terrain);
+    canvasRef.width = getCanvasSize(canvasRef, 8, 8)[0];
+    canvasRef.height = getCanvasSize(canvasRef, 8, 8)[1];
+    drawBackdrop(canvasRef.width, canvasRef.height);
+    drawTerrain(canvasRef.width, terrain);
 });
+
+
+/**
+ * Calculate canvas' parent size before it's drawn
+ * @param {*} canvas canvas reference
+ * @param {*} hMargin sum of horizontal border widths
+ * @param {*} vMargin sum of vertical border widths
+ * @returns an array of two values: width and height
+ */
+function getCanvasSize(canvas, hMargin, vMargin) {
+    let rect = canvas.parentElement.getBoundingClientRect();
+    return [
+        rect.width - hMargin,
+        rect.height - vMargin];
+    }
 
 
 /** Gets relative mouse coordinates on a canvas, on click */
@@ -178,7 +192,7 @@ function combineCps(loResCps, hiResCps, width) {
  * @param {*} height canvas height in pixels
  * @param {*} typeOf several styles to choose from (TODO)
  */
-function backdrop(width, height, typeOf) {
+function drawBackdrop(width, height, typeOf) {
     let r = 42;
     let g = 40;
     let b = 140;
@@ -203,10 +217,10 @@ function backdrop(width, height, typeOf) {
         canvasCtx.fillRect(0, i, width, Math.round(height/28));
     }
     
-    // Drawing a centered sun, slightly to the left, filling half the screen
+    // A centered sun, slightly to the left, filling half the screen
     let horizSunPos = width / 2.2;
     let vertSunPos = height;
-    let sunSize = width < height ? width / 2 : height / 2;
+    let sunSize = width < height ? width / 1.5 : height / 1.5;
     canvasCtx.fillStyle = "#FFFF00";
     canvasCtx.beginPath();
     canvasCtx.arc(horizSunPos, vertSunPos, sunSize, Math.PI, 0);
@@ -214,13 +228,13 @@ function backdrop(width, height, typeOf) {
 }
 
 
-function draw(width, array) {
+function drawTerrain(width, array) {
     let scalFct = array.length / width;
     console.log(scalFct);
     canvasCtx.fillStyle = "rgba(0,255,0,255)";
     
     for (let i = 0; i < width; i++) {
-        canvasCtx.fillRect(i, array[Math.round(i*scalFct)], 1, 1000);
+        canvasCtx.fillRect(i, array[Math.round(i*scalFct)]/scalFct, 1, 1000);
     }
 
     // for (let i = 0; i < landscapeArray1D.length; i++) {
