@@ -178,18 +178,19 @@ function cpsToPxs(cps, screenWidth) {
 
     // For each segment, defined by four points, but only two points long
     for (let seg = 0; seg < cps.length-3; seg+=1) {
+        
         let step = 1 / Math.abs(cps[seg+1].x - cps[seg+0].x);
         
         // Compute interpolated coordinates at location 't' in range [0-1]
         for (let t = 0; t < 1; t += step/5) {
 
-            let x = Math.round(cubicInterpolate(
-                    cps[seg+0].x, cps[seg+1].x,cps[seg+2].x, cps[seg+3].x, t));
+            let x = (cubicInterpolate(
+                    cps[seg+0].x, cps[seg+1].x,cps[seg+2].x, cps[seg+3].x, t))|0;
 
             // Skip repeating values
             if (x == oldX) { continue; }
 
-            let y = Math.round(cubicInterpolate(
+            let y = (cubicInterpolate(
                     cps[seg+0].y, cps[seg+1].y, cps[seg+2].y, cps[seg+3].y, t));
 
             // Array starts at 0, screen positions start at 1
@@ -199,6 +200,7 @@ function cpsToPxs(cps, screenWidth) {
             }
         }
     }
+    console.log(pixels);
     return pixels;
 }
 
