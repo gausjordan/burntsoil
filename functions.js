@@ -4,8 +4,8 @@ let posY = 0;
 window.addEventListener("click", (ev) => {
     canvasCtx.fillStyle = "rgb(255,255,255)";
     canvasCtx.fillRect(0, 0, 200, 50);
-    posX = getMousePos(canvasRef, ev).x;
-    posY = getMousePos(canvasRef, ev).y;
+    posX = getMousePos(canvRef, ev).x;
+    posY = getMousePos(canvRef, ev).y;
     colorValueAtPos = canvasCtx.getImageData(posX, posY, 1, 1).data;
 });
 
@@ -14,16 +14,21 @@ window.addEventListener("click", (ev) => {
  * Things to do once the document is fully loaded
  */
 document.addEventListener('DOMContentLoaded', function() {
-
 });
 
 
 /** On resize - reset */
 window.addEventListener("resize", (ev) => {
-    canvasRef.width = getCanvasSize(canvasRef, 8, 8)[0];
-    canvasRef.height = getCanvasSize(canvasRef, 8, 8)[1];
-    drawBackdrop(canvasRef.width, canvasRef.height);
-    drawTerrain(canvasRef.width, terrain);
+    canvRef.width = getCanvasSize(canvRef, 8, 8)[0];
+    canvRef.height = getCanvasSize(canvRef, 8, 8)[1];
+    drawBackdrop(canvRef.width, canvRef.height);
+
+    //// DEBUG - remove
+    // let loResCps = buildCps(canvRef.width, canvRef.height, false, false);
+    // let hiResCps = buildCps(canvRef.width, canvRef.height, false, true);
+    //terrain = combineCps(loResCps, hiResCps, canvRef.width);
+
+    drawTerrain(canvRef.width, canvRef.height, terrain, oldWidth, oldHeight);
 });
 
 
@@ -97,7 +102,7 @@ function generateCps(minDist, maxDist, minHeight, maxHeight) {
         widthInPx += newPosition;
         newPosition = randomInteger(minDist, maxDist);
         newHeight = randomInteger(minHeight, maxHeight);
-    } while (widthInPx <= canvasRef.width + 2 * maxDist);
+    } while (widthInPx <= canvRef.width + 2 * maxDist);
     
     return points;
 }
@@ -113,25 +118,44 @@ function generateCps(minDist, maxDist, minHeight, maxHeight) {
  * @returns an array of control point objects {x, y}
  */
 function buildCps(width, height, isLow, isHiFreq) {
-    let num1, num2, num3, num4;                      
+    let num1, num2, num3, num4;
+   // Maintains widescreen compatibility, somewhat, by squeezing
+   // in case someone decides to rotate their phone mid-game
+   if (height > width) {
+       height = 0.5 * (width/height) * width;
+   }
 
-    if (isLow) {
-        if (isHiFreq) {
-            num1 = 7; num2 = 5;  num3 = 0.15; num4 = 0.5;
-        } else {
-            num1 = 4; num2 = 2; num3 = 0.5; num4 = 0.1;
-        }
-    } else {
-        if (isHiFreq) {
-            num1 = 10; num2 = 8; num3 = 0.75; num4 = 0.6;
-        } else {
-            num1 = 4; num2 = 2; num3 = 0.1; num4 = 0.3;
-        }
-    }
-    return generateCps( width / num1,
-                        width / num2,
-                        height * num3,
-                        height - height * num4 );
+   if (isLow) {
+       if (isHiFreq) {
+           num1 = 7; num2 = 5;  num3 = 0.15; num4 = 0.5;
+       } else {
+           num1 = 4; num2 = 2; num3 = 0.5; num4 = 0.1;
+       }
+   } else {
+       if (isHiFreq) {
+           num1 = 10; num2 = 8; num3 = 0.75; num4 = 0.6;
+       } else {
+           num1 = 4; num2 = 2; num3 = 0.1; num4 = 0.3;
+       }
+   }
+   return generateCps( width / num1,
+                       width / num2,
+                       height * num3,
+                       height - height * num4 );
+}
+
+
+/**
+ * Converts two arrays of control points into pixels and combines them
+ * @param {*} loResCps array of control points defining a low-frequency curve
+ * @param {*} hiResCps array of control points defining a high-frequency curve
+ * @param {*} width canvas width in pixels
+ * @returns an array of pixel height values, one for each vertical line
+ */
+function combineCps(loResCps, hiResCps, width) {
+    let loResArr = cpsToPxs(loResCps, width);
+    let hiResArr = cpsToPxs(hiResCps, width);
+    return loResArr.map( (n, i) => n + 0.4 * hiResArr[i] );
 }
 
 
@@ -169,20 +193,6 @@ function cpsToPxs(cps, screenWidth) {
         }
     }
     return pixels;
-}
-
-
-/**
- * Combines two arrays of control points and converts them into pixel heights
- * @param {*} loResCps array of control points defining a low-frequency curve
- * @param {*} hiResCps array of control points defining a high-frequency curve
- * @param {*} width canvas width in pixels
- * @returns an array of pixel height values, one for each vertical line
- */
-function combineCps(loResCps, hiResCps, width) {
-    let loResArr = cpsToPxs(loResCps, width);
-    let hiResArr = cpsToPxs(hiResCps, width);
-    return loResArr.map( (n, i) => n + 0.4 * hiResArr[i] );
 }
 
 
@@ -228,13 +238,27 @@ function drawBackdrop(width, height, typeOf) {
 }
 
 
-function drawTerrain(width, array) {
-    let scalFct = array.length / width;
-    console.log(scalFct);
+function drawTerrain(width, height, array, oldWidth, oldHeight) {
+    let hScalFct = array.length / width;
+    let oldAbsoluteHeight = oldHeight - array[0];
+    let newAbsoluteHeight = height - array[0];
+
+    
+
     canvasCtx.fillStyle = "rgba(0,255,0,255)";
     
     for (let i = 0; i < width; i++) {
-        canvasCtx.fillRect(i, array[Math.round(i*scalFct)]/scalFct, 1, 1000);
+        canvasCtx.fillRect(
+            i,
+            (
+
+                //(array[Math.round(i*hScalFct)] / hScalFct)
+                (array[Math.round(i*hScalFct)])
+            
+            ),
+            1,
+            100000
+        );
     }
 
     // for (let i = 0; i < landscapeArray1D.length; i++) {

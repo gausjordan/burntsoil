@@ -1,27 +1,28 @@
 let colorValueAtPos = null;
 let flexMain = document.querySelector("main");
-let canvasRef = document.getElementById("canvas");
-let canvasCtx = canvasRef.getContext('2d');
-canvasRef.width = getCanvasSize(canvasRef, 8, 8)[0];
-canvasRef.height = getCanvasSize(canvasRef, 8, 8)[1];
-
+let canvRef = document.getElementById("canvas");
+let canvasCtx = canvRef.getContext('2d');
+canvRef.width = getCanvasSize(canvRef, 8, 8)[0];
+canvRef.height = getCanvasSize(canvRef, 8, 8)[1];
 
 
 // TODO: Portrait mode: Navbar does not stretch to fit
-//       Decouple buildTerrain (re-use single set of control points)
+
 
 // Debug info for mobile browsers
 document.getElementsByTagName('h1')[0].innerHTML =
-      "<br>Width: " + canvasRef.width
-    + "<br>Height: " + canvasRef.height
+      "<br>Width: " + canvRef.width
+    + "<br>Height: " + canvRef.height
     + "<br>DPR: " + window.devicePixelRatio;
 
-let loResCps = buildCps(canvasRef.width, canvasRef.height, false, false);
-let hiResCps = buildCps(canvasRef.width, canvasRef.height, false, true);
-let terrain = combineCps(loResCps, hiResCps, canvasRef.width);
+let loResCps = buildCps(canvRef.width, canvRef.height, false, false);
+let hiResCps = buildCps(canvRef.width, canvRef.height, false, true);
+let terrain = combineCps(loResCps, hiResCps, canvRef.width);
+let oldHeight = canvRef.height;
+let oldWidth = canvRef.width;
 
-drawBackdrop(canvasRef.width, canvasRef.height);
-drawTerrain(canvasRef.width, terrain);
+drawBackdrop(canvRef.width, canvRef.height);
+drawTerrain(canvRef.width, canvRef.height, terrain, oldWidth, oldHeight);
 
 
 // Drawing
