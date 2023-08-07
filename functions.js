@@ -160,7 +160,7 @@ function drawBackdrop(width, height, typeOf) {
     // A centered sun, slightly to the left, filling half the screen
     let horizSunPos = width / 2.2;
     let vertSunPos = height;
-    let sunSize = width < height ? width / 1.5 : height / 1.5;
+    let sunSize = width < height ? width / 1.6 : height / 1.6;
     canvasCtx.fillStyle = "#FFFF00";
     canvasCtx.beginPath();
     canvasCtx.arc(horizSunPos, vertSunPos, sunSize, Math.PI, 0);
