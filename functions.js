@@ -19,15 +19,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
 /** On resize - reset */
 window.addEventListener("resize", (ev) => {
-    canvRef.width = getCanvasSize(canvRef, 8, 8)[0];
-    canvRef.height = getCanvasSize(canvRef, 8, 8)[1];
+    canvRef.width = getCanvasSize(canvRef, 8, 8)[0] * ratio;
+    canvRef.height = getCanvasSize(canvRef, 8, 8)[1] * ratio;
+    canvRef.style.width = canvRef.width / ratio + "px";
+    canvRef.style.height = canvRef.height / ratio + "px";
     drawBackdrop(canvRef.width, canvRef.height);
-
-    //// DEBUG - remove
-    // let loResCps = buildCps(canvRef.width, canvRef.height, false, false);
-    // let hiResCps = buildCps(canvRef.width, canvRef.height, false, true);
-    //terrain = combineCps(loResCps, hiResCps, canvRef.width);
-
     drawTerrain(canvRef.width, canvRef.height, terrain, oldWidth, oldHeight);
 });
 
@@ -42,8 +38,8 @@ window.addEventListener("resize", (ev) => {
 function getCanvasSize(canvas, hMargin, vMargin) {
     let rect = canvas.parentElement.getBoundingClientRect();
     return [
-        rect.width - hMargin,
-        rect.height - vMargin];
+        (rect.width - hMargin),
+        (rect.height - vMargin)];
     }
 
 
@@ -77,6 +73,17 @@ function cubicInterpolate(y0, y1, y2, y3, t) {
     a3 = y1;
     return a0 * t * t2 + a1 * t2 + a2 * t + a3;
 }
+
+
+
+/* TODO:
+
+- generator ide od -500 do 1500
+- on-screen sadrzaj je od 0 do 1000
+- skalira se na canvas size po potrebi
+
+*/
+
 
 
 /**
@@ -207,7 +214,7 @@ function drawBackdrop(width, height, typeOf) {
     let g = 40;
     let b = 140;
     let string;
-    let step = Math.round(height/28);
+    let step = (height/28)|0;
     for (let i = 0; i < height; i += step) {
         r += 9;
 
@@ -224,7 +231,7 @@ function drawBackdrop(width, height, typeOf) {
 
         string = "rgb(" + r + "," + g + "," + b + ")";
         canvasCtx.fillStyle = string;
-        canvasCtx.fillRect(0, i, width, Math.round(height/28));
+        canvasCtx.fillRect(0, i, width, (height/28)|0);
     }
     
     // A centered sun, slightly to the left, filling half the screen

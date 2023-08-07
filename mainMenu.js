@@ -1,9 +1,48 @@
 let colorValueAtPos = null;
 let flexMain = document.querySelector("main");
 let canvRef = document.getElementById("canvas");
+let ratio = Math.ceil(window.devicePixelRatio);
+
+canvRef.width = getCanvasSize(canvRef, 8, 8)[0] * ratio;
+canvRef.height = getCanvasSize(canvRef, 8, 8)[1] * ratio;
+
+canvRef.style.width = canvRef.width / ratio + "px";
+canvRef.style.height = canvRef.height / ratio + "px";
+
 let canvasCtx = canvRef.getContext('2d');
-canvRef.width = getCanvasSize(canvRef, 8, 8)[0];
-canvRef.height = getCanvasSize(canvRef, 8, 8)[1];
+//canvasCtx.setTransform(1/2, 0, 0, 1/2, 0, 0);
+
+
+
+
+
+
+
+
+
+
+
+
+function createCanvas(width, height, set2dTransform = true) {
+    const ratio = Math.ceil(window.devicePixelRatio);
+    const canvas = document.createElement('canvas');
+
+    canvas.style.width = `${width}px`;
+    canvas.style.height = `${height}px`;
+    if (set2dTransform) {
+      canvas.getContext('2d').setTransform(ratio, 0, 0, ratio, 0, 0);
+    }
+    return canvas;
+  }
+  
+
+
+
+
+
+
+
+
 
 
 // TODO: Portrait mode: Navbar does not stretch to fit
@@ -22,7 +61,7 @@ let oldHeight = canvRef.height;
 let oldWidth = canvRef.width;
 
 drawBackdrop(canvRef.width, canvRef.height);
-drawTerrain(canvRef.width, canvRef.height, terrain, oldWidth, oldHeight);
+drawTerrain(canvRef.width * 2.75, canvRef.height * 2.75, terrain, oldWidth, oldHeight);
 
 
 // Drawing
