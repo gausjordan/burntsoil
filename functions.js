@@ -122,7 +122,6 @@ function cpsToPxs(cps, screenWidth) {
             }
         }
     }
-    console.log(pixels);
     return pixels;
 }
 

@@ -10,13 +10,6 @@ window.addEventListener("click", (ev) => {
 });
 
 
-/**
- * Things to do once the document is fully loaded
- */
-document.addEventListener('DOMContentLoaded', function() {
-});
-
-
 /** On resize - reset */
 window.addEventListener("resize", (ev) => {
     canvRef.width = getCanvasSize(canvRef, 8, 8)[0] * ratio;
@@ -25,4 +18,11 @@ window.addEventListener("resize", (ev) => {
     canvRef.style.height = canvRef.height / ratio + "px";
     drawBackdrop(canvRef.width, canvRef.height);
     drawTerrain(canvRef.width, canvRef.height, terrain, oldWidth, oldHeight);
+});
+
+
+/**
+ * Things to do once the document is fully loaded
+ */
+document.addEventListener('DOMContentLoaded', function() {
 });
