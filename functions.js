@@ -1,44 +1,37 @@
-/* TODO:
-
-- generator ide od -500 do 1500
-- on-screen sadrzaj je od 0 do 1000
-- skalira se na canvas size po potrebi
-
-*/
-
-
-
 /**
- * Generates random control points needed to build a landscape curve. The
- * total number of points is unknown (screen size dependent). This function
- * overshoots (produces extra points off-screen, required by the interpolator).
- * @param minDist minimum horizontal distance between two points (in pixels)
- * @param maxDist maximum horizontal distance between two points (in pixels)
- * @param minHeight minimum vertical distance between two points (in pixels)
- * @param maxHeight maximum vertical distance between two points (in pixels)
- * @returns an array of point objects: pairs of 'x' and 'y' values 
-* */
-function generateCps(minDist, maxDist, minHeight, maxHeight) {
-    let newHeight = (maxHeight-minHeight) / 2;
-    let widthInPx = -2 * maxDist;
-    let newPosition = 0;
-    let points = [];    
+ * Generates random control points required to build a landscape curve.
+ * Each control point is an object containing an X and a Y coordinate.
+ * Values are relative and are to be normalized at the later stages.
+ * @param minDist minimum horizontal distance between two points (percentage)
+ * @param maxDist maximum horizontal distance between two points (percentage)
+ * @returns an array of control point objects (pairs of 'x' and 'y' values)
+**/
+
+function generateCps(minDist, maxDist) {
+    
+    let points = [];
+    let newXStep;
+    let oldXStep = 0;
+
+    points[0] = { x: 0, y: randomInteger(0, 1000) };
     
     do {
+        xStep = randomInteger(minDist, maxDist);
+        yStep = randomInteger(minHeight, maxHeight);
+
         points.push ({
             x: (widthInPx + newPosition),
             y: newHeight });
-        widthInPx += newPosition;
-        newPosition = randomInteger(minDist, maxDist);
-        newHeight = randomInteger(minHeight, maxHeight);
-    } while (widthInPx <= canvRef.width + 2 * maxDist);
-    
+    } while (false);
+        
     return points;
+
+    
 }
 
 
 /**
- * Invokes the generateCps function to generate random control points
+ * Invokes generateCps(...) to generate random control points
  * Uses hardcoded magic numbers which tend to yield good aesthetics
  * @param {*} width canvas width in pixels
  * @param {*} height canvas height in pixels
