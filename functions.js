@@ -5,16 +5,13 @@
  * @param {*} typeOf several styles to choose from (TODO)
  */
 function drawBackdrop(width, height, styleCode) {
-
     let r = 42;
     let g = 40;
     let b = 140;
     let string;
     let step = (height/28)|0;
     for (let i = 0; i < height; i += step) {
-    
         r += 9;
-
         if (i <= 8*step) {
             g += 8;
             b += 14;
@@ -25,16 +22,13 @@ function drawBackdrop(width, height, styleCode) {
             g += 14;
             b -= 14;
         }
-
         string = "rgb(" + r + "," + g + "," + b + ")";
         canvCtx.fillStyle = string;
         canvCtx.fillRect(0, i, width, (height/28)|0);
     }
-
     let horizSunPos = width / 2.2;
     let vertSunPos = height;
     let sunSize = width < height ? width / 1.6 : height / 1.6;
-
     canvCtx.fillStyle = "#FFFF00";
     canvCtx.beginPath();
     canvCtx.arc(horizSunPos, vertSunPos, sunSize, Math.PI, 0);
@@ -50,12 +44,10 @@ function drawBackdrop(width, height, styleCode) {
  * @returns an array of control point objects ('x' and 'y' pairs)
  */
 function generateCps(pointCount) {
-
     let points = [];
     let minDist = 1000 / pointCount / 1.5;
     let maxDist = 1000 / pointCount + 0.5 * minDist;
     let progress = 0;
-    
     for (let i = 0; i < pointCount; i++) {
         points.push ({
             x: progress + randomInteger(minDist, maxDist),
@@ -68,27 +60,26 @@ function generateCps(pointCount) {
 
 
 /**
- * Scales the control points' X coordinate to fit the canvas size, in pixels.
- * Overshoots a point before and after the visible range, for the interpolator.
+ * Scales the X coordinates to fit the canvas size, in pixels. Once done,
+ * overshoots 1 point before and after the visible range, for the interpolator.
+ * Scales the Y coordinates to fit up to 75% of an average landscape display.
  * TODO: Array size must equal the size of the biggest display (multiplayer).
- */
+ * @param {*} cps an array of control point objects
+ * @param {*} cWidth - canvas width in pixels (oversampling is possible)
+ * @returns an array of normalized control points
+*/
 function normalizeCps(cps, cWidth) {
-    // We start at 0 and don't need the last pixel
+    // Array starts at 0, no need for the last one
     cWidth--;
-    // A new array of point objects
     let normalized = [];
-    // A second-to-last control points' X value
-    let upperLimit = cps[cps.length-2].x;
-    // A second X value of the array
-    let lowerLimit = cps[1].x;
-    // Scaling multiplier
+    let upperLimit = cps[cps.length-2].x;       // second-to-last x value
+    let lowerLimit = cps[1].x                   // second x value
     let squeezeFactor = cWidth / (upperLimit - lowerLimit);
-
-    // Width goes from 0 to the furtherest horizontal pixel
-    // Height goes up to 75%, assuming a 16:9 ratio.
     normalized = cps.map( e => {
         return {
+            // Width goes from 0 to the furtherest horizontal pixel
             x: (e.x - lowerLimit) * squeezeFactor,
+            // Height goes up to 75%, assuming a 16:9 ratio.
             y: (e.y * cWidth / (16/9) / 1000 / 0.75) }
         }
     );
@@ -97,8 +88,12 @@ function normalizeCps(cps, cWidth) {
 }
 
 
+/**
+ * Converts an array of control points into a 1D array of pixel heights.
+ * @param {*} cps array of control point objects (X and Y pairs)
+ * @returns an array of pixel heights, left to right
+ */
 function cpsToPxs(cps) {
-
     let step = 0;
     let pixels = [];
     let detailLvl = 5;
@@ -119,10 +114,7 @@ function cpsToPxs(cps) {
             oldX = newX;
         }
     }
-
-    console.log(pixels);
-    canvCtx.fillStyle = "rgba(0,255,0,0.5)";
-    pixels.forEach( (c, index) => canvCtx.fillRect(index, c, 1, 10));
+    return pixels;
 }
 
 

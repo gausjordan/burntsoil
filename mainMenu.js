@@ -15,12 +15,26 @@ document.getElementsByTagName('h1')[0].innerHTML =
     + "<br>Height: " + canvRef.height
     + "<br>DPR: " + window.devicePixelRatio;
 
-let rawPoints1 = generateCps(15);
+let rawPoints1 = generateCps(5);
+let rawPoints2 = generateCps(10);
 let normPoints1 = normalizeCps(rawPoints1, canvRef.width);
-let pixels = cpsToPxs(normPoints1);
+let normPoints2 = normalizeCps(rawPoints2, canvRef.width);
+let pixels1 = cpsToPxs(normPoints1);
+let pixels2 = cpsToPxs(normPoints2);
+let pixels3 = [];
+
+canvCtx.fillStyle = "rgba(0,255,0,1)";
+pixels1.forEach( (c, index) =>
+    canvCtx.fillRect(index, canvRef.height-c, 1, 10));
+pixels2.forEach( (c, index) =>
+    canvCtx.fillRect(index, canvRef.height-c, 1, 10));
+pixels3 = pixels1.map( (e, index) => { return e + pixels2[index]; });
+
+canvCtx.fillStyle = "rgba(255,0,0,1)";
+pixels3.forEach( (c, index) => canvCtx.fillRect(index, canvRef.height-c, 1, 10));
 
 //drawBackdrop(canvRef.width, canvRef.height);
-//drawTerrain(canvRef.width * 2.75, canvRef.height * 2.75, terrain, oldWidth, oldHeight);
+
 
 // Drawing
 canvCtx.font = "16px sans-serif";
