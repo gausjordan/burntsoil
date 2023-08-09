@@ -73,6 +73,9 @@ function generateCps(pointCount) {
  * TODO: Array size must equal the size of the biggest display (multiplayer).
  */
 function normalizeCps(cps, cWidth) {
+    // We start at 0 and don't need the last pixel
+    cWidth--;
+    // A new array of point objects
     let normalized = [];
     // A second-to-last control points' X value
     let upperLimit = cps[cps.length-2].x;
@@ -89,8 +92,7 @@ function normalizeCps(cps, cWidth) {
             y: (e.y * cWidth / (16/9) / 1000 / 0.75) }
         }
     );
-    normalized.forEach(c => canvCtx.fillRect(c.x, c.y, 1, -3000));
-    console.log(normalized);
+    //DEBUG normalized.forEach(c => canvCtx.fillRect(c.x, c.y, 1, -3000));
     return normalized;
 }
 
@@ -100,60 +102,28 @@ function cpsToPxs(cps) {
     let step = 0;
     let pixels = [];
     let detailLvl = 5;
+    let newX = -1;
+    let oldX = -2;
 
     for (let i = 1; i < cps.length-2; i+=1) {
         step = 1 / (cps[i+1].x - cps[i].x);
         for (let j = 0; j < 1; j += step / detailLvl ) {
-            let newX;
             
-            pixels.push(
+            newX = Math.round(cubicInterpolate(
+                cps[i-1].x, cps[i].x,cps[i+1].x, cps[i+2].x, j));
 
-                {
-                    x: cubicInterpolate(
-                        cps[i-1].x, cps[i].x,cps[i+1].x, cps[i+2].x, j),
-                    y: cubicInterpolate(
-                        cps[i-1].y, cps[i].y,cps[i+1].y, cps[i+2].y, j)
-                });
+            if (newX != oldX) {
+                pixels.push(cubicInterpolate(
+                    cps[i-1].y, cps[i].y,cps[i+1].y, cps[i+2].y, j));
+            }
+            oldX = newX;
         }
     }
 
     console.log(pixels);
     canvCtx.fillStyle = "rgba(0,255,0,0.5)";
-    pixels.forEach(c => canvCtx.fillRect(c.x, c.y, 1, 30));
+    pixels.forEach( (c, index) => canvCtx.fillRect(index, c, 1, 10));
 }
-
-
-
-// function cpsToPxs(cps, screenWidth) {
-//     let oldX = 0;
-//     const pixels = new Array();
-
-//     // For each segment, defined by four points, but only two points long
-//     for (let seg = 0; seg < cps.length-3; seg+=1) {
-        
-//         let step = 1 / Math.abs(cps[seg+1].x - cps[seg+0].x);
-        
-//         // Compute interpolated coordinates at location 't' in range [0-1]
-//         for (let t = 0; t < 1; t += step/5) {
-
-//             let x = (cubicInterpolate(
-//                     cps[seg+0].x, cps[seg+1].x,cps[seg+2].x, cps[seg+3].x, t))|0;
-
-//             // Skip repeating values
-//             if (x == oldX) { continue; }
-
-//             let y = (cubicInterpolate(
-//                     cps[seg+0].y, cps[seg+1].y, cps[seg+2].y, cps[seg+3].y, t));
-
-//             // Array starts at 0, screen positions start at 1
-//             if (x > 0 && x <= screenWidth) {
-//                 pixels[x-1] = y;
-//                 oldX = x-1;
-//             }
-//         }
-//     }
-//     return pixels;
-// }
 
 
 
