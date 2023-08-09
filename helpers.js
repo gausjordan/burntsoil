@@ -31,7 +31,7 @@ function randomInteger(lower, upper) {
 
 
 /**
- * Returns an interpolated function value on a segment location 't'
+ * Returns an interpolated function value on a segment fraction 't'
  * TODO: can be optimized by splitting the work in two correlated functions
  */
 function cubicInterpolate(y0, y1, y2, y3, t) {

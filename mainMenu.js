@@ -14,8 +14,9 @@ document.getElementsByTagName('h1')[0].innerHTML =
     + "<br>Height: " + canvRef.height
     + "<br>DPR: " + window.devicePixelRatio;
 
-let rawPoints1 = generateCps(15);
-let normPoints1 = normalizeCps(rawPoints1);
+let rawPoints1 = generateCps(5);
+let normPoints1 = normalizeCps(rawPoints1, canvRef.width);
+let pixels = cpsToPxs(normPoints1);
 
 //drawBackdrop(canvRef.width, canvRef.height);
 //drawTerrain(canvRef.width * 2.75, canvRef.height * 2.75, terrain, oldWidth, oldHeight);
