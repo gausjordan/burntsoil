@@ -28,7 +28,7 @@ pixels1.forEach( (c, index) =>
     canvCtx.fillRect(index, canvRef.height-c, 1, 10));
 pixels2.forEach( (c, index) =>
     canvCtx.fillRect(index, canvRef.height-c, 1, 10));
-pixels3 = pixels1.map( (e, index) => { return e + pixels2[index]; });
+pixels3 = pixels1.map( (e, index) => { return e + 0.2*pixels2[index]; });
 
 canvCtx.fillStyle = "rgba(255,0,0,1)";
 pixels3.forEach( (c, index) => canvCtx.fillRect(index, canvRef.height-c, 1, 10));
