@@ -65,25 +65,28 @@ function generateCps(pointCount) {
  * Scales the Y coordinates to fit up to 75% of an average landscape display.
  * TODO: Array size must equal the size of the biggest display (multiplayer).
  * @param {*} cps an array of control point objects
- * @param {*} cWidth - canvas width in pixels (oversampling is possible)
+ * @param {*} cWidth canvas width in pixels (oversampling is possible)
+ * @param {*} isLowered generate ultra-low terrain (for main menu)
  * @returns an array of normalized control points
 */
-function normalizeCps(cps, cWidth) {
+function normalizeCps(cps, cWidth, isLowered) {
     // Array starts at 0, no need for the last one
     cWidth--;
+    let ceiling = isLowered ? 0.35 : 0.65
     let normalized = [];
-    let upperLimit = cps[cps.length-2].x;       // second-to-last x value
+    let upperLimit = cps[cps.length-2].x;       // second-to-last x
     let lowerLimit = cps[1].x                   // second x value
     let squeezeFactor = cWidth / (upperLimit - lowerLimit);
     normalized = cps.map( e => {
         return {
             // Width goes from 0 to the furtherest horizontal pixel
             x: (e.x - lowerLimit) * squeezeFactor,
-            // Height goes up to 75%, assuming a 16:9 ratio.
-            y: (e.y * cWidth / (16/9) / 1000 / 0.75) }
+            // Height goes up to "ceiling" percent, assuming a 16:9 ratio.
+            y: (e.y * cWidth / (16/9) / 1000 * ceiling) }
         }
     );
-    //DEBUG normalized.forEach(c => canvCtx.fillRect(c.x, c.y, 1, -3000));
+    
+    //normalized.forEach(c => canvCtx.fillRect(c.x, c.y, 1, -3000));
     return normalized;
 }
 
@@ -118,24 +121,14 @@ function cpsToPxs(cps) {
 }
 
 
-
-function drawTerrain(width, height, array, oldWidth, oldHeight) {
-    let hScalFct = array.length / width;
-    let oldAbsoluteHeight = oldHeight - array[0];
-    let newAbsoluteHeight = height - array[0];
-
-    canvCtx.fillStyle = "rgba(0,255,0,255)";
-    
-    for (let i = 0; i < width; i++) {
+function drawTerrain(pixels) {
+    let squeezeFactor = canvRef.width / pixels.length;
+    canvCtx.fillStyle = "rgba(0,255,0,1)";
+    pixels.forEach( (c, index) =>
         canvCtx.fillRect(
-            i,
-            (
-                //(array[Math.round(i*hScalFct)] / hScalFct)
-                (array[Math.round(i*hScalFct)])
-            ),
+            index * squeezeFactor,
+            canvRef.height - (c * squeezeFactor),
             1,
-            100000
-        );
-    }
-
+            8000)
+    );
 }

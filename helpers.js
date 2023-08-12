@@ -5,7 +5,7 @@
  * @param {*} vMargin sum of vertical border widths
  * @returns an array of two values: width and height
  */
-function getCanvasSize(canvas, hMargin, vMargin) {
+function getCanvSize(canvas, hMargin, vMargin) {
     let rect = canvas.parentElement.getBoundingClientRect();
     return [
         (rect.width - hMargin),
