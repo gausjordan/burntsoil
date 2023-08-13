@@ -11,7 +11,6 @@
     --left-bord-color: rgb(252,252,252);
 }
 
-
 html, body {
     height: 100%;
     border: 2px outset;
@@ -22,11 +21,17 @@ html, body {
                     var(--left-bord-color);
 }
 
+.game {
+    height: 100%;
+    margin: 0 auto;
+}
+
 
 .whole-flex {
     display: flex;
     flex-direction: column;
     height: 100%;
+    position: center;
 }
 
 
@@ -62,6 +67,7 @@ footer {
     padding: 1em 1em 0.95em 20%;
     text-align: center;
 }
+
 
 canvas {
     position: absolute;
