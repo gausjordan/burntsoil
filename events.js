@@ -12,8 +12,10 @@ window.addEventListener("click", (ev) => {
 
 /** On resize - reset */
 window.addEventListener("resize", (ev) => {
-    let aspect = getCanvSize(canvRef, 8, 8)[0] / getCanvSize(canvRef, 8, 8)[1];
-    if (aspect < 1.78) {
+    let tempHeight, tempWidth;
+    // let aspect = getCanvSize(canvRef, 8, 8)[0] / getCanvSize(canvRef, 8, 8)[1];
+
+    
         canvRef.width = getCanvSize(canvRef, 8, 8)[0] * ratio;
         canvRef.height = getCanvSize(canvRef, 8, 8)[1] * ratio;
         canvRef.style.width = canvRef.width / ratio + "px";
@@ -21,11 +23,9 @@ window.addEventListener("resize", (ev) => {
         drawBackdrop(canvRef.width, canvRef.height);
         drawTerrain(pixels3);
         document.getElementsByTagName("main")[0].style.maxWidth = "";
-        let tempWidth;
-    } else {
-        document.getElementsByTagName("main")[0].style.maxWidth = tempWidth;
-        document.getElementsByTagName("main")[0].style.margin = "0 auto";
-    }
+        tempWidth = canvRef.width;
+        tempHeight = canvRef.height;
+    
 });
 
 
