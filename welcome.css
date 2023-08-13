@@ -21,11 +21,6 @@ html, body {
                     var(--left-bord-color);
 }
 
-.game {
-    height: 100%;
-    margin: 0 auto;
-}
-
 
 .whole-flex {
     display: flex;
