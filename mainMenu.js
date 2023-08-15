@@ -4,12 +4,6 @@ let canvRef = document.getElementById("canvas");
 canvasSizeFormatter();
 let canvCtx = canvRef.getContext('2d');
 
-// Debug info for mobile browsers
-document.getElementsByTagName('h1')[0].innerHTML =
-      "<br>Width: " + canvRef.width
-    + "<br>Height: " + canvRef.height
-    + "<br>DPR: " + window.devicePixelRatio;
-
 // Check all players and get the widest screen resolution possible
 // Temporarily hardcoded
 let maxRes = 6000;

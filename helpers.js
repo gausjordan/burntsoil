@@ -45,27 +45,23 @@ function cubicInterpolate(y0, y1, y2, y3, t) {
 }
 
 
+/** Ensures correct aspect ratio an most display types */
 function canvasSizeFormatter() {
-    
-    //let aspect = getCanvSize(canvRef, 8, 8)[0] / getCanvSize(canvRef, 8, 8)[1];
     let aspect = document.getElementsByTagName("html")[0].clientWidth /
                  document.getElementsByTagName("html")[0].clientHeight;
 
     if (aspect < 2.2) {
         document.getElementsByTagName("body")[0].style.width = "100%";
-        
-    } else if (aspect => 2.2) {
-        
+    }
+    else if (aspect => 2.2) {
         document.getElementsByTagName("body")[0].style.width =
             document.getElementsByTagName("html")[0].clientHeight * 2.2 + "px";
-            
     }   
-
     updateCanvasSize();
-
 }
 
 
+/** Gets (new) available screen size for the canvas */
 function updateCanvasSize() {
     canvRef.width = getCanvSize(canvRef, 8, 8)[0] * ratio;
     canvRef.height = getCanvSize(canvRef, 8, 8)[1] * ratio;

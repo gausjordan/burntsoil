@@ -16,8 +16,8 @@ function drawBackdrop(width, height, styleCode) {
             g += 8;
             b += 14;
         } else if (i > 8*step && i <= 17 * step) {
-            g -= 4;
-            b -= 14;
+            g -= 5;     // -4
+            b -= 15;    // -14
         } else if (i > 19 * step) {
             g += 14;
             b -= 14;
