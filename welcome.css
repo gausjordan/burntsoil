@@ -9,11 +9,13 @@
     --right-bord-color: rgb(20,20,20);
     --bottom-bord-color: rgb(60,60,60);
     --left-bord-color: rgb(252,252,252);
+    --base-distance: 1;
 }
 
 
 html {
     height: 100%;
+    font-family: Tahoma, Verdana, Arial, sans-serif;
     box-sizing: border-box;
     border-color:   var(--up-bord-color)
                     var(--right-bord-color)
@@ -84,6 +86,7 @@ footer > div {
 
 footer > p {
     width: 80%;
+    font-size: 0.85em;
 }
 
 canvas {
@@ -97,23 +100,49 @@ canvas {
     opacity: 1.0;
 }
 
-main h1 {
-    font-family: Verdana, sans-serif;
+main h1, h2 {
+    font-weight: normal;
+    color: white;
     text-align: center;
-    margin-top: 10%;
     z-index: 1;
 }
 
+main h1 {
+    transform: scaleY(0.7);
+    letter-spacing: 0.1em;
+    text-shadow: -0.03em -0.03em #bbbbbb,
+                 -0.06em -0.06em #888888,
+                 -0.09em -0.09em #555555,
+                 -0.12em -0.12em #333333,
+                 -0.15em -0.15em #000000;
+}
 
+main h2 {
+    letter-spacing: 0.2em;
+}
 
 
 
 @media (orientation: landscape) {
-
+    main h1 {
+        margin-top: 5%;
+        font-size: 8vmin;
+    }
+    main h2 {
+        font-size: 2vmin;
+    }
 }
 
 
 @media (orientation: portrait) {
+    
+    main h1 {
+        margin-top: 8%;
+        font-size: 6vmax;
+    }
+    main h2 {
+        font-size: 1.5vmax;
+    }
     .menu-and-canvas {
         flex-direction: column;
     }

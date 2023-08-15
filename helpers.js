@@ -53,6 +53,7 @@ function canvasSizeFormatter() {
 
     if (aspect < 2.2) {
         document.getElementsByTagName("body")[0].style.width = "100%";
+        
     } else if (aspect => 2.2) {
         
         document.getElementsByTagName("body")[0].style.width =

@@ -16,7 +16,7 @@ let maxRes = 6000;
 
 let rawPoints1 = generateCps(5);    // low frequency terrain
 let rawPoints2 = generateCps(10);   // high frequency terrain
-let normPoints1 = normalizeCps(rawPoints1, maxRes, false);
+let normPoints1 = normalizeCps(rawPoints1, maxRes, true);
 let normPoints2 = normalizeCps(rawPoints2, maxRes, false);
 let pixels1 = cpsToPxs(normPoints1);
 let pixels2 = cpsToPxs(normPoints2);
