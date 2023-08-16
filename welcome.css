@@ -19,7 +19,12 @@ html {
     border-color:   var(--up-bord-color)
                     var(--right-bord-color)
                     var(--bottom-bord-color)
-                    var(--left-bord-color);
+                    var(--left-bord-color);    
+}
+
+em {
+    font-style: normal;
+    color: cyan;
 }
 
 
@@ -59,19 +64,23 @@ body {
 
 ol {
     padding: 10%;
+    display: grid;
 }
 
-ol li {
+ol > li {
+    column-gap: 0;
+    row-gap: 0;
     font-family: Arial, Helvetica, sans-serif;
     transform: scaleY(0.8);
-    margin: 0.5em 0em;
+    margin: 0.3em 0em;
     padding: 0.3em 0.3em;
-    font-size: 100%;
-    display: block;
+    font-size: 2.2vmin;
+    display: inline;
     list-style: none;
     border: 2px outset;
     border-color: white black black white;
 }
+
 
 nav, footer, main {
     background-color:rgb(180,180,180);
@@ -111,6 +120,32 @@ canvas {
     border-color: black white white black;
     opacity: 1.0;
 }
+
+#curtain {
+    box-sizing: content-box;
+    margin: 5px;
+    z-index: 2;
+    position: absolute;
+    background-color: rgb(180,180,180);
+    width: 0px;
+    height: 0px;
+    animation: 1s linear 0s 1 slideAway;
+    animation-fill-mode: forwards;
+}
+
+@keyframes slideAway {
+    0% {
+      /* transform: translateX(0); */
+      /* matrix(scaleX(), skewY(), skewX(), scaleY(), translateX(), translateY()) */
+      transform-origin: top right;
+      transform: scaleX(100%);
+    }
+
+    100% {
+      transform-origin: top right;
+      transform: scaleX(0%);
+    }
+  }
 
 
 main h1, h2 {
@@ -173,4 +208,23 @@ main h2 {
     footer > div {
         display: none;
     }
+    ol {
+        padding: 2%;
+        grid-template-columns: auto auto;
+        height: 100%;
+    }
+    
+    ol li {        
+        margin: 0.2em 0.2em;
+        padding: 0.3em 0.3em;
+        font-size: 1.4vmax;
+        list-style: none;
+        border: 2px outset;
+        border-color: white black black white;
+    }
+
+    li:nth-child(1) { grid-row: 1;}
+    li:nth-child(2) { grid-row: 2;}
+    li:nth-child(3) { grid-row: 3;}
+    li:nth-child(4) { grid-row: 4;}
 }

@@ -3,6 +3,10 @@ let ratio = Math.ceil(window.devicePixelRatio);
 let canvRef = document.getElementById("canvas");
 canvasSizeFormatter();
 let canvCtx = canvRef.getContext('2d');
+document.getElementById("curtain").style.height = canvRef.height / ratio + "px";
+document.getElementById("curtain").style.width = canvRef.width / ratio + "px";
+
+console.log(document.getElementById("curtain"));
 
 // Check all players and get the widest screen resolution possible
 // Temporarily hardcoded
