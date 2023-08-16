@@ -23,16 +23,16 @@ function drawBackdrop(width, height, styleCode) {
             b -= 14;
         }
         string = "rgb(" + r + "," + g + "," + b + ")";
-        canvCtx.fillStyle = string;
-        canvCtx.fillRect(0, i, width, (height/28)|0);
+        canvCtx1.fillStyle = string;
+        canvCtx1.fillRect(0, i, width, (height/28)|0);
     }
     let horizSunPos = width / 2.2;
     let vertSunPos = height;
     let sunSize = width < height ? width / 1.6 : height / 1.6;
-    canvCtx.fillStyle = "#FFFF00";
-    canvCtx.beginPath();
-    canvCtx.arc(horizSunPos, vertSunPos, sunSize, Math.PI, 0);
-    canvCtx.fill();
+    canvCtx1.fillStyle = "#FFFF00";
+    canvCtx1.beginPath();
+    canvCtx1.arc(horizSunPos, vertSunPos, sunSize, Math.PI, 0);
+    canvCtx1.fill();
 }
 
 
@@ -122,12 +122,12 @@ function cpsToPxs(cps) {
 
 
 function drawTerrain(pixels) {
-    let squeezeFactor = canvRef.width / pixels.length;
-    canvCtx.fillStyle = "rgba(0,255,0,1)";
+    let squeezeFactor = canvRef2.width / pixels.length;
+    canvCtx2.fillStyle = "rgba(0,255,0,1)";
     pixels.forEach( (c, index) =>
-        canvCtx.fillRect(
+        canvCtx2.fillRect(
             index * squeezeFactor,
-            canvRef.height - (c * squeezeFactor),
+            canvRef2.height - (c * squeezeFactor),
             1,
             8000)
     );

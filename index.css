@@ -67,7 +67,7 @@ ol {
     display: grid;
 }
 
-ol > li {
+ol li {
     column-gap: 0;
     row-gap: 0;
     font-family: Arial, Helvetica, sans-serif;
@@ -79,6 +79,21 @@ ol > li {
     list-style: none;
     border: 2px outset;
     border-color: white black black white;
+}
+
+ol li {
+    display: block;
+    cursor: default;
+}
+
+a:link, a:visited {
+    color: black;
+    text-decoration: none;
+}
+
+a :hover {
+    font-weight: bold;
+    background-color: rgb(166,166,166);
 }
 
 
@@ -121,6 +136,7 @@ canvas {
     opacity: 1.0;
 }
 
+
 #curtain {
     box-sizing: content-box;
     margin: 5px;
@@ -135,8 +151,6 @@ canvas {
 
 @keyframes slideAway {
     0% {
-      /* transform: translateX(0); */
-      /* matrix(scaleX(), skewY(), skewX(), scaleY(), translateX(), translateY()) */
       transform-origin: top right;
       transform: scaleX(100%);
     }

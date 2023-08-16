@@ -1,12 +1,12 @@
 let colorValueAtPos = null;
 let ratio = Math.ceil(window.devicePixelRatio);
-let canvRef = document.getElementById("canvas");
+let canvRef1 = document.getElementById("canvas1");
+let canvRef2 = document.getElementById("canvas2");
 canvasSizeFormatter();
-let canvCtx = canvRef.getContext('2d');
-document.getElementById("curtain").style.height = canvRef.height / ratio + "px";
-document.getElementById("curtain").style.width = canvRef.width / ratio + "px";
-
-console.log(document.getElementById("curtain"));
+let canvCtx1 = canvRef1.getContext('2d');
+let canvCtx2 = canvRef2.getContext('2d');
+document.getElementById("curtain").style.height = canvRef1.height / ratio + "px";
+document.getElementById("curtain").style.width = canvRef1.width / ratio + "px";
 
 // Check all players and get the widest screen resolution possible
 // Temporarily hardcoded
@@ -22,19 +22,20 @@ let pixels2 = cpsToPxs(normPoints2);
 // Two sets of (pixel-defined) curves merged into one
 let pxMix = pixels1.map( (e, index) => { return e + 0.2 * pixels2[index]; });
 
-drawBackdrop(canvRef.width, canvRef.height);
+// Draws graphics. Backdrop is always on canvas1, game elements are on canvas2.
+drawBackdrop(canvRef1.width, canvRef1.height);
 drawTerrain(pxMix);
 
 
 // Drawing
-canvCtx.font = "16px sans-serif";
+canvCtx1.font = "16px sans-serif";
 
 function doDraw() {
     //bC.clearRect(0,0,innerWidth,innerHeight);
     //fC.clearRect(0,0,innerWidth,innerHeight);
-    canvCtx.fillStyle = "rgb(0,0,0)";
+    canvCtx2.fillStyle = "rgb(0,0,0)";
     if (colorValueAtPos != null) {
-        canvCtx.fillText(colorValueAtPos, 10, 30);
+        canvCtx2.fillText(colorValueAtPos, 10, 30);
     }
 }
 

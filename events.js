@@ -1,19 +1,21 @@
+var mouseIsDown = false;
+
 /** Gets a pixel color value at a given mouse position, on click */
 let posX = 0;
 let posY = 0;
 window.addEventListener("click", (ev) => {
-    canvCtx.fillStyle = "rgb(255,255,255)";
-    canvCtx.fillRect(0, 0, 200, 50);
-    posX = getMousePos(canvRef, ev).x;
-    posY = getMousePos(canvRef, ev).y;
-    colorValueAtPos = canvCtx.getImageData(posX, posY, 1, 1).data;
+    canvCtx2.fillStyle = "rgb(255,255,255)";
+    canvCtx2.fillRect(0, 0, 200, 50);
+    posX = getMousePos(canvRef2, ev).x;
+    posY = getMousePos(canvRef2, ev).y;
+    colorValueAtPos = canvCtx2.getImageData(posX, posY, 1, 1).data;
 });
 
 
 /** On resize - reset */
 window.addEventListener("resize", (ev) => {
     canvasSizeFormatter();
-    drawBackdrop(canvRef.width, canvRef.height);
+    drawBackdrop(canvRef1.width, canvRef1.height);
     drawTerrain(pxMix);
 });
 
@@ -23,3 +25,11 @@ window.addEventListener("resize", (ev) => {
  */
 document.addEventListener('DOMContentLoaded', function() {
 });
+
+
+/** Keyboard shortcuts */
+document.addEventListener('keydown', (event) => {
+    if (event.key == "s") {
+
+    }
+  }, false);

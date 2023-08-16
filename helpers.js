@@ -31,7 +31,8 @@ function randomInteger(lower, upper) {
 
 
 /**
- * Returns an interpolated function value on a segment fraction 't'
+ * Takes four points (on a single axis, x or y) - in.
+ * Returns an interpolated value between point a1 and a2, at position t=[0-1].
  * TODO: can be optimized by splitting the work in two correlated functions
  */
 function cubicInterpolate(y0, y1, y2, y3, t) {
@@ -46,7 +47,7 @@ function cubicInterpolate(y0, y1, y2, y3, t) {
 
 
 /** Ensures correct aspect ratio an most display types */
-function canvasSizeFormatter() {
+function canvasSizeFormatter(canvas1, canvas2) {
     let aspect = document.getElementsByTagName("html")[0].clientWidth /
                  document.getElementsByTagName("html")[0].clientHeight;
 
@@ -63,8 +64,12 @@ function canvasSizeFormatter() {
 
 /** Gets (new) available screen size for the canvas */
 function updateCanvasSize() {
-    canvRef.width = getCanvSize(canvRef, 8, 8)[0] * ratio;
-    canvRef.height = getCanvSize(canvRef, 8, 8)[1] * ratio;
-    canvRef.style.width = canvRef.width / ratio + "px";
-    canvRef.style.height = canvRef.height / ratio + "px";
+    canvRef1.width = getCanvSize(canvRef1, 8, 8)[0] * ratio;
+    canvRef1.height = getCanvSize(canvRef1, 8, 8)[1] * ratio;
+    canvRef1.style.width = canvRef1.width / ratio + "px";
+    canvRef1.style.height = canvRef1.height / ratio + "px";
+    canvRef2.width = canvRef1.width;
+    canvRef2.height = canvRef1.height;
+    canvRef2.style.width = canvRef1.style.width;
+    canvRef2.style.height = canvRef1.style.height;
 }
