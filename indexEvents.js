@@ -12,8 +12,8 @@ window.addEventListener("click", (ev) => {
 
 /** On resize - reset */
 window.addEventListener("resize", (ev) => {
-    canvasSizeFormatter();
-    drawBackdrop(canvRef1.width, canvRef1.height);
+    canvasSizeFormatterIndex(10, 10);
+    drawBackdrop(canvRef1.width, canvRef1.height, "sunset");
     drawTerrain(pxMix);
 });
 

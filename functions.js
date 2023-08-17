@@ -2,37 +2,55 @@
  * Draws a passive backdrop / background
  * @param {*} width canvas width in pixels
  * @param {*} height canvas height in pixels
- * @param {*} typeOf several styles to choose from (TODO)
+ * @param {*} typeOf background style
  */
 function drawBackdrop(width, height, styleCode) {
-    let r = 42;
-    let g = 40;
-    let b = 140;
-    let string;
-    let step = (height/28)|0;
-    for (let i = 0; i < height; i += step) {
-        r += 9;
-        if (i <= 8*step) {
-            g += 8;
-            b += 14;
-        } else if (i > 8*step && i <= 17 * step) {
-            g -= 5;     // -4
-            b -= 15;    // -14
-        } else if (i > 19 * step) {
-            g += 14;
-            b -= 14;
-        }
-        string = "rgb(" + r + "," + g + "," + b + ")";
-        canvCtx1.fillStyle = string;
-        canvCtx1.fillRect(0, i, width, (height/28)|0);
+    let r, g, b, step, string;
+    switch (styleCode) {
+        case 'sunset':
+            r = 42;
+            g = 40;
+            b = 140;
+            step = (height/28)|0;
+            for (let i = 0; i < height; i += step) {
+                r += 9;
+                if (i <= 8*step) {
+                    g += 8;
+                    b += 14;
+                } else if (i > 8*step && i <= 17 * step) {
+                    g -= 5;     // -4
+                    b -= 15;    // -14
+                } else if (i > 19 * step) {
+                    g += 14;
+                    b -= 14;
+                }
+                string = "rgb(" + r + "," + g + "," + b + ")";
+                canvCtx1.fillStyle = string;
+                canvCtx1.fillRect(0, i, width, (height/28)|0);
+            }
+            let horizSunPos = width / 2.2;
+            let vertSunPos = height;
+            let sunSize = width < height ? width / 1.6 : height / 1.6;
+            canvCtx1.fillStyle = "#FFFF00";
+            canvCtx1.beginPath();
+            canvCtx1.arc(horizSunPos, vertSunPos, sunSize, Math.PI, 0);
+            canvCtx1.fill();
+            break;
+        case 'blue':
+            r = 32;
+            g = 32;
+            b = 152;
+            step = (height/28)|0;
+            for (let i = 0; i < height; i += step) {
+                r -= 2;
+                g -= 2;
+                b -= 1;
+                string = "rgb(" + r + "," + g + "," + b + ")";
+                canvCtx1.fillStyle = string;
+                canvCtx1.fillRect(0, i, width, (height/28)|0);
+            }
+            break;
     }
-    let horizSunPos = width / 2.2;
-    let vertSunPos = height;
-    let sunSize = width < height ? width / 1.6 : height / 1.6;
-    canvCtx1.fillStyle = "#FFFF00";
-    canvCtx1.beginPath();
-    canvCtx1.arc(horizSunPos, vertSunPos, sunSize, Math.PI, 0);
-    canvCtx1.fill();
 }
 
 
@@ -72,7 +90,7 @@ function generateCps(pointCount) {
 function normalizeCps(cps, cWidth, isLowered) {
     // Array starts at 0, no need for the last one
     cWidth--;
-    let ceiling = isLowered ? 0.35 : 0.65
+    let ceiling = isLowered ? 0.35 : 0.60
     let normalized = [];
     let upperLimit = cps[cps.length-2].x;       // second-to-last x
     let lowerLimit = cps[1].x                   // second x value

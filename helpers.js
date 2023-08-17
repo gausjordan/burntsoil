@@ -47,7 +47,7 @@ function cubicInterpolate(y0, y1, y2, y3, t) {
 
 
 /** Ensures correct aspect ratio an most display types */
-function canvasSizeFormatter(canvas1, canvas2) {
+function canvasSizeFormatterIndex(hMargin, vMargin) {
     let aspect = document.getElementsByTagName("html")[0].clientWidth /
                  document.getElementsByTagName("html")[0].clientHeight;
 
@@ -58,14 +58,30 @@ function canvasSizeFormatter(canvas1, canvas2) {
         document.getElementsByTagName("body")[0].style.width =
             document.getElementsByTagName("html")[0].clientHeight * 2.2 + "px";
     }   
-    updateCanvasSize();
+    updateCanvasSize(hMargin, vMargin);
+}
+
+
+/** Ensures correct aspect ratio an most display types */
+function canvasSizeFormatterGame(hMargin, vMargin) {
+    let aspect = document.getElementsByTagName("html")[0].clientWidth /
+                 document.getElementsByTagName("html")[0].clientHeight;
+
+    if (aspect < 2.2) {
+        document.getElementsByClassName("main-element")[0].style.width = "100%";
+    }
+    else if (aspect => 2.2) {
+        document.getElementsByClassName("main-element")[0].style.width =
+            document.getElementsByTagName("html")[0].clientHeight * 2.2 + "px";
+    }   
+    updateCanvasSize(hMargin, vMargin);
 }
 
 
 /** Gets (new) available screen size for the canvas */
-function updateCanvasSize() {
-    canvRef1.width = getCanvSize(canvRef1, 8, 8)[0] * ratio;
-    canvRef1.height = getCanvSize(canvRef1, 8, 8)[1] * ratio;
+function updateCanvasSize(hMargin, vMargin) {
+    canvRef1.width = getCanvSize(canvRef1, hMargin, vMargin)[0] * ratio;
+    canvRef1.height = getCanvSize(canvRef1, hMargin, vMargin)[1] * ratio;
     canvRef1.style.width = canvRef1.width / ratio + "px";
     canvRef1.style.height = canvRef1.height / ratio + "px";
     canvRef2.width = canvRef1.width;

@@ -5,31 +5,32 @@
         <meta charset="utf-8">
         <meta name="viewport" content="initial-scale=1.0 , minimum-scale=1.0 , maximum-scale=1.0" />
         <link rel="icon" type="image/x-icon" href="#">
-        <link rel="stylesheet" href="inGame.css">
+        <link rel="stylesheet" href="game.css">
         <title id="tit">JS avantura </title>
     </head>
    
     <body>
         <div class="whole-flex">
             <aside class="common-element">
-                Aside left
             </aside>
             <section class="main-element">
                 <header>
                     Header
                 </header>
                 <main>
-                    <canvas>
-
+                    <canvas id="canvas1">
+                    </canvas>
+                    <canvas id="canvas2">
                     </canvas>
                 </main>
             </section>
             <aside class="common-element">
-                Aside right
             </aside>
 
+            <script src="gameEvents.js"></script>
+            <script src="helpers.js"></script>
             <script src="functions.js"></script>
-            <script src="inGame.js"></script>
+            <script src="game.js"></script>
 
         </div>
     </body>

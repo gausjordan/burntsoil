@@ -10,7 +10,6 @@
     padding: 0;
     margin: 0;
     height: 100%;
-    background-color: var(--basic-background);
     font-family: Arial, Helvetica, sans-serif;
     font-style: normal;
 }
@@ -25,7 +24,7 @@
     display: flex;
     flex-shrink: 1;
     overflow: hidden;
-    background-color: yellow;
+    background-image: linear-gradient(#777777, #333333);
     width: 100%;
 }
 
@@ -34,11 +33,11 @@
     flex-direction: column;
     width: 100%;
     flex-shrink: 0;
-    background-color: red;
 }
 
 header {
     display: flex;
+    background-color: var(--basic-background);
     height: fit-content;
     border: 2px outset;
     box-sizing: border-box;
@@ -51,15 +50,14 @@ header {
 
 main {
     display: flex;
-    background-color: var(--basic-background);
     overflow: hidden;
 }
 
 
 canvas {
-    width: 100%;
-    height: calc(100% - 12px);
-    background-color: blue;
+    position: absolute;
+    width: 50%;
+    height: 50%;
     margin: 6px;
     box-shadow: 0px 0px 0px 2px var(--basic-background),
                 0px 0px 0px 4px black,

@@ -67,7 +67,13 @@ ol {
     display: grid;
 }
 
+a {
+    text-decoration: none;
+    color: black;
+}
+
 ol li {
+    border: 2px outset;
     column-gap: 0;
     row-gap: 0;
     font-family: Arial, Helvetica, sans-serif;
@@ -77,23 +83,24 @@ ol li {
     font-size: 2.2vmin;
     display: inline;
     list-style: none;
-    border: 2px outset;
+    display: block;
+    cursor: default;
     border-color: white black black white;
 }
 
-ol li {
-    display: block;
-    cursor: default;
+ol li:link, ol li:visited {
+
 }
 
-a:link, a:visited {
-    color: black;
-    text-decoration: none;
+ol li:hover {
+    background-color: rgb(156,156,156);
+    border-color: white black black white;
 }
 
-a :hover {
-    font-weight: bold;
-    background-color: rgb(166,166,166);
+
+ol li:active {
+    /* font-weight: bold; */
+    border: 2px inset;
 }
 
 
@@ -101,13 +108,16 @@ nav, footer, main {
     background-color:rgb(180,180,180);
 }
 
+
 nav {
     flex: 1 1 20%;
 }
 
+
 main {
     flex: 1 1 80%;
 }
+
 
 footer {
     height: max-content;
@@ -117,15 +127,18 @@ footer {
     padding: 0.4em 0.4em 0.7em 0.4em;
 }
 
+
 footer > div {
     width: 20%;
 }
+
 
 footer > p {
     font-family: Arial, Helvetica, sans-serif;
     width: 80%;
     font-size: 80%;
 }
+
 
 canvas {
     position: absolute;
@@ -148,6 +161,7 @@ canvas {
     animation: 1s linear 0s 1 slideAway;
     animation-fill-mode: forwards;
 }
+
 
 @keyframes slideAway {
     0% {
@@ -188,6 +202,7 @@ main h2 {
     letter-spacing: normal;
     font-weight: normal;
 }
+
 
 
 
