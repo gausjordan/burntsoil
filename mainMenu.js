@@ -33,6 +33,7 @@ canvCtx1.font = "16px sans-serif";
 function doDraw() {
     //bC.clearRect(0,0,innerWidth,innerHeight);
     //fC.clearRect(0,0,innerWidth,innerHeight);
+    canvCtx2.font = "16px Arial";
     canvCtx2.fillStyle = "rgb(0,0,0)";
     if (colorValueAtPos != null) {
         canvCtx2.fillText(colorValueAtPos, 10, 30);
