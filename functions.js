@@ -150,3 +150,16 @@ function drawTerrain(pixels) {
             8000)
     );
 }
+
+
+function manualCircle(x, y, r) {
+    let x1, y1;
+    canvCtx2.fillStyle = "rgb(255,0,0)";
+    for(let i = 0; i < 360; i += 0.1)
+    {
+        x1 = r * Math.cos(i * Math.PI / 180);
+        y1 = r * Math.sin(i * Math.PI / 180);
+        canvCtx2.fillRect(x + x1, y + y1, 1, 1);
+    }
+
+}

@@ -88,9 +88,6 @@ ol li {
     border-color: white black black white;
 }
 
-ol li:link, ol li:visited {
-
-}
 
 ol li:hover {
     background-color: rgb(156,156,156);

@@ -24,3 +24,41 @@ let pxMix = pixels1.map( (e, index) => { return e + 0.2 * pixels2[index]; });
 // Draws graphics. Backdrop is always on canvas1, game elements are on canvas2.
 drawBackdrop(canvRef1.width, canvRef1.height, "blue");
 drawTerrain(pxMix);
+
+manualCircle(300, 300, 100);
+
+
+
+/*
+ 
+// PRIMJER ANIMACIJE S MDN WEB DOCSA
+
+const element = document.getElementById("some-element-you-want-to-animate");
+let start, previousTimeStamp;
+let done = false;
+
+function step(timeStamp) {
+  if (start === undefined) {
+    start = timeStamp;
+  }
+  const elapsed = timeStamp - start;
+
+  if (previousTimeStamp !== timeStamp) {
+    // Math.min() is used here to make sure the element stops at exactly 200px
+    const count = Math.min(0.1 * elapsed, 200);
+    element.style.transform = `translateX(${count}px)`;
+    if (count === 200) done = true;
+  }
+
+  if (elapsed < 2000) {
+    // Stop the animation after 2 seconds
+    previousTimeStamp = timeStamp;
+    if (!done) {
+      window.requestAnimationFrame(step);
+    }
+  }
+}
+
+window.requestAnimationFrame(step);
+
+*/
