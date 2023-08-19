@@ -1,3 +1,7 @@
+// Check all players and get the widest screen resolution possible
+// Temporarily hardcoded
+let maxRes = 6000;
+
 let colorValueAtPos = null;
 let ratio = Math.ceil(window.devicePixelRatio);
 let canvRef1 = document.getElementById("canvas1");
@@ -6,10 +10,6 @@ canvasSizeFormatterGame(12, 12);
 let canvCtx1 = canvRef1.getContext('2d');
 let canvCtx2 = canvRef2.getContext('2d');
 
-
-// Check all players and get the widest screen resolution possible
-// Temporarily hardcoded
-let maxRes = 6000;
 
 let rawPoints1 = generateCps(5);    // low frequency terrain
 let rawPoints2 = generateCps(10);   // high frequency terrain
