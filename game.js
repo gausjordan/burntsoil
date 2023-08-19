@@ -97,7 +97,7 @@ let squeezeFactor = canvRef2.width / pxMix.length;
 drawBackdrop(canvRef1.width, canvRef1.height, "blue");
 drawTerrain(pxMix, squeezeFactor);
 
-manualCircle(300, 600, 60);
+manualCircle(900, 2000, 200);
 
 drawCircle();
 

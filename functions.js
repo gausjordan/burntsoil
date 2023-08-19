@@ -152,8 +152,8 @@ function drawTerrain(pixels, squeezeFactor) {
 }
 
 
-function manualCircle(x, y, r) {
-    let x1, y1;
+function manualCircle(dx, dy, r) {
+    
     canvCtx2.fillStyle = "rgb(255,0,0)";
 
     let lowerArc = new Set;
@@ -168,16 +168,24 @@ function manualCircle(x, y, r) {
     for(let i = 0; i <= 180; i += 0.1)
     {
         lowerArc.add({
-            x: r * Math.cos(i * Math.PI / 180),
-            y: r * Math.sin(i * Math.PI / 180)
+            x: Math.round(dx + r * Math.cos(i * Math.PI / 180)),
+            y: Math.round(dy + r * Math.sin(i * Math.PI / 180))
         });
-        
-        //canvCtx2.fillRect(x + x1, y + y1, 1, 1);
     }
 
+    console.log(lowerArc)
 
-    lowerArc.forEach(v => canvCtx2.fillRect(x + v.x, y + v.y, 1, 1) );
+
+
+    lowerArc.forEach(v => canvCtx2.fillRect(
+        v.x * squeezeFactor,
+        v.y * squeezeFactor,
+        1,
+        1        
+        ));
+
     
+
 }
 
 
