@@ -139,21 +139,22 @@ function cpsToPxs(cps) {
 }
 
 
-function drawTerrain(pixels) {
-    let squeezeFactor = canvRef2.width / pixels.length;
+function drawTerrain(pixels, squeezeFactor) {
     canvCtx2.fillStyle = "rgba(0,255,0,1)";
-    pixels.forEach( (c, index) =>
+    pixels.forEach(
+        (c, index) =>
         canvCtx2.fillRect(
             index * squeezeFactor,
             canvRef2.height - (c * squeezeFactor),
             1,
             8000)
-    );
+        );
 }
 
 
 function manualCircle(x, y, r) {
     let x1, y1;
+    //  let squeezeFactor = canvRef2.width / pixels.length;
     canvCtx2.fillStyle = "rgb(255,0,0)";
     for(let i = 0; i < 360; i += 0.1)
     {
@@ -161,5 +162,9 @@ function manualCircle(x, y, r) {
         y1 = r * Math.sin(i * Math.PI / 180);
         canvCtx2.fillRect(x + x1, y + y1, 1, 1);
     }
+}
+
+
+function drawCircle() {
 
 }

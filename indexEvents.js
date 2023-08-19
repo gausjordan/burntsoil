@@ -13,8 +13,9 @@ window.addEventListener("click", (ev) => {
 /** On resize - reset */
 window.addEventListener("resize", (ev) => {
     canvasSizeFormatterIndex(10, 10);
+    let squeezeFactor = canvRef2.width / pixels2.length;
     drawBackdrop(canvRef1.width, canvRef1.height, "sunset");
-    drawTerrain(pxMix);
+    drawTerrain(pxMix, squeezeFactor);
 });
 
 

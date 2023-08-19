@@ -1,8 +1,9 @@
 /** On resize - reset */
 window.addEventListener("resize", (ev) => {
     canvasSizeFormatterGame(12, 12);
+    squeezeFactor = canvRef2.width / pxMix.length;
     drawBackdrop(canvRef1.width, canvRef1.height, "blue");
-    drawTerrain(pxMix);
+    drawTerrain(pxMix, squeezeFactor);
 });
 
 

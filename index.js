@@ -21,10 +21,11 @@ let pixels2 = cpsToPxs(normPoints2);
 
 // Two sets of (pixel-defined) curves merged into one
 let pxMix = pixels1.map( (e, index) => { return e + 0.2 * pixels2[index]; });
+let squeezeFactor = canvRef2.width / pxMix.length;
 
 // Draws graphics. Backdrop is always on canvas1, game elements are on canvas2.
 drawBackdrop(canvRef1.width, canvRef1.height, "sunset");
-drawTerrain(pxMix);
+drawTerrain(pxMix, squeezeFactor);
 
 
 // Drawing
