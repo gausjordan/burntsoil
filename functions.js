@@ -139,6 +139,7 @@ function cpsToPxs(cps) {
 }
 
 
+
 function drawTerrain(pixels, squeezeFactor) {
     canvCtx2.fillStyle = "rgba(0,255,0,1)";
     pixels.forEach(
@@ -152,45 +153,28 @@ function drawTerrain(pixels, squeezeFactor) {
 }
 
 
-function manualCircle(dx, dy, r) {
+function carveCircle(dx, dy, r) {
     
     canvCtx2.fillStyle = "rgb(255,0,0)";
+    let lowerArc = {};
 
-    let lowerArcSet = {};
-
-    for(let i = 0; i <= 180; i += 0.1)
+    for(let i = 180; i < 360; i += 0.01)
     {
         let x = Math.round(dx + r * Math.cos(i * Math.PI / 180));
         let y = Math.round(dy + r * Math.sin(i * Math.PI / 180));
-
-        lowerArcSet[x] = y;
-        
+        lowerArc[x] = y;
     }
 
-    // let key;
-    // let value;
-    // for(let i = 0; i <= 180; i += 0.1)
-    // {
-    //     key = 
-    //     lowerArc.add({
-    //         x: Math.round(dx + r * Math.cos(i * Math.PI / 180)),
-    //         y: Math.round(dy + r * Math.sin(i * Math.PI / 180))
-    //     });
-    // }
+    for (key in lowerArc) {
 
-
-    console.log(Object.keys(lowerArcSet).length);
-
-
-    for (key in lowerArcSet) {
+        if (lowerArc[key] < pxMix[key]) {
+            pxMix[key] = lowerArc[key];
+        }
 
         canvCtx2.fillRect(
                 key * squeezeFactor,
-                lowerArcSet[key] * squeezeFactor,
-                1,
-                1        
-                );
-
+                lowerArc[key] * squeezeFactor,
+                1, 1);
     }
     
 
