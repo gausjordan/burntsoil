@@ -96,7 +96,10 @@ let squeezeFactor = canvRef2.width / pxMix.length;
 // Draws graphics. Backdrop is always on canvas1, game elements are on canvas2.
 drawBackdrop(canvRef1.width, canvRef1.height, "blue");
 
-carveCircle(1500, 800, 600);
+//carveCircle(1500, 800, 600);
+
+createExplosion(2000);
+
 drawCircle();
 
 drawTerrain(pxMix, squeezeFactor);
@@ -109,21 +112,22 @@ drawTerrain(pxMix, squeezeFactor);
 
 
 
-var globalID;
-var counter = 0;
+// var id;
+// var counter = 0;
 
-repeatOften();
+// doStuff();
 
-function repeatOften() {
-  canvCtx2.fillRect(640, 420, 40+counter, 20+counter);
-  counter++;
+// function doStuff() {
+//   canvCtx2.fillRect(640, 420, 40+counter, 20+counter);
+//   counter++;
 
-  if (counter < 200) {
-     globalID = requestAnimationFrame(repeatOften);
-  }
-}
+//   if (counter < 60) {
+//      id = requestAnimationFrame(doStuff);
+//      console.log(id);
+//   }
+// }
 
-  globalID = requestAnimationFrame(repeatOften);
+//   id = requestAnimationFrame(doStuff);
 
 
 

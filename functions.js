@@ -153,6 +153,13 @@ function drawTerrain(pixels, squeezeFactor) {
 }
 
 
+function createExplosion(x) {
+    
+    
+    carveCircle(x, pxMix[x], 200);
+}
+
+
 function carveCircle(dx, dy, r) {
     
     canvCtx2.fillStyle = "rgb(255,0,0)";
