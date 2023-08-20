@@ -156,33 +156,50 @@ function manualCircle(dx, dy, r) {
     
     canvCtx2.fillStyle = "rgb(255,0,0)";
 
-    let lowerArc = new Set;
-
-    // for(let i = 0; i < 360; i += 0.1)
-    // {
-    //     x1 = r * Math.cos(i * Math.PI / 180);
-    //     y1 = r * Math.sin(i * Math.PI / 180);
-    //     canvCtx2.fillRect(x + x1, y + y1, 1, 1);
-    // }
+    let lowerArcSet = {};
 
     for(let i = 0; i <= 180; i += 0.1)
     {
-        lowerArc.add({
-            x: Math.round(dx + r * Math.cos(i * Math.PI / 180)),
-            y: Math.round(dy + r * Math.sin(i * Math.PI / 180))
-        });
+        let x = Math.round(dx + r * Math.cos(i * Math.PI / 180));
+        let y = Math.round(dy + r * Math.sin(i * Math.PI / 180));
+
+        lowerArcSet[x] = y;
+        
     }
 
-    console.log(lowerArc)
+    // let key;
+    // let value;
+    // for(let i = 0; i <= 180; i += 0.1)
+    // {
+    //     key = 
+    //     lowerArc.add({
+    //         x: Math.round(dx + r * Math.cos(i * Math.PI / 180)),
+    //         y: Math.round(dy + r * Math.sin(i * Math.PI / 180))
+    //     });
+    // }
 
 
+    console.log(Object.keys(lowerArcSet).length);
 
-    lowerArc.forEach(v => canvCtx2.fillRect(
-        v.x * squeezeFactor,
-        v.y * squeezeFactor,
-        1,
-        1        
-        ));
+
+    for (key in lowerArcSet) {
+
+        canvCtx2.fillRect(
+                key * squeezeFactor,
+                lowerArcSet[key] * squeezeFactor,
+                1,
+                1        
+                );
+
+    }
+    
+
+    // lowerArcSet.forEach(v => canvCtx2.fillRect(
+    //     v.x * squeezeFactor,
+    //     v.y * squeezeFactor,
+    //     1,
+    //     1        
+    //     ));
 
     
 
