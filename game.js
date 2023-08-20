@@ -96,7 +96,7 @@ let squeezeFactor = canvRef2.width / pxMix.length;
 // Draws graphics. Backdrop is always on canvas1, game elements are on canvas2.
 drawBackdrop(canvRef1.width, canvRef1.height, "blue");
 
-carveCircle(1300, 2500, 1200);
+carveCircle(1300, 800, 600);
 drawCircle();
 
 drawTerrain(pxMix, squeezeFactor);

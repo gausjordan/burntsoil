@@ -157,13 +157,41 @@ function carveCircle(dx, dy, r) {
     
     canvCtx2.fillStyle = "rgb(255,0,0)";
     let lowerArc = {};
+    let upperArc = {};
+    let soilAbove = {};
 
+    // Compute a lower semi-circle shape for digging
     for(let i = 180; i < 360; i += 0.01)
     {
         let x = Math.round(dx + r * Math.cos(i * Math.PI / 180));
         let y = Math.round(dy + r * Math.sin(i * Math.PI / 180));
         lowerArc[x] = y;
     }
+
+    // Compute an upper semi-circle for the remaining soil to fall down
+    for(let i = 0; i < 180; i += 0.01)
+    {
+        let x = Math.round(dx + r * Math.cos(i * Math.PI / 180));
+        let y = Math.round(dy + r * Math.sin(i * Math.PI / 180));
+        upperArc[x] = y;
+    }
+
+    // Whatever needs to fall down becomes a new temporary dictionary
+    for (key in upperArc) {
+        if (upperArc[key] < pxMix[key]) {
+            soilAbove[key] = upperArc[key] - pxMix[key];
+        }
+    }
+
+    // Another short pixel array gets drawn
+    for (key in upperArc) {
+        canvCtx2.fillRect(
+            key * squeezeFactor,
+            canvRef2.height - (upperArc[key] * squeezeFactor),
+            1,
+            soilAbove[key] * squeezeFactor)
+    }
+
 
     for (key in lowerArc) {
 
@@ -176,16 +204,15 @@ function carveCircle(dx, dy, r) {
                 lowerArc[key] * squeezeFactor,
                 1, 1);
     }
+
+    for (s in soilAbove) {
+        canvCtx2.fillRect(
+            s * squeezeFactor,
+            lowerArc[s] * squeezeFactor,
+            1, 1);
+    }
     
 
-    // lowerArcSet.forEach(v => canvCtx2.fillRect(
-    //     v.x * squeezeFactor,
-    //     v.y * squeezeFactor,
-    //     1,
-    //     1        
-    //     ));
-
-    
 
 }
 
