@@ -193,6 +193,7 @@ function carveCircle(dx, dy, r) {
     }
 
 
+
     for (key in lowerArc) {
 
         if (lowerArc[key] < pxMix[key]) {
@@ -204,11 +205,11 @@ function carveCircle(dx, dy, r) {
         //         key * squeezeFactor,
         //         lowerArc[key] * squeezeFactor,
         //         1, 1);
+
     }
-  
-
-
 }
+
+
 
 
 function drawCircle() {

@@ -102,6 +102,36 @@ drawCircle();
 drawTerrain(pxMix, squeezeFactor);
 
 
+
+
+
+
+
+
+
+var globalID;
+var counter = 0;
+
+repeatOften();
+
+function repeatOften() {
+  canvCtx2.fillRect(640, 420, 40+counter, 20+counter);
+  counter++;
+
+  if (counter < 200) {
+     globalID = requestAnimationFrame(repeatOften);
+  }
+}
+
+  globalID = requestAnimationFrame(repeatOften);
+
+
+
+
+
+
+
+
 /*
  
 // PRIMJER ANIMACIJE S MDN WEB DOCSA
