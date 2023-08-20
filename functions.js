@@ -199,19 +199,13 @@ function carveCircle(dx, dy, r) {
             pxMix[key] = lowerArc[key];
         }
 
-        canvCtx2.fillRect(
-                key * squeezeFactor,
-                lowerArc[key] * squeezeFactor,
-                1, 1);
+        // // DEBUG
+        // canvCtx2.fillRect(
+        //         key * squeezeFactor,
+        //         lowerArc[key] * squeezeFactor,
+        //         1, 1);
     }
-
-    for (s in soilAbove) {
-        canvCtx2.fillRect(
-            s * squeezeFactor,
-            lowerArc[s] * squeezeFactor,
-            1, 1);
-    }
-    
+  
 
 
 }
