@@ -98,7 +98,8 @@ drawBackdrop(canvRef1.width, canvRef1.height, "blue");
 
 
 canvCtx2.fillStyle = "rgba(0,255,0,1)";
-createExplosion(4700);
+
+explode(4700, 900, 250, squeezeFactor);
 
 
 drawCircle();
@@ -107,7 +108,7 @@ canvCtx2.fillStyle = "rgba(0,255,0,1)";
 
 drawTerrain(pxMix, squeezeFactor);
 
-animationTest();
+
 
 // TODO:
 // Provjeri delta time i pomakni objekt za onolko kolko vremena ima!

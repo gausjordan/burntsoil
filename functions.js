@@ -166,8 +166,40 @@ function drawTerrain(pixels, squeezeFactor, from, to) {
 }
 
 
+
+function explode(x, y, blastSize) {
+
+    drawFireball(x, y, blastSize, squeezeFactor);
+    
+    let upperArc = generateUpperArc(x, y, blastSize);
+    let lowerArc = generateLowerArc(x, y, blastSize);
+
+    let soilAbove = soilAboveGenerator(upperArc);
+    let damageSpan = carve(lowerArc);
+    
+    drawDebris(soilAbove, squeezeFactor, damageSpan, upperArc);
+
+}
+
+
+function drawFireball(x, y, blastSize, squeezeFactor) {
+    x = x * squeezeFactor;
+    y = canvRef2.height - (y * squeezeFactor);
+    blastSize = blastSize * squeezeFactor;
+    let grad = canvCtx2.createRadialGradient(x, y, 0, x, y, blastSize);
+    grad.addColorStop(0, "red");
+    grad.addColorStop(1, "black");
+    canvCtx2.fillStyle = grad;
+    canvCtx2.beginPath();
+    canvCtx2.arc(x, y, blastSize, 0, 2*Math.PI);
+    canvCtx2.stroke();
+    canvCtx2.fill();
+}
+
+
 function drawDebris(soilAbove, squeezeFactor, damageSpan, upperArc) {
-    //canvCtx2.fillStyle = "rgb(255,0,0)";
+
+    canvCtx2.fillStyle = "rgb(0,255,0)";
     
     for (let i = damageSpan[0]; i < damageSpan[1]; i++) {
 
@@ -180,17 +212,6 @@ function drawDebris(soilAbove, squeezeFactor, damageSpan, upperArc) {
 }
 
 
-function createExplosion(x) {
-
-    let upperArc = generateUpperArc(x, pxMix[x], 300);
-    let lowerArc = generateLowerArc(x, pxMix[x], 300);
-
-    let soilAbove = soilAboveGenerator(upperArc);
-    let damageSpan = carve(lowerArc);
-    
-    drawDebris(soilAbove, squeezeFactor, damageSpan, upperArc);
-
-}
 
 
 /** Compute a lower semi-circle shape for the future carving */
@@ -247,24 +268,27 @@ function soilAboveGenerator(upperArc) {
 }
 
 
+
 function animationTest() {
     var stopId;
     var progress = 0;
     var stopId;
+    canvCtx2.fillStyle = "rgb(255,255,0)";
+    canvCtx2.fillRect(100, 100, 10, 500);
 
     controller();
 
     function step(timestamp) {
         progress++;
-        canvCtx2.fillRect(randomInteger(1,600), randomInteger(1, 600), 4, 4);
-        console.log(progress);
+        canvCtx2.fillRect(200, 300, progress, progress);
+        console.log(timestamp);
         controller();
     }
 
     function controller() {
-        if (progress < 140) {
+        if (progress < 1) {
             stopId = window.requestAnimationFrame(step);
-        } if (progress > 140) {
+        } if (progress > 1) {
             window.cancelAnimationFrame(stopId);
         }
         
