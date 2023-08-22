@@ -52,3 +52,36 @@ function debugDrawCurves() {
     }
 
 }
+
+
+
+
+
+// function createExplosion(x) {
+//     let upperArc = generateUpperArc(x, pxMix[x]-400, 300);
+//     let lowerArc = generateLowerArc(x, pxMix[x]-400, 300);
+//     let soilAbove = soilAboveGenerator(upperArc);
+//     let damageSpan = carve(lowerArc);
+
+//         // Debug
+//         // for (key in lowerArc) {
+//         // canvCtx2.fillStyle = "rgb(155,155,0)";
+//         // canvCtx2.fillRect(
+//         //     key * squeezeFactor,
+//         //     canvRef2.height - (lowerArc[key] * squeezeFactor),
+//         //     1,
+//         //     1)
+//         // }
+
+//         // for (key in upperArc) {
+//         //     canvCtx2.fillStyle = "rgb(155,155,0)";
+//         //     canvCtx2.fillRect(
+//         //         key * squeezeFactor,
+//         //         canvRef2.height - ((upperArc[key]) * squeezeFactor),
+//         //         1,
+//         //         1)
+//         // }
+
+//     drawDebris(soilAbove, squeezeFactor, damageSpan, upperArc);
+
+// }

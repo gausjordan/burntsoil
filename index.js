@@ -26,6 +26,8 @@ let squeezeFactor = canvRef2.width / pxMix.length;
 
 // Draws graphics. Backdrop is always on canvas1, game elements are on canvas2.
 drawBackdrop(canvRef1.width, canvRef1.height, "sunset");
+
+canvCtx2.fillStyle = "rgba(0,255,0,1)";
 drawTerrain(pxMix, squeezeFactor);
 
 

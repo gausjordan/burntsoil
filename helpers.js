@@ -89,3 +89,13 @@ function updateCanvasSize(hMargin, vMargin) {
     canvRef2.style.width = canvRef1.style.width;
     canvRef2.style.height = canvRef1.style.height;
 }
+
+
+/** A horrible, blocking, sleep method (to be improved) */
+function sleep(milliseconds) {
+    const date = Date.now();
+    let currentDate = null;
+    do {
+      currentDate = Date.now();
+    } while (currentDate - date < milliseconds);
+  }

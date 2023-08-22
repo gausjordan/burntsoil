@@ -5,7 +5,9 @@
  * @param {*} typeOf background style
  */
 function drawBackdrop(width, height, styleCode) {
+
     let r, g, b, step, string;
+    
     switch (styleCode) {
         case 'sunset':
             r = 42;
@@ -80,11 +82,11 @@ function generateCps(pointCount) {
 /**
  * Scales the X coordinates to fit the canvas size, in pixels. Once done,
  * overshoots 1 point before and after the visible range, for the interpolator.
- * Scales the Y coordinates to fit up to 75% of an average landscape display.
+ * Scales the Y coordinates to fit up to 60% of an average landscape display.
  * TODO: Array size must equal the size of the biggest display (multiplayer).
  * @param {*} cps an array of control point objects
  * @param {*} cWidth canvas width in pixels (oversampling is possible)
- * @param {*} isLowered generate ultra-low terrain (for main menu)
+ * @param {*} isLowered generate ultra-low terrain (for the main menu)
  * @returns an array of normalized control points
 */
 function normalizeCps(cps, cWidth, isLowered) {
@@ -103,8 +105,6 @@ function normalizeCps(cps, cWidth, isLowered) {
             y: (e.y * cWidth / (16/9) / 1000 * ceiling) }
         }
     );
-    
-    //normalized.forEach(c => canvCtx.fillRect(c.x, c.y, 1, -3000));
     return normalized;
 }
 
@@ -139,82 +139,198 @@ function cpsToPxs(cps) {
 }
 
 
+/**
+ * Draws the terrain on screen, doing the downsampling as necessary
+ * @param {*} pixels an array of pixel heights describing the landscape
+ * @param {*} squeezeFactor how much smaller the display resolution is
+ */
+function drawTerrain(pixels, squeezeFactor, from, to) {
+    if (from == undefined && to == undefined) {
+        pixels.forEach(
+            (c, index) =>
+            canvCtx2.fillRect(
+                index * squeezeFactor,
+                canvRef2.height - (c * squeezeFactor),
+                1,
+                8000)
+            );
+    } else {
+        for (let i = from; i < to; i++) {
+            canvCtx2.fillRect(
+                i * squeezeFactor,
+                canvRef2.height - (pixels[i] * squeezeFactor),
+                1,
+                8000);
+        }
+    }
+}
 
-function drawTerrain(pixels, squeezeFactor) {
-    canvCtx2.fillStyle = "rgba(0,255,0,1)";
-    pixels.forEach(
-        (c, index) =>
+
+function drawDebris(soilAbove, squeezeFactor, damageSpan, upperArc) {
+    //canvCtx2.fillStyle = "rgb(255,0,0)";
+    
+    for (let i = damageSpan[0]; i < damageSpan[1]; i++) {
+
         canvCtx2.fillRect(
-            index * squeezeFactor,
-            canvRef2.height - (c * squeezeFactor),
+            i * squeezeFactor,
+            canvRef2.height - ( (soilAbove[i] + upperArc[i] ) * squeezeFactor),
             1,
-            8000)
-        );
+            soilAbove[i] * squeezeFactor);
+    }
 }
 
 
 function createExplosion(x) {
+
+    let upperArc = generateUpperArc(x, pxMix[x], 300);
+    let lowerArc = generateLowerArc(x, pxMix[x], 300);
+
+    let soilAbove = soilAboveGenerator(upperArc);
+    let damageSpan = carve(lowerArc);
     
-    
-    carveCircle(x, pxMix[x], 200);
+    drawDebris(soilAbove, squeezeFactor, damageSpan, upperArc);
+
 }
 
 
-function carveCircle(dx, dy, r) {
-    
-    canvCtx2.fillStyle = "rgb(255,0,0)";
+/** Compute a lower semi-circle shape for the future carving */
+function generateLowerArc(dx, dy, r) {
     let lowerArc = {};
-    let upperArc = {};
-    let soilAbove = {};
-
-    // Compute a lower semi-circle shape for digging
-    for(let i = 180; i < 360; i += 0.01)
-    {
+    for(let i = 180; i < 360; i += 0.01) {
         let x = Math.round(dx + r * Math.cos(i * Math.PI / 180));
         let y = Math.round(dy + r * Math.sin(i * Math.PI / 180));
         lowerArc[x] = y;
     }
+    return lowerArc;
+}
 
-    // Compute an upper semi-circle for the remaining soil to fall down
-    for(let i = 0; i < 180; i += 0.01)
-    {
+
+/** Compute an upper semi-circle shape above which terrain is unaffected */
+function generateUpperArc(dx, dy, r) {
+    let upperArc = {};
+    for(let i = 0; i < 180; i += 0.01) {
         let x = Math.round(dx + r * Math.cos(i * Math.PI / 180));
         let y = Math.round(dy + r * Math.sin(i * Math.PI / 180));
         upperArc[x] = y;
     }
-
-    // Whatever needs to fall down becomes a new temporary dictionary
-    for (key in upperArc) {
-        if (upperArc[key] < pxMix[key]) {
-            soilAbove[key] = upperArc[key] - pxMix[key];
-        }
-    }
-
-    // Another short pixel array gets drawn
-    for (key in upperArc) {
-        canvCtx2.fillRect(
-            key * squeezeFactor,
-            canvRef2.height - (upperArc[key] * squeezeFactor),
-            1,
-            soilAbove[key] * squeezeFactor)
-    }
+    return upperArc;
+}
 
 
-
+/**
+ * Changes (carves) the existing landscape after an explosion event
+ * @param {*} lowerArc a dictionary of coordinates to be carved out
+ * @returns left and right blast limit on the x axis (array)
+ */
+function carve(lowerArc) {
     for (key in lowerArc) {
-
         if (lowerArc[key] < pxMix[key]) {
             pxMix[key] = lowerArc[key];
         }
-
-        // // DEBUG
-        // canvCtx2.fillRect(
-        //         key * squeezeFactor,
-        //         lowerArc[key] * squeezeFactor,
-        //         1, 1);
-
     }
+    let beginning = Object.keys(lowerArc)[0];
+    let end = Object.keys(lowerArc)[Object.keys(lowerArc).length - 1];
+    return [beginning, end];
 }
+
+
+/** Creates a dictionary of x and y values defining soil above the explosion */
+function soilAboveGenerator(upperArc) {
+    let soilAbove = {};
+    
+    for (key in upperArc) {
+        if (upperArc[key] < pxMix[key]) {
+            soilAbove[key] = pxMix[key] - upperArc[key];
+        }
+    }
+    return soilAbove;
+}
+
+
+function animationTest() {
+    var stopId;
+    var progress = 0;
+    var stopId;
+
+    controller();
+
+    function step(timestamp) {
+        progress++;
+        canvCtx2.fillRect(randomInteger(1,600), randomInteger(1, 600), 4, 4);
+        console.log(progress);
+        controller();
+    }
+
+    function controller() {
+        if (progress < 140) {
+            stopId = window.requestAnimationFrame(step);
+        } if (progress > 140) {
+            window.cancelAnimationFrame(stopId);
+        }
+        
+        
+    }
+
+}
+
+
+
+
+// function carveCircle(dx, dy, r) {
+    
+//     canvCtx2.fillStyle = "rgb(255,0,0)";
+//     let lowerArc = {};
+//     let upperArc = {};
+//     let soilAbove = {};
+
+//     // Compute a lower semi-circle shape for digging
+//     for(let i = 180; i < 360; i += 0.01)
+//     {
+//         let x = Math.round(dx + r * Math.cos(i * Math.PI / 180));
+//         let y = Math.round(dy + r * Math.sin(i * Math.PI / 180));
+//         lowerArc[x] = y;
+//     }
+
+//     // Compute an upper semi-circle for the remaining soil to fall down
+//     for(let i = 0; i < 180; i += 0.01)
+//     {
+//         let x = Math.round(dx + r * Math.cos(i * Math.PI / 180));
+//         let y = Math.round(dy + r * Math.sin(i * Math.PI / 180));
+//         upperArc[x] = y;
+//     }
+
+//     // Whatever needs to fall down becomes a new temporary dictionary
+//     for (key in upperArc) {
+//         if (upperArc[key] < pxMix[key]) {
+//             soilAbove[key] = upperArc[key] - pxMix[key];
+//         }
+//     }
+
+//     // Another short pixel array gets drawn
+//     for (key in upperArc) {
+//         canvCtx2.fillRect(
+//             key * squeezeFactor,
+//             canvRef2.height - (upperArc[key] * squeezeFactor),
+//             1,
+//             soilAbove[key] * squeezeFactor)
+//     }
+
+
+
+//     for (key in lowerArc) {
+
+//         if (lowerArc[key] < pxMix[key]) {
+//             pxMix[key] = lowerArc[key];
+//         }
+
+//         // // DEBUG
+//         // canvCtx2.fillRect(
+//         //         key * squeezeFactor,
+//         //         lowerArc[key] * squeezeFactor,
+//         //         1, 1);
+
+//     }
+// }
 
 
 

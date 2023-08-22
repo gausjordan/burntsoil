@@ -96,39 +96,38 @@ let squeezeFactor = canvRef2.width / pxMix.length;
 // Draws graphics. Backdrop is always on canvas1, game elements are on canvas2.
 drawBackdrop(canvRef1.width, canvRef1.height, "blue");
 
-//carveCircle(1500, 800, 600);
 
-createExplosion(2000);
+canvCtx2.fillStyle = "rgba(0,255,0,1)";
+createExplosion(4700);
+
 
 drawCircle();
 
+canvCtx2.fillStyle = "rgba(0,255,0,1)";
+
 drawTerrain(pxMix, squeezeFactor);
 
+animationTest();
 
-
-
-
-
-
+// TODO:
+// Provjeri delta time i pomakni objekt za onolko kolko vremena ima!
+// Klasican delta-time.
 
 
 // var id;
 // var counter = 0;
-
-// doStuff();
 
 // function doStuff() {
 //   canvCtx2.fillRect(640, 420, 40+counter, 20+counter);
 //   counter++;
 
 //   if (counter < 60) {
-//      id = requestAnimationFrame(doStuff);
-//      console.log(id);
+//      //id = 
+//      requestAnimationFrame(doStuff);
+//      //console.log(id);
 //   }
 // }
-
-//   id = requestAnimationFrame(doStuff);
-
+// requestAnimationFrame(doStuff);
 
 
 
@@ -141,8 +140,8 @@ drawTerrain(pxMix, squeezeFactor);
 // PRIMJER ANIMACIJE S MDN WEB DOCSA
 
 const element = document.getElementById("some-element-you-want-to-animate");
-let start, previousTimeStamp;
-let done = false;
+let start, previousTimeStamp;   // undefined
+let done = false;               // flag
 
 function step(timeStamp) {
   if (start === undefined) {
