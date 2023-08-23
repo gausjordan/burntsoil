@@ -99,73 +99,14 @@ drawBackdrop(canvRef1.width, canvRef1.height, "blue");
 
 canvCtx2.fillStyle = "rgba(0,255,0,1)";
 
+drawTerrain(pxMix, squeezeFactor);
+
 explode(4700, 900, 250, squeezeFactor);
 
 
-drawCircle();
 
 canvCtx2.fillStyle = "rgba(0,255,0,1)";
 
 drawTerrain(pxMix, squeezeFactor);
 
 
-
-// TODO:
-// Provjeri delta time i pomakni objekt za onolko kolko vremena ima!
-// Klasican delta-time.
-
-
-// var id;
-// var counter = 0;
-
-// function doStuff() {
-//   canvCtx2.fillRect(640, 420, 40+counter, 20+counter);
-//   counter++;
-
-//   if (counter < 60) {
-//      //id = 
-//      requestAnimationFrame(doStuff);
-//      //console.log(id);
-//   }
-// }
-// requestAnimationFrame(doStuff);
-
-
-
-
-
-
-
-/*
- 
-// PRIMJER ANIMACIJE S MDN WEB DOCSA
-
-const element = document.getElementById("some-element-you-want-to-animate");
-let start, previousTimeStamp;   // undefined
-let done = false;               // flag
-
-function step(timeStamp) {
-  if (start === undefined) {
-    start = timeStamp;
-  }
-  const elapsed = timeStamp - start;
-
-  if (previousTimeStamp !== timeStamp) {
-    // Math.min() is used here to make sure the element stops at exactly 200px
-    const count = Math.min(0.1 * elapsed, 200);
-    element.style.transform = `translateX(${count}px)`;
-    if (count === 200) done = true;
-  }
-
-  if (elapsed < 2000) {
-    // Stop the animation after 2 seconds
-    previousTimeStamp = timeStamp;
-    if (!done) {
-      window.requestAnimationFrame(step);
-    }
-  }
-}
-
-window.requestAnimationFrame(step);
-
-*/

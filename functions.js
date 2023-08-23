@@ -183,6 +183,11 @@ function explode(x, y, blastSize) {
 
 
 function drawFireball(x, y, blastSize, squeezeFactor) {
+    let animId;
+    let lastTime;
+    let frameDurationLimit = 1000 / 60;
+    let grower = 0;
+    let fireIsFinished = false;
     x = x * squeezeFactor;
     y = canvRef2.height - (y * squeezeFactor);
     blastSize = blastSize * squeezeFactor;
@@ -191,10 +196,57 @@ function drawFireball(x, y, blastSize, squeezeFactor) {
     grad.addColorStop(1, "black");
     canvCtx2.fillStyle = grad;
     canvCtx2.beginPath();
-    canvCtx2.arc(x, y, blastSize, 0, 2*Math.PI);
-    canvCtx2.stroke();
+    //canvCtx2.arc(x, y, blastSize, 0, 2*Math.PI);
+    canvCtx2.arc(x, y, 0, 0, 2*Math.PI);
     canvCtx2.fill();
+    animateFire();
+  
+    function animateFire(timeStamp) {
+        if (grower < blastSize) {
+            animId = requestAnimationFrame(animateFire);
+        }
+        if (lastTime === undefined) {
+            lastTime = timeStamp;
+        }
+        let elapsed = timeStamp - lastTime;
+
+        if (elapsed > frameDurationLimit) {
+            canvCtx2.fillStyle = grad;
+            canvCtx2.beginPath();
+            canvCtx2.arc(x, y, grower, 0, 2*Math.PI);
+            canvCtx2.fill();
+            grower = grower + 1;
+            lastTime = timeStamp;
+        } else {
+            fireIsFinished = true;
+        }
+    }
+
+
+    function animateSmoke(timeStamp) {
+
+        canvCtx2.fillRect(200, 200, 40, 40);
+
+        if (grower < blastSize) {
+            animId = requestAnimationFrame(animateSmoke);
+        }
+        if (lastTime === undefined) {
+            lastTime = timeStamp;
+        }
+        let elapsed = timeStamp - lastTime;
+
+        if (elapsed > frameDurationLimit) {
+            canvCtx2.fillStyle = "rgba(255, 0, 255, 1)";
+            canvCtx2.beginPath();
+            canvCtx2.arc(x-200, y-200, grower, 0, 2*Math.PI);
+            canvCtx2.fill();
+            grower = grower + 1;
+            lastTime = timeStamp;
+        }
+    }
+
 }
+
 
 
 function drawDebris(soilAbove, squeezeFactor, damageSpan, upperArc) {
@@ -269,96 +321,3 @@ function soilAboveGenerator(upperArc) {
 
 
 
-function animationTest() {
-    var stopId;
-    var progress = 0;
-    var stopId;
-    canvCtx2.fillStyle = "rgb(255,255,0)";
-    canvCtx2.fillRect(100, 100, 10, 500);
-
-    controller();
-
-    function step(timestamp) {
-        progress++;
-        canvCtx2.fillRect(200, 300, progress, progress);
-        console.log(timestamp);
-        controller();
-    }
-
-    function controller() {
-        if (progress < 1) {
-            stopId = window.requestAnimationFrame(step);
-        } if (progress > 1) {
-            window.cancelAnimationFrame(stopId);
-        }
-        
-        
-    }
-
-}
-
-
-
-
-// function carveCircle(dx, dy, r) {
-    
-//     canvCtx2.fillStyle = "rgb(255,0,0)";
-//     let lowerArc = {};
-//     let upperArc = {};
-//     let soilAbove = {};
-
-//     // Compute a lower semi-circle shape for digging
-//     for(let i = 180; i < 360; i += 0.01)
-//     {
-//         let x = Math.round(dx + r * Math.cos(i * Math.PI / 180));
-//         let y = Math.round(dy + r * Math.sin(i * Math.PI / 180));
-//         lowerArc[x] = y;
-//     }
-
-//     // Compute an upper semi-circle for the remaining soil to fall down
-//     for(let i = 0; i < 180; i += 0.01)
-//     {
-//         let x = Math.round(dx + r * Math.cos(i * Math.PI / 180));
-//         let y = Math.round(dy + r * Math.sin(i * Math.PI / 180));
-//         upperArc[x] = y;
-//     }
-
-//     // Whatever needs to fall down becomes a new temporary dictionary
-//     for (key in upperArc) {
-//         if (upperArc[key] < pxMix[key]) {
-//             soilAbove[key] = upperArc[key] - pxMix[key];
-//         }
-//     }
-
-//     // Another short pixel array gets drawn
-//     for (key in upperArc) {
-//         canvCtx2.fillRect(
-//             key * squeezeFactor,
-//             canvRef2.height - (upperArc[key] * squeezeFactor),
-//             1,
-//             soilAbove[key] * squeezeFactor)
-//     }
-
-
-
-//     for (key in lowerArc) {
-
-//         if (lowerArc[key] < pxMix[key]) {
-//             pxMix[key] = lowerArc[key];
-//         }
-
-//         // // DEBUG
-//         // canvCtx2.fillRect(
-//         //         key * squeezeFactor,
-//         //         lowerArc[key] * squeezeFactor,
-//         //         1, 1);
-
-//     }
-// }
-
-
-
-
-function drawCircle() {
-
-}
