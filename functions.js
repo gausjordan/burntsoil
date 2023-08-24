@@ -216,7 +216,7 @@ function drawFireball(x, y, blastSize, squeezeFactor, upperArc, lowerArc) {
             canvCtx2.beginPath();
             canvCtx2.arc(xSqz, ySqz, grower, 0, 2*Math.PI);
             canvCtx2.fill();
-            grower = grower + 1;
+            grower = grower + 10 * squeezeFactor;
             lastTime = timeStamp;
         } else {
             isDone = true;
@@ -234,12 +234,9 @@ function drawFireball(x, y, blastSize, squeezeFactor, upperArc, lowerArc) {
         }
     }
 
-
+    grower = 0;
     function animateClearout(timeStamp) {
 
-        canvCtx2.fillStyle = "white";
-        grower = 0;
-        
         for (let v = x - blastSize; v < x; v++) {
             
             grower = 0;
@@ -256,11 +253,17 @@ function drawFireball(x, y, blastSize, squeezeFactor, upperArc, lowerArc) {
                         canvRef2.height - ((lowerArc[v] + grower) * squeezeFactor),
                         (x - v) * 2 * squeezeFactor,
                         1);
-                debugger;
                 grower++;
-                //if (grower > 50) { break; }
+                
+
+                if (v < x) {
+                    console.log("Fuck");
+                    requestAnimationFrame(animateClearout);
+                }
+
+
             }
-            
+                        
         }
     
 
