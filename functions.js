@@ -169,79 +169,115 @@ function drawTerrain(pixels, squeezeFactor, from, to) {
 
 function explode(x, y, blastSize) {
 
-    drawFireball(x, y, blastSize, squeezeFactor);
-    
     let upperArc = generateUpperArc(x, y, blastSize);
     let lowerArc = generateLowerArc(x, y, blastSize);
 
+    drawFireball(x, y, blastSize, squeezeFactor, upperArc, lowerArc);
+    
     let soilAbove = soilAboveGenerator(upperArc);
     let damageSpan = carve(lowerArc);
-    
+
+  
+    //canvCtx2.clearRect(0,0,canvRef2.width, canvRef2.height);
     drawDebris(soilAbove, squeezeFactor, damageSpan, upperArc);
 
 }
 
 
-function drawFireball(x, y, blastSize, squeezeFactor) {
+function drawFireball(x, y, blastSize, squeezeFactor, upperArc, lowerArc) {
     let animId;
     let lastTime;
     let frameDurationLimit = 1000 / 60;
     let grower = 0;
-    let fireIsFinished = false;
-    x = x * squeezeFactor;
-    y = canvRef2.height - (y * squeezeFactor);
-    blastSize = blastSize * squeezeFactor;
-    let grad = canvCtx2.createRadialGradient(x, y, 0, x, y, blastSize);
+    let elapsed = 30000;
+    let isDone = false;
+    xSqz = x * squeezeFactor;
+    ySqz = canvRef2.height - (y * squeezeFactor);
+    blastSizeSqz = blastSize * squeezeFactor;
+    let grad = canvCtx2.createRadialGradient(
+        xSqz, ySqz, 0, xSqz, ySqz, blastSizeSqz);
     grad.addColorStop(0, "red");
     grad.addColorStop(1, "black");
     canvCtx2.fillStyle = grad;
     canvCtx2.beginPath();
-    //canvCtx2.arc(x, y, blastSize, 0, 2*Math.PI);
-    canvCtx2.arc(x, y, 0, 0, 2*Math.PI);
+    canvCtx2.arc(xSqz, ySqz, 0, 0, 2*Math.PI);
     canvCtx2.fill();
     animateFire();
-  
-    function animateFire(timeStamp) {
-        if (grower < blastSize) {
-            animId = requestAnimationFrame(animateFire);
-        }
+
+      function animateFire(timeStamp) {
+
         if (lastTime === undefined) {
             lastTime = timeStamp;
         }
-        let elapsed = timeStamp - lastTime;
+        elapsed = timeStamp - lastTime;
 
         if (elapsed > frameDurationLimit) {
             canvCtx2.fillStyle = grad;
             canvCtx2.beginPath();
-            canvCtx2.arc(x, y, grower, 0, 2*Math.PI);
+            canvCtx2.arc(xSqz, ySqz, grower, 0, 2*Math.PI);
             canvCtx2.fill();
             grower = grower + 1;
             lastTime = timeStamp;
         } else {
-            fireIsFinished = true;
+            isDone = true;
+        }
+
+        if (grower < blastSizeSqz) {
+            animId = requestAnimationFrame(animateFire);
+        }
+        else {
+            lastTime = undefined;
+            grower = 0;
+            animId = undefined;
+            elapsed = 30000;
+            animateClearout();
         }
     }
 
 
-    function animateSmoke(timeStamp) {
+    function animateClearout(timeStamp) {
 
-        canvCtx2.fillRect(200, 200, 40, 40);
+        canvCtx2.fillStyle = "white";
+        grower = 0;
+        
+        for (let v = x - blastSize; v < x; v++) {
+            
+            grower = 0;
 
-        if (grower < blastSize) {
-            animId = requestAnimationFrame(animateSmoke);
+            while (grower != upperArc[v+1] - upperArc[v]) {
+                canvCtx2.clearRect(
+                    v * squeezeFactor,
+                    canvRef2.height - ((upperArc[v] + grower) * squeezeFactor),
+                    (x - v) * 2 * squeezeFactor,
+                    1);
+                
+                grower++;
+                //if (grower > 50) { break; }
+            }
+            
         }
+    
+
         if (lastTime === undefined) {
             lastTime = timeStamp;
         }
         let elapsed = timeStamp - lastTime;
 
         if (elapsed > frameDurationLimit) {
-            canvCtx2.fillStyle = "rgba(255, 0, 255, 1)";
-            canvCtx2.beginPath();
-            canvCtx2.arc(x-200, y-200, grower, 0, 2*Math.PI);
-            canvCtx2.fill();
-            grower = grower + 1;
-            lastTime = timeStamp;
+            
+            for (let i = upperArc[0]; i < Object.keys(upperArc).length; i++) {
+                console.log(i + ", " + upperArc[i]);
+                if (i < 2000) {
+                    animId = requestAnimationFrame(animateClearout);
+                }
+            }
+            
+            
+
+        }
+
+        if (false) {
+            animId = requestAnimationFrame(animateClearout);
         }
     }
 

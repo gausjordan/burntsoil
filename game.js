@@ -93,7 +93,7 @@ let pixels2 = cpsToPxs(normPoints2);
 let pxMix = pixels1.map( (e, index) => { return e + 0.2 * pixels2[index]; });
 let squeezeFactor = canvRef2.width / pxMix.length;
 
-// Draws graphics. Backdrop is always on canvas1, game elements are on canvas2.
+// Draws graphics. Backdrop always uses canvas1, game elements use canvas2.
 drawBackdrop(canvRef1.width, canvRef1.height, "blue");
 
 
@@ -105,8 +105,8 @@ explode(4700, 900, 250, squeezeFactor);
 
 
 
-canvCtx2.fillStyle = "rgba(0,255,0,1)";
+// canvCtx2.fillStyle = "rgba(0,255,0,1)";
 
-drawTerrain(pxMix, squeezeFactor);
+// drawTerrain(pxMix, squeezeFactor);
 
 
