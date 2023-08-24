@@ -204,8 +204,7 @@ function drawFireball(x, y, blastSize, squeezeFactor, upperArc, lowerArc) {
     canvCtx2.fill();
     animateFire();
 
-      function animateFire(timeStamp) {
-
+    function animateFire(timeStamp) {
         if (lastTime === undefined) {
             lastTime = timeStamp;
         }
@@ -233,60 +232,33 @@ function drawFireball(x, y, blastSize, squeezeFactor, upperArc, lowerArc) {
             animateClearout();
         }
     }
-
+    
     grower = 0;
+    let v = x - blastSize;
+
     function animateClearout(timeStamp) {
+        grower = 0;
 
-        for (let v = x - blastSize; v < x; v++) {
-            
-            grower = 0;
+        while (grower != upperArc[v+1] - upperArc[v]) {
 
-            while (grower != upperArc[v+1] - upperArc[v]) {
+            canvCtx2.clearRect(
+                v * squeezeFactor,
+                canvRef2.height - ((upperArc[v] + grower) * squeezeFactor),
+                (x - v) * 2 * squeezeFactor,
+                1);
+
                 canvCtx2.clearRect(
                     v * squeezeFactor,
-                    canvRef2.height - ((upperArc[v] + grower) * squeezeFactor),
+                    canvRef2.height - ((lowerArc[v] + grower) * squeezeFactor),
                     (x - v) * 2 * squeezeFactor,
                     1);
-
-                    canvCtx2.clearRect(
-                        v * squeezeFactor,
-                        canvRef2.height - ((lowerArc[v] + grower) * squeezeFactor),
-                        (x - v) * 2 * squeezeFactor,
-                        1);
-                grower++;
-                
-
-                if (v < x) {
-                    console.log("Fuck");
-                    requestAnimationFrame(animateClearout);
-                }
-
-
-            }
-                        
+            grower++;
         }
-    
+        v++;
 
-        if (lastTime === undefined) {
-            lastTime = timeStamp;
-        }
-        let elapsed = timeStamp - lastTime;
-
-        if (elapsed > frameDurationLimit) {
-            
-            for (let i = upperArc[0]; i < Object.keys(upperArc).length; i++) {
-                console.log(i + ", " + upperArc[i]);
-                if (i < 2000) {
-                    animId = requestAnimationFrame(animateClearout);
-                }
-            }
-            
-            
-
-        }
-
-        if (false) {
-            animId = requestAnimationFrame(animateClearout);
+        if (v < x) {
+            requestAnimationFrame(animateClearout);
+            console.log("Log");
         }
     }
 
