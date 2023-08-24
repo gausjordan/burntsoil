@@ -250,7 +250,13 @@ function drawFireball(x, y, blastSize, squeezeFactor, upperArc, lowerArc) {
                     canvRef2.height - ((upperArc[v] + grower) * squeezeFactor),
                     (x - v) * 2 * squeezeFactor,
                     1);
-                
+
+                    canvCtx2.clearRect(
+                        v * squeezeFactor,
+                        canvRef2.height - ((lowerArc[v] + grower) * squeezeFactor),
+                        (x - v) * 2 * squeezeFactor,
+                        1);
+                debugger;
                 grower++;
                 //if (grower > 50) { break; }
             }
