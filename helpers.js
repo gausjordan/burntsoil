@@ -91,11 +91,24 @@ function updateCanvasSize(hMargin, vMargin) {
 }
 
 
-/** A horrible, blocking, sleep method (to be improved) */
-function sleep(milliseconds) {
-    const date = Date.now();
-    let currentDate = null;
-    do {
-      currentDate = Date.now();
-    } while (currentDate - date < milliseconds);
-  }
+function semiArcToNormalizedQuarterArc(x, y, semiarc) {
+    let tempQuarterArc = [];
+    for (let v in semiarc) {
+        if (v - x == 0) { 
+            break;
+        }
+        tempQuarterArc.push(semiarc[v] - y);
+    }
+    return tempQuarterArc;
+}
+
+
+
+// function semiArcToNormalizedQuarterArc(x, y, semiarc) {
+//     let tempQuarterArc = {};
+//     for (let v in semiarc) {
+//         tempQuarterArc[v-x] = semiarc[v] - y;
+//         if (v-x == 0) { break; }
+//     }
+//     return tempQuarterArc;
+// }

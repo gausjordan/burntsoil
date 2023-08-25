@@ -186,11 +186,13 @@ function explode(x, y, blastSize) {
 
 function drawFireball(x, y, blastSize, squeezeFactor, upperArc, lowerArc) {
     let animId;
+    let iterator;
     let lastTime;
     let frameDurationLimit = 1000 / 60;
     let grower = 0;
     let elapsed = 30000;
     let isDone = false;
+    let normQuarterArc = {};
     xSqz = x * squeezeFactor;
     ySqz = canvRef2.height - (y * squeezeFactor);
     blastSizeSqz = blastSize * squeezeFactor;
@@ -202,6 +204,7 @@ function drawFireball(x, y, blastSize, squeezeFactor, upperArc, lowerArc) {
     canvCtx2.beginPath();
     canvCtx2.arc(xSqz, ySqz, 0, 0, 2*Math.PI);
     canvCtx2.fill();
+
     animateFire();
 
     function animateFire(timeStamp) {
@@ -215,52 +218,55 @@ function drawFireball(x, y, blastSize, squeezeFactor, upperArc, lowerArc) {
             canvCtx2.beginPath();
             canvCtx2.arc(xSqz, ySqz, grower, 0, 2*Math.PI);
             canvCtx2.fill();
-            grower = grower + 10 * squeezeFactor;
+            grower = grower + Math.min(10 * squeezeFactor, blastSizeSqz);
             lastTime = timeStamp;
         } else {
             isDone = true;
         }
 
-        if (grower < blastSizeSqz) {
+        if (grower <= blastSizeSqz + 2) {
             animId = requestAnimationFrame(animateFire);
         }
         else {
             lastTime = undefined;
-            grower = 0;
             animId = undefined;
             elapsed = 30000;
+            grower = 0;
+            normQuarterArc = semiArcToNormalizedQuarterArc(x, y, upperArc);
+            canvCtx2.fillStyle = "rgba(255,255,255,1)";
+            iterator = blastSize;
+            console.log(normQuarterArc);
             animateClearout();
         }
     }
     
-    grower = 0;
-    let v = x - blastSize;
-
     function animateClearout(timeStamp) {
-        grower = 0;
 
-        while (grower != upperArc[v+1] - upperArc[v]) {
+            iterator--;
 
             canvCtx2.clearRect(
-                v * squeezeFactor,
-                canvRef2.height - ((upperArc[v] + grower) * squeezeFactor),
-                (x - v) * 2 * squeezeFactor,
-                1);
+                xSqz + normQuarterArc[iterator] * squeezeFactor,
+                ySqz - blastSizeSqz + iterator * squeezeFactor,
+                - 2 * normQuarterArc[iterator] * squeezeFactor,
+                -1);
 
-                canvCtx2.clearRect(
-                    v * squeezeFactor,
-                    canvRef2.height - ((lowerArc[v] + grower) * squeezeFactor),
-                    (x - v) * 2 * squeezeFactor,
-                    1);
-            grower++;
-        }
-        v++;
+            canvCtx2.clearRect(
+                xSqz + normQuarterArc[iterator] * squeezeFactor,
+                ySqz + blastSizeSqz - iterator * squeezeFactor,
+                - 2 * normQuarterArc[iterator] * squeezeFactor,
+                -1);
 
-        if (v < x) {
-            requestAnimationFrame(animateClearout);
-            console.log("Log");
-        }
+            if (iterator != 0) {
+                requestAnimationFrame(animateClearout);
+            } else {
+                canvCtx2.fillStyle = "rgba(0,255,0,1)";
+                drawTerrain(pxMix, squeezeFactor);
+            }
+            
     }
+
+
+
 
 }
 
