@@ -91,12 +91,13 @@ function updateCanvasSize(hMargin, vMargin) {
 }
 
 
-function semiArcToNormalizedQuarterArc(x, y, semiarc, blastSize) {
+function semiArcToNormalizedQuarterArc(x, y, semiArc, blastSize) {
     let tempQuarterArc = [];
-    let size = Object.keys(semiarc).length;
-    let firstElement = Object.keys(semiarc)[0];
-    let lastElement = Object.keys(semiarc)[size-1];
+    let size = Object.keys(semiArc).length;
+    let firstElement = semiArc[Object.keys(semiArc)[0]];
+    let lastElement = semiArc[Object.keys(semiArc)[length-1]];
     let i;
+    //console.log(semiArc);
     console.log("x = " + x);
     console.log("y = " + y);
     console.log("blastSize = " + blastSize);
@@ -104,20 +105,41 @@ function semiArcToNormalizedQuarterArc(x, y, semiarc, blastSize) {
     console.log("Last dict element = " + lastElement);
     console.log("size = " + size);
 
-    //console.log(semiarc);
+    console.log("SemiArc:");
+    console.log(semiArc);
     i = 0;
-    for (let [key, value] of Object.entries(semiarc)) {
-        i++;
+    for (let [key, value] of Object.entries(semiArc)) {
         //console.log(key, value);
         tempQuarterArc.push(value - firstElement);
-        if (i == Math.round(size/2)) {
+        if (i == Math.floor(size/2)) {
             break;
         }
+        i++;
     }
 
+    console.log("Novi array:");
     console.log(tempQuarterArc);
+    visualize(tempQuarterArc);
+    visualize2(semiArc);
     return tempQuarterArc;
+
 }
+
+
+function visualize(arr) {
+    arr.forEach( (element, index) => {
+        canvCtx2.fillRect(element, index, 1, 1);
+        
+    });
+}
+
+function visualize2(dct) {
+    canvCtx2.fillStyle = "rgb(0,255,255)";
+    for(d in dct) {
+        canvCtx2.fillRect(300 + d/8, dct[d]/8, 1, 1);
+    }
+}
+
 
 
 // function semiArcToNormalizedQuarterArc(x, y, semiarc) {

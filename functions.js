@@ -264,6 +264,22 @@ function drawFireball(x, y, blastSize, squeezeFactor, upperArc, lowerArc) {
                     ySqz + blastSizeSqz - (iterator-j) * squeezeFactor,
                     -2 * normQuarterArc[iterator-j] * squeezeFactor,
                     -1);
+
+                /*
+                canvCtx2.fillRect(
+                    xSqz + normQuarterArc[iterator-j] * squeezeFactor,
+                    ySqz - blastSizeSqz + (iterator-j) * squeezeFactor,
+                    1, // -2 * normQuarterArc[iterator-j] * squeezeFactor,
+                    -1);
+
+                // Clears the fireball's upper hemisphere
+                canvCtx2.fillRect(
+                    xSqz + normQuarterArc[iterator-j] * squeezeFactor,
+                    ySqz + blastSizeSqz - (iterator-j) * squeezeFactor,
+                    1, // -2 * normQuarterArc[iterator-j] * squeezeFactor,
+                    -1);
+                */
+                
             }
 
             iterator -= 10;
@@ -344,6 +360,7 @@ function carve(lowerArc) {
     }
     let beginning = Object.keys(lowerArc)[0];
     let end = Object.keys(lowerArc)[Object.keys(lowerArc).length - 1];
+    console.log(lowerArc);
     return [beginning, end];
 }
 
