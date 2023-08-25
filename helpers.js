@@ -90,56 +90,25 @@ function updateCanvasSize(hMargin, vMargin) {
     canvRef2.style.height = canvRef1.style.height;
 }
 
-
+/** Converts a semicircle - defined by a dictionary - to a normalized array
+ * of pixel width deltas, defining a quarter of a circle, and having 0 as a
+ * centerline. Keys are X-axis coordinates, values are Y-axis coordinates.
+ * Edge case: First key is not necessarily at position 0! */
 function semiArcToNormalizedQuarterArc(x, y, semiArc, blastSize) {
+    let i;
     let tempQuarterArc = [];
     let size = Object.keys(semiArc).length;
-    let firstElement = semiArc[Object.keys(semiArc)[0]];
-    let lastElement = semiArc[Object.keys(semiArc)[length-1]];
-    let i;
-    //console.log(semiArc);
-    console.log("x = " + x);
-    console.log("y = " + y);
-    console.log("blastSize = " + blastSize);
-    console.log("First dict element = " + firstElement);
-    console.log("Last dict element = " + lastElement);
-    console.log("size = " + size);
+    let firstKey = (x < blastSize) ? Math.round(x - blastSize)
+                   : Number(Object.keys(semiArc)[0]);
+    let firstValue = semiArc[firstKey];
+    let lastKey = firstKey + size - 1;
 
-    console.log("SemiArc:");
-    console.log(semiArc);
-    i = 0;
-    for (let [key, value] of Object.entries(semiArc)) {
-        //console.log(key, value);
-        tempQuarterArc.push(value - firstElement);
-        if (i == Math.floor(size/2)) {
-            break;
-        }
-        i++;
+    for (let i = firstKey; i < (Math.abs(firstKey) + lastKey) / 2; i++) {
+        tempQuarterArc.push(semiArc[i] - firstValue);
     }
-
-    console.log("Novi array:");
-    console.log(tempQuarterArc);
-    visualize(tempQuarterArc);
-    visualize2(semiArc);
+       
     return tempQuarterArc;
-
 }
-
-
-function visualize(arr) {
-    arr.forEach( (element, index) => {
-        canvCtx2.fillRect(element, index, 1, 1);
-        
-    });
-}
-
-function visualize2(dct) {
-    canvCtx2.fillStyle = "rgb(0,255,255)";
-    for(d in dct) {
-        canvCtx2.fillRect(300 + d/8, dct[d]/8, 1, 1);
-    }
-}
-
 
 
 // function semiArcToNormalizedQuarterArc(x, y, semiarc) {

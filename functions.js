@@ -246,44 +246,23 @@ function drawFireball(x, y, blastSize, squeezeFactor, upperArc, lowerArc) {
         if (lastTime === undefined) {
             lastTime = timeStamp;
         }
-
-            
-          
             for (let j = -10; j < 10; j++) {
                 
                 // Clears the fireball's lower hemisphere
-                canvCtx2.fillRect(
+                canvCtx2.clearRect(
                     xSqz + normQuarterArc[iterator-j] * squeezeFactor,
                     ySqz - blastSizeSqz + (iterator-j) * squeezeFactor,
                     -2 * normQuarterArc[iterator-j] * squeezeFactor,
                     -1);
 
                 // Clears the fireball's upper hemisphere
-                canvCtx2.fillRect(
+                canvCtx2.clearRect(
                     xSqz + normQuarterArc[iterator-j] * squeezeFactor,
                     ySqz + blastSizeSqz - (iterator-j) * squeezeFactor,
                     -2 * normQuarterArc[iterator-j] * squeezeFactor,
                     -1);
-
-                /*
-                canvCtx2.fillRect(
-                    xSqz + normQuarterArc[iterator-j] * squeezeFactor,
-                    ySqz - blastSizeSqz + (iterator-j) * squeezeFactor,
-                    1, // -2 * normQuarterArc[iterator-j] * squeezeFactor,
-                    -1);
-
-                // Clears the fireball's upper hemisphere
-                canvCtx2.fillRect(
-                    xSqz + normQuarterArc[iterator-j] * squeezeFactor,
-                    ySqz + blastSizeSqz - (iterator-j) * squeezeFactor,
-                    1, // -2 * normQuarterArc[iterator-j] * squeezeFactor,
-                    -1);
-                */
-                
             }
-
             iterator -= 10;
-
         
         if (elapsed > frameDurationLimit) {
 
@@ -292,16 +271,9 @@ function drawFireball(x, y, blastSize, squeezeFactor, upperArc, lowerArc) {
             } else {
                 canvCtx2.fillStyle = "rgba(0,255,0,1)";
                 lock = false;
-                // TODO Pocisti ostatak kruga, refreshaj teren parcijalno
-                // drawTerrain(pxMix, squeezeFactor);
             }
-        }
-            
+        }   
     }
-
-
-
-
 }
 
 
@@ -360,7 +332,6 @@ function carve(lowerArc) {
     }
     let beginning = Object.keys(lowerArc)[0];
     let end = Object.keys(lowerArc)[Object.keys(lowerArc).length - 1];
-    console.log(lowerArc);
     return [beginning, end];
 }
 

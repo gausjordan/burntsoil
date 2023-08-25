@@ -54,34 +54,16 @@ function debugDrawCurves() {
 }
 
 
+function visualize(arr) {
+    arr.forEach( (element, index) => {
+        canvCtx2.fillRect(300 + element, index, 1, 1);
+        
+    });
+}
 
-
-
-// function createExplosion(x) {
-//     let upperArc = generateUpperArc(x, pxMix[x]-400, 300);
-//     let lowerArc = generateLowerArc(x, pxMix[x]-400, 300);
-//     let soilAbove = soilAboveGenerator(upperArc);
-//     let damageSpan = carve(lowerArc);
-
-//         // Debug
-//         // for (key in lowerArc) {
-//         // canvCtx2.fillStyle = "rgb(155,155,0)";
-//         // canvCtx2.fillRect(
-//         //     key * squeezeFactor,
-//         //     canvRef2.height - (lowerArc[key] * squeezeFactor),
-//         //     1,
-//         //     1)
-//         // }
-
-//         // for (key in upperArc) {
-//         //     canvCtx2.fillStyle = "rgb(155,155,0)";
-//         //     canvCtx2.fillRect(
-//         //         key * squeezeFactor,
-//         //         canvRef2.height - ((upperArc[key]) * squeezeFactor),
-//         //         1,
-//         //         1)
-//         // }
-
-//     drawDebris(soilAbove, squeezeFactor, damageSpan, upperArc);
-
-// }
+function visualize2(dct) {
+    canvCtx2.fillStyle = "rgb(0,255,255)";
+    for(d in dct) {
+        canvCtx2.fillRect(200 + d/8, 400 + dct[d]/8, 1, 1);
+    }
+}
