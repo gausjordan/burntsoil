@@ -265,7 +265,6 @@ function drawFireball(x, y, blastSize, squeezeFactor, upperArc, lowerArc) {
         
         if (elapsed > frameDurationLimit) {
 
-
             if (iterator != 0) {
                 requestAnimationFrame(animateClearout);
             } else {
