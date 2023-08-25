@@ -224,7 +224,7 @@ function drawFireball(x, y, blastSize, squeezeFactor, upperArc, lowerArc) {
             isDone = true;
         }
 
-        if (grower <= blastSizeSqz + 2) {
+        if (grower <= blastSizeSqz + 1) {
             animId = requestAnimationFrame(animateFire);
         }
         else {
@@ -242,26 +242,38 @@ function drawFireball(x, y, blastSize, squeezeFactor, upperArc, lowerArc) {
     
     function animateClearout(timeStamp) {
 
-            iterator--;
+        if (lastTime === undefined) {
+            lastTime = timeStamp;
+        }
 
-            canvCtx2.clearRect(
-                xSqz + normQuarterArc[iterator] * squeezeFactor,
-                ySqz - blastSizeSqz + iterator * squeezeFactor,
-                - 2 * normQuarterArc[iterator] * squeezeFactor,
-                -1);
+            iterator -= 5;
 
-            canvCtx2.clearRect(
-                xSqz + normQuarterArc[iterator] * squeezeFactor,
-                ySqz + blastSizeSqz - iterator * squeezeFactor,
-                - 2 * normQuarterArc[iterator] * squeezeFactor,
-                -1);
+            for (let j = -5; j < 5; j++) {
+                canvCtx2.clearRect(
+                    xSqz + normQuarterArc[iterator-j] * squeezeFactor,
+                    ySqz - blastSizeSqz + (iterator-j) * squeezeFactor,
+                    - 2 * normQuarterArc[iterator-j] * squeezeFactor,
+                    -1);
+
+                canvCtx2.clearRect(
+                    xSqz + normQuarterArc[iterator-j] * squeezeFactor,
+                    ySqz + blastSizeSqz - (iterator-j) * squeezeFactor,
+                    - 2 * normQuarterArc[iterator-j] * squeezeFactor,
+                    -1);
+            }
+
+        
+        if (elapsed > frameDurationLimit) {
+
 
             if (iterator != 0) {
                 requestAnimationFrame(animateClearout);
             } else {
                 canvCtx2.fillStyle = "rgba(0,255,0,1)";
-                drawTerrain(pxMix, squeezeFactor);
+                // TODO Pocisti ostatak kruga, refreshaj teren parcijalno
+                // drawTerrain(pxMix, squeezeFactor);
             }
+        }
             
     }
 

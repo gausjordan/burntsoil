@@ -99,7 +99,7 @@ drawBackdrop(canvRef1.width, canvRef1.height, "blue");
 
 canvCtx2.fillStyle = "rgba(0,255,0,1)";
 
-drawTerrain(pxMix, squeezeFactor);
+ drawTerrain(pxMix, squeezeFactor);
 
 explode(4700, 900, 250, squeezeFactor);
 
@@ -107,6 +107,6 @@ explode(4700, 900, 250, squeezeFactor);
 
 // canvCtx2.fillStyle = "rgba(0,255,0,1)";
 
-// drawTerrain(pxMix, squeezeFactor);
+ drawTerrain(pxMix, squeezeFactor);
 
 
