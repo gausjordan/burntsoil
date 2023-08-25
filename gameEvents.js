@@ -1,3 +1,19 @@
+let posX = 0;
+let posY = 0;
+let lock = false;
+window.addEventListener("click", (ev) => {
+    posX = getMousePos(canvRef2, ev).x * ratio;
+    posY = getMousePos(canvRef2, ev).y * ratio;
+
+    corrX = posX / squeezeFactor;
+    corrY = (canvRef2.height - posY) / squeezeFactor;
+    if (!lock) {
+        lock = true;
+        explode(corrX, corrY, 250, squeezeFactor);
+    }
+});
+
+
 /** On resize - reset */
 window.addEventListener("resize", (ev) => {
     canvasSizeFormatterGame(12, 12);

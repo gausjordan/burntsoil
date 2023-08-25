@@ -16,7 +16,7 @@ let rawPoints2 = generateCps(10);   // high frequency terrain
 
 
 // DEBUG: Fixed points
-
+/*
 rawPoints1 = [
   {
     "x": 227,
@@ -82,7 +82,7 @@ rawPoints2 = [
     "y": 761
   }
 ];
-
+*/
 
 let normPoints1 = normalizeCps(rawPoints1, maxRes, false);
 let normPoints2 = normalizeCps(rawPoints2, maxRes, false);
@@ -101,7 +101,7 @@ canvCtx2.fillStyle = "rgba(0,255,0,1)";
 
  drawTerrain(pxMix, squeezeFactor);
 
-explode(4700, 900, 250, squeezeFactor);
+//explode(40, 900, 250, squeezeFactor);
 
 
 

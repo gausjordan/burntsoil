@@ -207,6 +207,7 @@ function drawFireball(x, y, blastSize, squeezeFactor, upperArc, lowerArc) {
 
     animateFire();
 
+
     function animateFire(timeStamp) {
         if (lastTime === undefined) {
             lastTime = timeStamp;
@@ -232,35 +233,40 @@ function drawFireball(x, y, blastSize, squeezeFactor, upperArc, lowerArc) {
             animId = undefined;
             elapsed = 30000;
             grower = 0;
-            normQuarterArc = semiArcToNormalizedQuarterArc(x, y, upperArc);
+            normQuarterArc = semiArcToNormalizedQuarterArc(x, y, upperArc, blastSize);
             canvCtx2.fillStyle = "rgba(255,255,255,1)";
             iterator = blastSize;
-            console.log(normQuarterArc);
             animateClearout();
         }
     }
     
+
     function animateClearout(timeStamp) {
 
         if (lastTime === undefined) {
             lastTime = timeStamp;
         }
 
-            iterator -= 5;
-
-            for (let j = -5; j < 5; j++) {
-                canvCtx2.clearRect(
+            
+          
+            for (let j = -10; j < 10; j++) {
+                
+                // Clears the fireball's lower hemisphere
+                canvCtx2.fillRect(
                     xSqz + normQuarterArc[iterator-j] * squeezeFactor,
                     ySqz - blastSizeSqz + (iterator-j) * squeezeFactor,
-                    - 2 * normQuarterArc[iterator-j] * squeezeFactor,
+                    -2 * normQuarterArc[iterator-j] * squeezeFactor,
                     -1);
 
-                canvCtx2.clearRect(
+                // Clears the fireball's upper hemisphere
+                canvCtx2.fillRect(
                     xSqz + normQuarterArc[iterator-j] * squeezeFactor,
                     ySqz + blastSizeSqz - (iterator-j) * squeezeFactor,
-                    - 2 * normQuarterArc[iterator-j] * squeezeFactor,
+                    -2 * normQuarterArc[iterator-j] * squeezeFactor,
                     -1);
             }
+
+            iterator -= 10;
 
         
         if (elapsed > frameDurationLimit) {
@@ -269,6 +275,7 @@ function drawFireball(x, y, blastSize, squeezeFactor, upperArc, lowerArc) {
                 requestAnimationFrame(animateClearout);
             } else {
                 canvCtx2.fillStyle = "rgba(0,255,0,1)";
+                lock = false;
                 // TODO Pocisti ostatak kruga, refreshaj teren parcijalno
                 // drawTerrain(pxMix, squeezeFactor);
             }

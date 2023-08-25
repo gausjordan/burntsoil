@@ -91,24 +91,44 @@ function updateCanvasSize(hMargin, vMargin) {
 }
 
 
-function semiArcToNormalizedQuarterArc(x, y, semiarc) {
+function semiArcToNormalizedQuarterArc(x, y, semiarc, blastSize) {
     let tempQuarterArc = [];
-    for (let v in semiarc) {
-        if (v - x == 0) { 
+    let size = Object.keys(semiarc).length;
+    let firstElement = Object.keys(semiarc)[0];
+    let lastElement = Object.keys(semiarc)[size-1];
+    let i;
+    console.log("x = " + x);
+    console.log("y = " + y);
+    console.log("blastSize = " + blastSize);
+    console.log("First dict element = " + firstElement);
+    console.log("Last dict element = " + lastElement);
+    console.log("size = " + size);
+
+    //console.log(semiarc);
+    i = 0;
+    for (let [key, value] of Object.entries(semiarc)) {
+        i++;
+        //console.log(key, value);
+        tempQuarterArc.push(value - firstElement);
+        if (i == Math.round(size/2)) {
             break;
         }
-        tempQuarterArc.push(semiarc[v] - y);
     }
+
+    console.log(tempQuarterArc);
     return tempQuarterArc;
 }
 
 
-
 // function semiArcToNormalizedQuarterArc(x, y, semiarc) {
-//     let tempQuarterArc = {};
+//     let tempQuarterArc = [];
+//     console.log(semiarc);
+//     //let size = Object.keys(semiarc).size;
 //     for (let v in semiarc) {
-//         tempQuarterArc[v-x] = semiarc[v] - y;
-//         if (v-x == 0) { break; }
+//         if (v - x == 0) {
+//             break;
+//         }
+//         tempQuarterArc.push(semiarc[v] - y);
 //     }
 //     return tempQuarterArc;
 // }
