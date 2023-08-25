@@ -4,12 +4,15 @@ let lock = false;
 window.addEventListener("click", (ev) => {
     posX = getMousePos(canvRef2, ev).x * ratio;
     posY = getMousePos(canvRef2, ev).y * ratio;
-
     corrX = posX / squeezeFactor;
     corrY = (canvRef2.height - posY) / squeezeFactor;
     if (!lock) {
         lock = true;
+
         explode(corrX, corrY, 250, squeezeFactor);
+
+        //drawTerrain(pxMix, squeezeFactor);
+        
     }
 });
 

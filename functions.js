@@ -145,6 +145,7 @@ function cpsToPxs(cps) {
  * @param {*} squeezeFactor how much smaller the display resolution is
  */
 function drawTerrain(pixels, squeezeFactor, from, to) {
+    canvCtx2.fillStyle = "rgba(0,255,0,1)";
     if (from == undefined && to == undefined) {
         pixels.forEach(
             (c, index) =>
@@ -168,18 +169,13 @@ function drawTerrain(pixels, squeezeFactor, from, to) {
 
 
 function explode(x, y, blastSize) {
-
     let upperArc = generateUpperArc(x, y, blastSize);
     let lowerArc = generateLowerArc(x, y, blastSize);
-
     drawFireball(x, y, blastSize, squeezeFactor, upperArc, lowerArc);
-    
     let soilAbove = soilAboveGenerator(upperArc);
     let damageSpan = carve(lowerArc);
-
-  
-    //canvCtx2.clearRect(0,0,canvRef2.width, canvRef2.height);
     drawDebris(soilAbove, squeezeFactor, damageSpan, upperArc);
+    
 
 }
 
@@ -204,9 +200,7 @@ function drawFireball(x, y, blastSize, squeezeFactor, upperArc, lowerArc) {
     canvCtx2.beginPath();
     canvCtx2.arc(xSqz, ySqz, 0, 0, 2*Math.PI);
     canvCtx2.fill();
-
     animateFire();
-
 
     function animateFire(timeStamp) {
         if (lastTime === undefined) {
@@ -233,16 +227,14 @@ function drawFireball(x, y, blastSize, squeezeFactor, upperArc, lowerArc) {
             animId = undefined;
             elapsed = 30000;
             grower = 0;
-            normQuarterArc = semiArcToNormalizedQuarterArc(x, y, upperArc, blastSize);
+            normQuarterArc = semiArcToNormQarc(x, y, upperArc, blastSize);
             canvCtx2.fillStyle = "rgba(255,255,255,1)";
             iterator = blastSize;
             animateClearout();
         }
     }
     
-
     function animateClearout(timeStamp) {
-
         if (lastTime === undefined) {
             lastTime = timeStamp;
         }
@@ -270,26 +262,45 @@ function drawFireball(x, y, blastSize, squeezeFactor, upperArc, lowerArc) {
                 requestAnimationFrame(animateClearout);
             } else {
                 canvCtx2.fillStyle = "rgba(0,255,0,1)";
-                lock = false;
+                animateDebris();
             }
         }   
     }
+
+    function animateDebris(timeStamp) {
+        if (lastTime === undefined) {
+            lastTime = timeStamp;
+        }
+            
+        
+        if (elapsed > frameDurationLimit) {
+
+            if (iterator != 0) {
+                requestAnimationFrame(animateDebris);
+            } else {
+                canvCtx2.fillStyle = "rgba(0,255,0,1)";
+                lock = false;
+                
+            }
+        }   
+    }
+
+
+
 }
 
 
-
 function drawDebris(soilAbove, squeezeFactor, damageSpan, upperArc) {
-
-    canvCtx2.fillStyle = "rgb(0,255,0)";
-    
+    canvCtx2.fillStyle = "rgb(0,155,100)";
     for (let i = damageSpan[0]; i < damageSpan[1]; i++) {
-
+        
         canvCtx2.fillRect(
             i * squeezeFactor,
-            canvRef2.height - ( (soilAbove[i] + upperArc[i] ) * squeezeFactor),
+            canvRef2.height - ((soilAbove[i] + upperArc[i]) * squeezeFactor),
             1,
             soilAbove[i] * squeezeFactor);
     }
+    canvCtx2.fillRect(20,20,100,100);
 }
 
 
@@ -339,7 +350,6 @@ function carve(lowerArc) {
 /** Creates a dictionary of x and y values defining soil above the explosion */
 function soilAboveGenerator(upperArc) {
     let soilAbove = {};
-    
     for (key in upperArc) {
         if (upperArc[key] < pxMix[key]) {
             soilAbove[key] = pxMix[key] - upperArc[key];

@@ -94,8 +94,7 @@ function updateCanvasSize(hMargin, vMargin) {
  * of pixel width deltas, defining a quarter of a circle, and having 0 as a
  * centerline. Keys are X-axis coordinates, values are Y-axis coordinates.
  * Edge case: First key is not necessarily at position 0! */
-function semiArcToNormalizedQuarterArc(x, y, semiArc, blastSize) {
-    let i;
+function semiArcToNormQarc(x, y, semiArc, blastSize) {
     let tempQuarterArc = [];
     let size = Object.keys(semiArc).length;
     let firstKey = (x < blastSize) ? Math.round(x - blastSize)
@@ -106,20 +105,5 @@ function semiArcToNormalizedQuarterArc(x, y, semiArc, blastSize) {
     for (let i = firstKey; i < (Math.abs(firstKey) + lastKey) / 2; i++) {
         tempQuarterArc.push(semiArc[i] - firstValue);
     }
-       
     return tempQuarterArc;
 }
-
-
-// function semiArcToNormalizedQuarterArc(x, y, semiarc) {
-//     let tempQuarterArc = [];
-//     console.log(semiarc);
-//     //let size = Object.keys(semiarc).size;
-//     for (let v in semiarc) {
-//         if (v - x == 0) {
-//             break;
-//         }
-//         tempQuarterArc.push(semiarc[v] - y);
-//     }
-//     return tempQuarterArc;
-// }
