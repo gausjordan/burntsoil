@@ -10,8 +10,9 @@ window.addEventListener("click", (ev) => {
         lock = true;
 
         explode(corrX, corrY, 250, squeezeFactor);
-
         
+        // Debug
+        // explode(1000, 500, 250, squeezeFactor);
         //drawTerrain(pxMix, squeezeFactor);
         
     }

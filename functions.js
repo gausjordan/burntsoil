@@ -143,9 +143,17 @@ function cpsToPxs(cps) {
  * Draws the terrain on screen, doing the downsampling as necessary
  * @param {*} pixels an array of pixel heights describing the landscape
  * @param {*} squeezeFactor how much smaller the display resolution is
+ * @param {*} terrainColor (optional) CSS color
+ * @param {*} from (optional) partial redraw beginning
+ * @param {*} to (optional) partial redraw end
  */
-function drawTerrain(pixels, squeezeFactor, from, to) {
-    canvCtx2.fillStyle = "rgba(0,255,0,1)";
+function drawTerrain(pixels, squeezeFactor, terrainColor, from, to) {
+    if (terrainColor == undefined) {
+        canvCtx2.fillStyle = globalTerrainColor;
+    } else {
+        canvCtx2.fillStyle = terrainColor;
+    }
+    
     if (from == undefined && to == undefined) {
         pixels.forEach(
             (c, index) =>
@@ -167,16 +175,15 @@ function drawTerrain(pixels, squeezeFactor, from, to) {
 }
 
 
-
 function explode(x, y, blastSize) {
     let upperArc = generateUpperArc(x, y, blastSize);
     let lowerArc = generateLowerArc(x, y, blastSize);
     drawFireball(x, y, blastSize, squeezeFactor, upperArc, lowerArc);
-    let soilAbove = soilAboveGenerator(upperArc);
-    let damageSpan = getCarveLimits(lowerArc);
-    carve(lowerArc);
+    //let soilAbove = soilAboveGenerator(upperArc);
+    //let damageSpan = getCarveLimits(lowerArc);
+    //carve(lowerArc, drawTerrain);
     drawTerrain(pxMix, squeezeFactor);
-    drawDebris(soilAbove, squeezeFactor, damageSpan, upperArc);
+    //drawDebris(soilAbove, squeezeFactor, damageSpan, upperArc);
 
 }
 
@@ -262,42 +269,24 @@ function drawFireball(x, y, blastSize, squeezeFactor, upperArc, lowerArc) {
             if (iterator != 0) {
                 requestAnimationFrame(animateClearout);
             } else {
-                canvCtx2.fillStyle = "rgba(0,255,0,1)";
-                animateDebris();
-            }
-        }   
-    }
-
-    function animateDebris(timeStamp) {
-        if (lastTime === undefined) {
-            lastTime = timeStamp;
-        }
-            
-        
-        if (elapsed > frameDurationLimit) {
-
-            if (iterator != 0) {
-                requestAnimationFrame(animateDebris);
-            } else {
+                //canvCtx2.clearRect(1, 1, canvRef2.width, canvRef2.height);
+                //drawTerrain(pxMix, squeezeFactor);
                 canvCtx2.fillStyle = "rgba(0,255,0,1)";
                 lock = false;
-                
+                //drawDebris(soilAbove, squeezeFactor, damageSpan, upperArc);
             }
         }   
     }
-
-
-
 }
 
 
 function drawDebris(soilAbove, squeezeFactor, damageSpan, upperArc) {
     canvCtx2.fillStyle = "rgb(0,155,100)";
 
-    console.log(soilAbove);
-    console.log(squeezeFactor);
-    console.log(damageSpan);
-    console.log(upperArc);
+    // console.log(soilAbove);
+    // console.log(squeezeFactor);
+    // console.log(damageSpan);
+    // console.log(upperArc);
 
     for (let i = damageSpan[0]; i < damageSpan[1]; i++) {
         canvCtx2.fillRect(
@@ -340,20 +329,12 @@ function generateUpperArc(dx, dy, r) {
  * @param {*} lowerArc a dictionary of coordinates to be carved out
  * @returns left and right blast limit on the x axis (array)
  */
-function carve(lowerArc) {
+function carve(lowerArc, callback) {
     for (key in lowerArc) {
         if (lowerArc[key] < pxMix[key]) {
             pxMix[key] = lowerArc[key];
         }
     }
-
-}
-
-
-function getCarveLimits(lowerArc) {
-    let beginning = Object.keys(lowerArc)[0];
-    let end = Object.keys(lowerArc)[Object.keys(lowerArc).length - 1];
-    return [beginning, end];
 }
 
 
@@ -365,8 +346,19 @@ function soilAboveGenerator(upperArc) {
             soilAbove[key] = pxMix[key] - upperArc[key];
         }
     }
+    console.log("Upper arc:");
+    console.log(upperArc);
+    console.log("Soil above:");
+    console.log(soilAbove);
     return soilAbove;
 }
 
 
 
+function getCarveLimits(lowerArc) {
+    let beginning = Object.keys(lowerArc)[0];
+    let end = Object.keys(lowerArc)[Object.keys(lowerArc).length - 1];
+    console.log("Carve limit beginning: " + beginning);
+    console.log("Carve limit ending: " + end);
+    return [beginning, end];
+}

@@ -1,7 +1,7 @@
 // Check all players and get the widest screen resolution possible
 // Temporarily hardcoded
 let maxRes = 6000;
-
+let globalTerrainColor = "rgba(0, 255, 0, 1)";
 let colorValueAtPos = null;
 let ratio = Math.ceil(window.devicePixelRatio);
 let canvRef1 = document.getElementById("canvas1");
@@ -16,7 +16,7 @@ let rawPoints2 = generateCps(10);   // high frequency terrain
 
 
 // DEBUG: Fixed points
-/*
+
 rawPoints1 = [
   {
     "x": 227,
@@ -82,7 +82,7 @@ rawPoints2 = [
     "y": 761
   }
 ];
-*/
+
 
 let normPoints1 = normalizeCps(rawPoints1, maxRes, false);
 let normPoints2 = normalizeCps(rawPoints2, maxRes, false);
@@ -93,9 +93,7 @@ let pixels2 = cpsToPxs(normPoints2);
 let pxMix = pixels1.map( (e, index) => { return e + 0.2 * pixels2[index]; });
 let squeezeFactor = canvRef2.width / pxMix.length;
 
-// Draws graphics. Backdrop always uses canvas1, game elements use canvas2.
+// Backdrop always uses canvas1. Game elements use canvas2.
 drawBackdrop(canvRef1.width, canvRef1.height, "blue");
-
-canvCtx2.fillStyle = "rgba(0,255,0,1)";
 
 drawTerrain(pxMix, squeezeFactor);
