@@ -173,9 +173,10 @@ function explode(x, y, blastSize) {
     let lowerArc = generateLowerArc(x, y, blastSize);
     drawFireball(x, y, blastSize, squeezeFactor, upperArc, lowerArc);
     let soilAbove = soilAboveGenerator(upperArc);
-    let damageSpan = carve(lowerArc);
+    let damageSpan = getCarveLimits(lowerArc);
+    carve(lowerArc);
+    drawTerrain(pxMix, squeezeFactor);
     drawDebris(soilAbove, squeezeFactor, damageSpan, upperArc);
-    
 
 }
 
@@ -292,15 +293,19 @@ function drawFireball(x, y, blastSize, squeezeFactor, upperArc, lowerArc) {
 
 function drawDebris(soilAbove, squeezeFactor, damageSpan, upperArc) {
     canvCtx2.fillStyle = "rgb(0,155,100)";
+
+    console.log(soilAbove);
+    console.log(squeezeFactor);
+    console.log(damageSpan);
+    console.log(upperArc);
+
     for (let i = damageSpan[0]; i < damageSpan[1]; i++) {
-        
         canvCtx2.fillRect(
             i * squeezeFactor,
             canvRef2.height - ((soilAbove[i] + upperArc[i]) * squeezeFactor),
             1,
             soilAbove[i] * squeezeFactor);
     }
-    canvCtx2.fillRect(20,20,100,100);
 }
 
 
@@ -341,6 +346,11 @@ function carve(lowerArc) {
             pxMix[key] = lowerArc[key];
         }
     }
+
+}
+
+
+function getCarveLimits(lowerArc) {
     let beginning = Object.keys(lowerArc)[0];
     let end = Object.keys(lowerArc)[Object.keys(lowerArc).length - 1];
     return [beginning, end];

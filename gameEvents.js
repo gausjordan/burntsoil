@@ -11,6 +11,7 @@ window.addEventListener("click", (ev) => {
 
         explode(corrX, corrY, 250, squeezeFactor);
 
+        
         //drawTerrain(pxMix, squeezeFactor);
         
     }
