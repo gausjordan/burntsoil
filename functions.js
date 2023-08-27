@@ -175,27 +175,30 @@ function drawTerrain(pixels, squeezeFactor, terrainColor, from, to) {
 }
 
 
-function explode(x, y, blastSize) {
-    let upperArc = generateUpperArc(x, y, blastSize);
-    let lowerArc = generateLowerArc(x, y, blastSize);
-    drawFireball(x, y, blastSize, squeezeFactor, upperArc, lowerArc);
+async function explode(x, y, blastSize) {
+    let outterResolve;
+    let upArc = generateUpperArc(x, y, blastSize);
+    let lowArc = generateLowerArc(x, y, blastSize);
+
+    await drawFireball(x, y, blastSize, upArc, lowArc);
+    await clearFireball(x, y, blastSize, upArc, lowArc);
+    
+    
+        
+    //drawFireball(x, y, blastSize, squeezeFactor, upperArc, lowerArc);
     //let soilAbove = soilAboveGenerator(upperArc);
     //let damageSpan = getCarveLimits(lowerArc);
     //carve(lowerArc, drawTerrain);
-    drawTerrain(pxMix, squeezeFactor);
+    // drawTerrain(pxMix, squeezeFactor);
     //drawDebris(soilAbove, squeezeFactor, damageSpan, upperArc);
-
 }
 
 
-function drawFireball(x, y, blastSize, squeezeFactor, upperArc, lowerArc) {
-    let animId;
-    let iterator;
-    let lastTime;
+function drawFireball(x, y, blastSize, upArc, lowArc) {
+    let iterator, lastTime;
     let frameDurationLimit = 1000 / 60;
     let grower = 0;
     let elapsed = 30000;
-    let isDone = false;
     let normQuarterArc = {};
     xSqz = x * squeezeFactor;
     ySqz = canvRef2.height - (y * squeezeFactor);
@@ -208,75 +211,95 @@ function drawFireball(x, y, blastSize, squeezeFactor, upperArc, lowerArc) {
     canvCtx2.beginPath();
     canvCtx2.arc(xSqz, ySqz, 0, 0, 2*Math.PI);
     canvCtx2.fill();
-    animateFire();
-
-    function animateFire(timeStamp) {
-        if (lastTime === undefined) {
-            lastTime = timeStamp;
-        }
-        elapsed = timeStamp - lastTime;
-
-        if (elapsed > frameDurationLimit) {
-            canvCtx2.fillStyle = grad;
-            canvCtx2.beginPath();
-            canvCtx2.arc(xSqz, ySqz, grower, 0, 2*Math.PI);
-            canvCtx2.fill();
-            grower = grower + Math.min(10 * squeezeFactor, blastSizeSqz);
-            lastTime = timeStamp;
-        } else {
-            isDone = true;
-        }
-
-        if (grower <= blastSizeSqz + 1) {
-            animId = requestAnimationFrame(animateFire);
-        }
-        else {
-            lastTime = undefined;
-            animId = undefined;
-            elapsed = 30000;
-            grower = 0;
-            normQuarterArc = semiArcToNormQarc(x, y, upperArc, blastSize);
-            canvCtx2.fillStyle = "rgba(255,255,255,1)";
-            iterator = blastSize;
-            animateClearout();
-        }
-    }
     
-    function animateClearout(timeStamp) {
-        if (lastTime === undefined) {
-            lastTime = timeStamp;
+    return new Promise(resolve => {
+        function animateFire(timeStamp) {
+            if (lastTime === undefined) {
+                lastTime = timeStamp;
+            }
+            elapsed = timeStamp - lastTime;
+
+            if (elapsed > frameDurationLimit) {
+                canvCtx2.fillStyle = grad;
+                canvCtx2.beginPath();
+                canvCtx2.arc(xSqz, ySqz, grower, 0, 2*Math.PI);
+                canvCtx2.fill();
+                grower = grower + Math.min(10 * squeezeFactor, blastSizeSqz);
+                lastTime = timeStamp;
+            }
+
+            if (grower <= blastSizeSqz + 1) {
+                requestAnimationFrame(animateFire);
+            }
+            else {
+                lastTime = undefined;
+                elapsed = 30000;
+                grower = 0;
+                normQuarterArc = semiArcToNormQarc(x, y, upArc, blastSize);
+                canvCtx2.fillStyle = "rgba(255,255,255,1)";
+                iterator = blastSize;
+                resolve();
+            }
         }
-            for (let j = -10; j < 10; j++) {
-                
-                // Clears the fireball's lower hemisphere
-                canvCtx2.clearRect(
-                    xSqz + normQuarterArc[iterator-j] * squeezeFactor,
-                    ySqz - blastSizeSqz + (iterator-j) * squeezeFactor,
-                    -2 * normQuarterArc[iterator-j] * squeezeFactor,
-                    -1);
+        requestAnimationFrame(animateFire);
+    })
+}
 
-                // Clears the fireball's upper hemisphere
-                canvCtx2.clearRect(
-                    xSqz + normQuarterArc[iterator-j] * squeezeFactor,
-                    ySqz + blastSizeSqz - (iterator-j) * squeezeFactor,
-                    -2 * normQuarterArc[iterator-j] * squeezeFactor,
-                    -1);
-            }
-            iterator -= 10;
-        
-        if (elapsed > frameDurationLimit) {
+function clearFireball(x, y, blastSize, upArc, lowArc) {
+    let frameDurationLimit = 1000 / 60;
+    xSqz = x * squeezeFactor;
+    ySqz = canvRef2.height - (y * squeezeFactor);
+    blastSizeSqz = blastSize * squeezeFactor;
+    lastTime = undefined;
+    elapsed = 30000;
+    normQuarterArc = semiArcToNormQarc(x, y, upArc, blastSize);
+    canvCtx2.fillStyle = "rgba(255,255,255,1)";
+    iterator = blastSize;
+    //animateClearout();
 
-            if (iterator != 0) {
-                requestAnimationFrame(animateClearout);
-            } else {
-                //canvCtx2.clearRect(1, 1, canvRef2.width, canvRef2.height);
-                //drawTerrain(pxMix, squeezeFactor);
-                canvCtx2.fillStyle = "rgba(0,255,0,1)";
-                lock = false;
-                //drawDebris(soilAbove, squeezeFactor, damageSpan, upperArc);
+    return new Promise(resolve => {
+        function animateClearout(timeStamp) {
+            if (lastTime === undefined) {
+                lastTime = timeStamp;
             }
-        }   
-    }
+                for (let j = -10; j < 10; j++) {
+                    
+                    // Clears the fireball's lower hemisphere
+                    canvCtx2.clearRect(
+                        xSqz + normQuarterArc[iterator-j] * squeezeFactor,
+                        ySqz - blastSizeSqz + (iterator-j) * squeezeFactor,
+                        -2 * normQuarterArc[iterator-j] * squeezeFactor,
+                        -1);
+
+                    // Clears the fireball's upper hemisphere
+                    canvCtx2.clearRect(
+                        xSqz + normQuarterArc[iterator-j] * squeezeFactor,
+                        ySqz + blastSizeSqz - (iterator-j) * squeezeFactor,
+                        -2 * normQuarterArc[iterator-j] * squeezeFactor,
+                        -1);
+                }
+                iterator -= 10;
+            
+            if (elapsed > frameDurationLimit) {
+
+                if (iterator != 0) {
+                    requestAnimationFrame(animateClearout);
+                    // await new Promise(resolve => {
+                    //     requestAnimationFrame(animateClearout);
+                    // });
+
+                } else {
+                    //canvCtx2.clearRect(1, 1, canvRef2.width, canvRef2.height);
+                    //drawTerrain(pxMix, squeezeFactor);
+                    canvCtx2.fillStyle = "rgba(0,255,0,1)";
+                    lock = false;
+                    //drawDebris(soilAbove, squeezeFactor, damageSpan, upperArc);
+                    resolve();
+                }
+            }   
+        }
+        requestAnimationFrame(animateClearout);
+    })
 }
 
 

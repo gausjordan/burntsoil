@@ -8,10 +8,20 @@ window.addEventListener("click", (ev) => {
     corrY = (canvRef2.height - posY) / squeezeFactor;
     if (!lock) {
         lock = true;
+        explode(corrX, corrY, 250);
 
-        explode(corrX, corrY, 250, squeezeFactor);
+        /*
+            let pr = new Promise ( resolve => { 
+                setTimeout( () => { resolve() }, 1200);
+            });
+
+            pr
+                .then( () => console.log("Yo"))
+                .then( () => animiranaSlova.innerHTML="Opa maco!")
+                .then( () => setTimeout( () => alert("Ha!"), 1000));
+        */
+
         
-        // Debug
         // explode(1000, 500, 250, squeezeFactor);
         //drawTerrain(pxMix, squeezeFactor);
         
