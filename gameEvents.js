@@ -8,7 +8,7 @@ window.addEventListener("click", (ev) => {
     corrY = (canvRef2.height - posY) / squeezeFactor;
     if (!lock) {
         lock = true;
-        explode(corrX, corrY, 250);
+        explosionOnGround(corrX, corrY, 250);
 
         /*
             let pr = new Promise ( resolve => { 

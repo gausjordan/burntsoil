@@ -90,6 +90,7 @@ function updateCanvasSize(hMargin, vMargin) {
     canvRef2.style.height = canvRef1.style.height;
 }
 
+
 /** Converts a semicircle - defined by a dictionary - to a normalized array
  * of pixel width deltas, defining a quarter of a circle, and having 0 as a
  * centerline. Keys are X-axis coordinates, values are Y-axis coordinates.
@@ -102,7 +103,7 @@ function semiArcToNormQarc(x, y, semiArc, blastSize) {
     let firstValue = semiArc[firstKey];
     let lastKey = firstKey + size - 1;
 
-    for (let i = firstKey; i < (Math.abs(firstKey) + lastKey) / 2; i++) {
+    for (let i = firstKey; i < Math.round(Math.abs(firstKey) + lastKey) / 2; i++) {
         tempQuarterArc.push(semiArc[i] - firstValue);
     }
     return tempQuarterArc;

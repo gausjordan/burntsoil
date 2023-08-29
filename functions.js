@@ -175,16 +175,24 @@ function drawTerrain(pixels, squeezeFactor, terrainColor, from, to) {
 }
 
 
-async function explode(x, y, blastSize) {
-    let outterResolve;
+/**
+ * A series of actions taken once a weapon misses and hits the ground
+ * @param {*} x 
+ * @param {*} y 
+ * @param {*} blastSize 
+ */
+async function explosionOnGround(x, y, blastSize) {
+    xSqz = x * squeezeFactor;
+    ySqz = canvRef2.height - (y * squeezeFactor);
+    blastSqz = blastSize * squeezeFactor;
+    
     let upArc = generateUpperArc(x, y, blastSize);
     let lowArc = generateLowerArc(x, y, blastSize);
 
-    await drawFireball(x, y, blastSize, upArc, lowArc);
-    await clearFireball(x, y, blastSize, upArc, lowArc);
+    await drawFireball(x, y, blastSize);
+    await clearFireball(xSqz, ySqz, blastSqz);
+    //let debris = collectDebris(upArc, lowArc, pxMix);
     
-    
-        
     //drawFireball(x, y, blastSize, squeezeFactor, upperArc, lowerArc);
     //let soilAbove = soilAboveGenerator(upperArc);
     //let damageSpan = getCarveLimits(lowerArc);
@@ -194,50 +202,66 @@ async function explode(x, y, blastSize) {
 }
 
 
-function drawFireball(x, y, blastSize, upArc, lowArc) {
-    let iterator, lastTime;
-    let frameDurationLimit = 1000 / 60;
-    let grower = 0;
-    let elapsed = 30000;
-    let normQuarterArc = {};
-    xSqz = x * squeezeFactor;
-    ySqz = canvRef2.height - (y * squeezeFactor);
-    blastSizeSqz = blastSize * squeezeFactor;
+function collectDebris(upArc, lowArc, pxMix) {
+    /*
+    // debug visualizer
+    for (v in upArc) {
+        canvCtx2.fillStyle = "pink";
+        canvCtx2.fillRect(
+            v*squeezeFactor,
+            (canvRef2.height - upArc[v] * squeezeFactor), 
+            1,
+            1);
+    }
+    for (v in lowArc) {
+        canvCtx2.fillStyle = "cyan";
+        canvCtx2.fillRect(
+            v*squeezeFactor,
+            (canvRef2.height - lowArc[v] * squeezeFactor), 
+            1,
+            1);
+    }
+    */
+
+}
+
+
+/**
+ * Draws an animated explosion
+ * @param {*} x x coordinate (full oversampled resolution)
+ * @param {*} y y coordinate (full oversampled resolution)
+ * @param {*} blastSize blast radius ("downsampled", display size)
+ * @param {*} upArc upper blast limit (semicircle) (oversampled)
+ * @param {*} lowArc lower blast limit (semicircle) (oversampled)
+ * @returns 
+ */
+function drawFireball(x, y, blastSize) {
     let grad = canvCtx2.createRadialGradient(
-        xSqz, ySqz, 0, xSqz, ySqz, blastSizeSqz);
+                        xSqz,ySqz,0, xSqz,ySqz,blastSqz);
     grad.addColorStop(0, "red");
     grad.addColorStop(1, "black");
     canvCtx2.fillStyle = grad;
     canvCtx2.beginPath();
-    canvCtx2.arc(xSqz, ySqz, 0, 0, 2*Math.PI);
+    canvCtx2.arc(xSqz, ySqz, 0, 0, 2 * Math.PI);
     canvCtx2.fill();
-    
-    return new Promise(resolve => {
-        function animateFire(timeStamp) {
-            if (lastTime === undefined) {
-                lastTime = timeStamp;
-            }
-            elapsed = timeStamp - lastTime;
 
-            if (elapsed > frameDurationLimit) {
+    return new Promise(resolve => {
+        let currentRadius = 0;
+        let startTime = performance.now();
+        function animateFire(timeStamp) {
+            if (currentRadius < blastSqz) {
+                requestAnimationFrame(animateFire);
+                currentRadius = Math.min(
+                    (timeStamp - startTime) / 400 * blastSqz,
+                    blastSqz);
+                if ( currentRadius < 0 ) currentRadius = 0;
                 canvCtx2.fillStyle = grad;
                 canvCtx2.beginPath();
-                canvCtx2.arc(xSqz, ySqz, grower, 0, 2*Math.PI);
+                canvCtx2.arc(xSqz, ySqz, currentRadius, 0, 2 * Math.PI);
                 canvCtx2.fill();
-                grower = grower + Math.min(10 * squeezeFactor, blastSizeSqz);
-                lastTime = timeStamp;
-            }
-
-            if (grower <= blastSizeSqz + 1) {
-                requestAnimationFrame(animateFire);
             }
             else {
-                lastTime = undefined;
-                elapsed = 30000;
-                grower = 0;
-                normQuarterArc = semiArcToNormQarc(x, y, upArc, blastSize);
-                canvCtx2.fillStyle = "rgba(255,255,255,1)";
-                iterator = blastSize;
+                lock = false;
                 resolve();
             }
         }
@@ -245,49 +269,105 @@ function drawFireball(x, y, blastSize, upArc, lowArc) {
     })
 }
 
-function clearFireball(x, y, blastSize, upArc, lowArc) {
+
+
+// NEW! 
+function clearFireball(x, y, blastSqz) {
+    
+    let quarterCircle = pixelatedArch(blastSqz);
+
+    for (let i = 0; i < blastSqz; i++) {
+    
+        // 15 passes are required in order to avoid dirty
+        // leftovers (edges), caused by antialiasing
+        for (let j = 0; j < 15; j++ ) {
+
+            canvCtx2.clearRect(
+                x - quarterCircle[i].width,
+                y + quarterCircle[i].heigth,
+                quarterCircle[i].width * 2,
+                1);
+
+            canvCtx2.clearRect(
+                x - quarterCircle[i].width,
+                y - quarterCircle[i].heigth,
+                quarterCircle[i].width * 2,
+                1);
+            }
+    }
+
+
+    return new Promise(resolve => {
+        
+        let startTime = performance.now();
+        function animateFire(timeStamp) {
+            if ( false ) {
+                requestAnimationFrame(animateFire);
+
+            }
+            else {
+                lock = false;
+                resolve();
+            }
+        }
+        requestAnimationFrame(animateFire);
+    })
+}
+
+
+
+
+
+
+/**
+ * Clears the CSS explosion animation (drawFireball), pixel-by-pixel
+ * @param {*} x x coordinate (full oversampled resolution)
+ * @param {*} y y coordinate (full oversampled resolution)
+ * @param {*} blastSize blast radius ("downsampled", display size)
+ * @param {*} upArc upper blast limit (semicircle) (oversampled)
+ * @param {*} lowArc lower blast limit (semicircle) (oversampled)
+ * @returns 
+ */
+function clearFireballOld(x, y, blastSize, lowArc) {
     let frameDurationLimit = 1000 / 60;
-    xSqz = x * squeezeFactor;
-    ySqz = canvRef2.height - (y * squeezeFactor);
-    blastSizeSqz = blastSize * squeezeFactor;
     lastTime = undefined;
     elapsed = 30000;
-    normQuarterArc = semiArcToNormQarc(x, y, upArc, blastSize);
+    normQuarterArc = semiArcToNormQarc(x, y, lowArc, blastSize);
     canvCtx2.fillStyle = "rgba(255,255,255,1)";
     iterator = blastSize;
-    //animateClearout();
+    let step;
 
     return new Promise(resolve => {
         function animateClearout(timeStamp) {
+            step = 10;
             if (lastTime === undefined) {
                 lastTime = timeStamp;
             }
-                for (let j = -10; j < 10; j++) {
+                for (let j = -step; j < step; j++) {
                     
-                    // Clears the fireball's lower hemisphere
-                    canvCtx2.clearRect(
-                        xSqz + normQuarterArc[iterator-j] * squeezeFactor,
-                        ySqz - blastSizeSqz + (iterator-j) * squeezeFactor,
-                        -2 * normQuarterArc[iterator-j] * squeezeFactor,
-                        -1);
-
                     // Clears the fireball's upper hemisphere
                     canvCtx2.clearRect(
                         xSqz + normQuarterArc[iterator-j] * squeezeFactor,
-                        ySqz + blastSizeSqz - (iterator-j) * squeezeFactor,
+                        -0 + ySqz - blastSqz + (iterator-j) * squeezeFactor,
                         -2 * normQuarterArc[iterator-j] * squeezeFactor,
-                        -1);
+                        1);
+
+                    // Clears the fireball's lower hemisphere
+                    canvCtx2.clearRect(
+                        xSqz + normQuarterArc[iterator-j] * squeezeFactor,
+                        -0 + ySqz + blastSqz - (iterator-j) * squeezeFactor,
+                        -2 * normQuarterArc[iterator-j] * squeezeFactor,
+                        1);
                 }
-                iterator -= 10;
+                iterator -= step;
             
             if (elapsed > frameDurationLimit) {
 
-                if (iterator != 0) {
+                if (iterator > 0 && iterator >= step) {
                     requestAnimationFrame(animateClearout);
-                    // await new Promise(resolve => {
-                    //     requestAnimationFrame(animateClearout);
-                    // });
-
+                } else if (iterator > 0 && iterator < step) {
+                    iterator = step;
+                    requestAnimationFrame(animateClearout);
                 } else {
                     //canvCtx2.clearRect(1, 1, canvRef2.width, canvRef2.height);
                     //drawTerrain(pxMix, squeezeFactor);
@@ -322,28 +402,38 @@ function drawDebris(soilAbove, squeezeFactor, damageSpan, upperArc) {
 
 
 
-
-/** Compute a lower semi-circle shape for the future carving */
-function generateLowerArc(dx, dy, r) {
-    let lowerArc = {};
-    for(let i = 180; i < 360; i += 0.01) {
-        let x = Math.round(dx + r * Math.cos(i * Math.PI / 180));
-        let y = Math.round(dy + r * Math.sin(i * Math.PI / 180));
-        lowerArc[x] = y;
+function pixelatedArch(radius) {
+    let pxArch = [];
+    for (let i = 0; i <= radius; i++) {
+        let angle = Math.asin(i / radius);
+        let length = radius  * Math.cos(angle);
+        pxArch.push({ heigth: i, width: length});
     }
-    return lowerArc;
+    return pxArch;
 }
 
 
-/** Compute an upper semi-circle shape above which terrain is unaffected */
+/** Compute a lower semi-circle shape for the future carving */
 function generateUpperArc(dx, dy, r) {
     let upperArc = {};
-    for(let i = 0; i < 180; i += 0.01) {
+    for(let i = 180; i < 360; i += 0.01) {
         let x = Math.round(dx + r * Math.cos(i * Math.PI / 180));
         let y = Math.round(dy + r * Math.sin(i * Math.PI / 180));
         upperArc[x] = y;
     }
     return upperArc;
+}
+
+
+/** Compute an upper semi-circle shape above which terrain is unaffected */
+function generateLowerArc(dx, dy, r) {
+    let lowerArc = {};
+    for(let i = 0; i < 180; i += 0.01) {
+        let x = Math.round(dx + r * Math.cos(i * Math.PI / 180));
+        let y = Math.round(dy + r * Math.sin(i * Math.PI / 180));
+        lowerArc[x] = y;
+    }
+    return lowerArc;
 }
 
 
