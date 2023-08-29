@@ -176,7 +176,7 @@ function drawTerrain(pixels, squeezeFactor, terrainColor, from, to) {
 
 
 /**
- * A series of actions taken once a weapon misses and hits the ground
+ * A series of actions taken once the weapon misses and hits the ground
  * @param {*} x 
  * @param {*} y 
  * @param {*} blastSize 
@@ -270,42 +270,43 @@ function drawFireball(x, y, blastSize) {
 }
 
 
-
-// NEW! 
+/**
+ * 
+ * @param {*} x 
+ * @param {*} y 
+ * @param {*} blastSqz 
+ * @returns 
+ */
 function clearFireball(x, y, blastSqz) {
-    
+    let i = 0;
     let quarterCircle = pixelatedArch(blastSqz);
-
-    for (let i = 0; i < blastSqz; i++) {
-    
-        // 15 passes are required in order to avoid dirty
-        // leftovers (edges), caused by antialiasing
-        for (let j = 0; j < 15; j++ ) {
-
-            canvCtx2.clearRect(
-                x - quarterCircle[i].width,
-                y + quarterCircle[i].heigth,
-                quarterCircle[i].width * 2,
-                1);
-
-            canvCtx2.clearRect(
-                x - quarterCircle[i].width,
-                y - quarterCircle[i].heigth,
-                quarterCircle[i].width * 2,
-                1);
-            }
-    }
-
 
     return new Promise(resolve => {
         
         let startTime = performance.now();
         function animateFire(timeStamp) {
-            if ( false ) {
-                requestAnimationFrame(animateFire);
+            if ( i < blastSqz ) {
+                
+            // 15 passes are enough to avoid dirty anti-aliasing leftovers
+            for (let j = 0; j < 15; j++ ) {
 
+                canvCtx2.clearRect(
+                    x - quarterCircle[i].width,
+                    y + quarterCircle[i].heigth,
+                    quarterCircle[i].width * 2,
+                    1);
+
+                canvCtx2.clearRect(
+                    x - quarterCircle[i].width,
+                    y - quarterCircle[i].heigth,
+                    quarterCircle[i].width * 2,
+                    1);
             }
-            else {
+
+            i++;
+            requestAnimationFrame(animateFire);
+            
+            } else {
                 lock = false;
                 resolve();
             }
