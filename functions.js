@@ -231,8 +231,6 @@ function collectDebris(upArc, lowArc, pxMix) {
  * @param {*} x x coordinate (full oversampled resolution)
  * @param {*} y y coordinate (full oversampled resolution)
  * @param {*} blastSize blast radius ("downsampled", display size)
- * @param {*} upArc upper blast limit (semicircle) (oversampled)
- * @param {*} lowArc lower blast limit (semicircle) (oversampled)
  * @returns 
  */
 function drawFireball(x, y, blastSize) {
@@ -271,12 +269,13 @@ function drawFireball(x, y, blastSize) {
 
 
 /**
- * 
- * @param {*} x 
- * @param {*} y 
- * @param {*} blastSqz 
+ * Clears the explosion (animated), leaving a transparent patch on the canvas
+ * @param {*} x x coordinate (full oversampled resolution)
+ * @param {*} y y coordinate (full oversampled resolution)
+ * @param {*} blastSize blast radius ("downsampled", display size)
  * @returns 
  */
+
 function clearFireball(x, y, blastSqz) {
     let i = 0;
     let quarterCircle = pixelatedArch(blastSqz);
@@ -284,6 +283,7 @@ function clearFireball(x, y, blastSqz) {
     return new Promise(resolve => {
         
         let startTime = performance.now();
+
         function animateFire(timeStamp) {
             if ( i < blastSqz ) {
                 
@@ -303,8 +303,14 @@ function clearFireball(x, y, blastSqz) {
                     1);
             }
 
-            i++;
-            requestAnimationFrame(animateFire);
+            
+            
+            
+            if (( (timeStamp - startTime) / i) > 16 || ( timeStamp - startTime < 0 )) {
+                console.log((timeStamp - startTime) / i);
+                i++;
+                requestAnimationFrame(animateFire);
+            }
             
             } else {
                 lock = false;
