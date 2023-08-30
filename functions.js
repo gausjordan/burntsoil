@@ -9,11 +9,14 @@ function drawBackdrop(width, height, styleCode) {
     let r, g, b, step, string;
     
     switch (styleCode) {
+
         case 'sunset':
             r = 42;
             g = 40;
             b = 140;
+
             step = (height/28)|0;
+            
             for (let i = 0; i < height; i += step) {
                 r += 9;
                 if (i <= 8*step) {
@@ -30,19 +33,26 @@ function drawBackdrop(width, height, styleCode) {
                 canvCtx1.fillStyle = string;
                 canvCtx1.fillRect(0, i, width, (height/28)|0);
             }
+
             let horizSunPos = width / 2.2;
             let vertSunPos = height;
             let sunSize = width < height ? width / 1.6 : height / 1.6;
+
             canvCtx1.fillStyle = "#FFFF00";
             canvCtx1.beginPath();
             canvCtx1.arc(horizSunPos, vertSunPos, sunSize, Math.PI, 0);
             canvCtx1.fill();
+
             break;
+
         case 'blue':
+
             r = 32;
             g = 32;
             b = 152;
+
             step = (height/28)|0;
+
             for (let i = 0; i < height; i += step) {
                 r -= 2;
                 g -= 2;
@@ -64,10 +74,12 @@ function drawBackdrop(width, height, styleCode) {
  * @returns an array of control point objects ('x' and 'y' pairs)
  */
 function generateCps(pointCount) {
+
     let points = [];
     let minDist = 1000 / pointCount / 1.5;
     let maxDist = 1000 / pointCount + 0.5 * minDist;
     let progress = 0;
+
     for (let i = 0; i < pointCount; i++) {
         points.push ({
             x: progress + randomInteger(minDist, maxDist),
@@ -75,6 +87,7 @@ function generateCps(pointCount) {
         });
         progress = points.slice(-1)[0].x;
     }
+
     return points;
 }
 
@@ -83,20 +96,20 @@ function generateCps(pointCount) {
  * Scales the X coordinates to fit the canvas size, in pixels. Once done,
  * overshoots 1 point before and after the visible range, for the interpolator.
  * Scales the Y coordinates to fit up to 60% of an average landscape display.
- * TODO: Array size must equal the size of the biggest display (multiplayer).
+ * TODO: Array size must equal the size of the biggest display (network game).
  * @param {*} cps an array of control point objects
  * @param {*} cWidth canvas width in pixels (oversampling is possible)
  * @param {*} isLowered generate ultra-low terrain (for the main menu)
  * @returns an array of normalized control points
 */
 function normalizeCps(cps, cWidth, isLowered) {
-    // Array starts at 0, no need for the last one
-    cWidth--;
+    cWidth--;   // Array starts at 0, no need for the last one
     let ceiling = isLowered ? 0.35 : 0.60
     let normalized = [];
     let upperLimit = cps[cps.length-2].x;       // second-to-last x
     let lowerLimit = cps[1].x                   // second x value
     let squeezeFactor = cWidth / (upperLimit - lowerLimit);
+
     normalized = cps.map( e => {
         return {
             // Width goes from 0 to the furtherest horizontal pixel
@@ -105,6 +118,7 @@ function normalizeCps(cps, cWidth, isLowered) {
             y: (e.y * cWidth / (16/9) / 1000 * ceiling) }
         }
     );
+
     return normalized;
 }
 
@@ -148,6 +162,7 @@ function cpsToPxs(cps) {
  * @param {*} to (optional) partial redraw end
  */
 function drawTerrain(pixels, squeezeFactor, terrainColor, from, to) {
+
     if (terrainColor == undefined) {
         canvCtx2.fillStyle = globalTerrainColor;
     } else {
@@ -234,8 +249,9 @@ function collectDebris(upArc, lowArc, pxMix) {
  * @returns 
  */
 function drawFireball(x, y, blastSize) {
+
     let grad = canvCtx2.createRadialGradient(
-                        xSqz,ySqz,0, xSqz,ySqz,blastSqz);
+                   xSqz, ySqz, 0, xSqz, ySqz, blastSqz);
     grad.addColorStop(0, "red");
     grad.addColorStop(1, "black");
     canvCtx2.fillStyle = grad;
@@ -244,14 +260,16 @@ function drawFireball(x, y, blastSize) {
     canvCtx2.fill();
 
     return new Promise(resolve => {
+
         let currentRadius = 0;
         let startTime = performance.now();
         function animateFire(timeStamp) {
+
             if (currentRadius < blastSqz) {
                 requestAnimationFrame(animateFire);
                 currentRadius = Math.min(
-                    (timeStamp - startTime) / 400 * blastSqz,
-                    blastSqz);
+                        (timeStamp - startTime) / 400 * blastSqz, blastSqz
+                    );
                 if ( currentRadius < 0 ) currentRadius = 0;
                 canvCtx2.fillStyle = grad;
                 canvCtx2.beginPath();
@@ -269,29 +287,26 @@ function drawFireball(x, y, blastSize) {
 
 
 /**
- * Clears the explosion (animated), leaving a transparent patch on the canvas
+ * Clears the (animated) explosion, leaving a transparent patch on the canvas
  * @param {*} x x coordinate (full oversampled resolution)
  * @param {*} y y coordinate (full oversampled resolution)
  * @param {*} blastSize blast radius ("downsampled", display size)
  * @returns 
  */
-
 function clearFireball(x, y, blastSqz) {
     let currentIndex = 0;
     let lastIndex = 0;
     let quarterCircle = pixelatedArch(blastSqz);
 
     return new Promise(resolve => {
-        
         let startTime = performance.now();
-
         function animateFire(timeStamp) {
             if ( currentIndex <= blastSqz ) {
                    
                 lastIndex = currentIndex;
                 currentIndex = Math.round(
                         Math.min(
-                            (timeStamp - startTime) / 1000 * blastSqz,
+                            (timeStamp - startTime) / 500 * blastSqz,
                             blastSqz
                         )
                     );
@@ -311,83 +326,13 @@ function clearFireball(x, y, blastSqz) {
                             1);
                     }
                 }
-                
                 requestAnimationFrame(animateFire);
-                
             } else {
                 lock = false;
                 resolve();
             }
         }
         requestAnimationFrame(animateFire);
-    })
-}
-
-
-
-
-
-
-/**
- * Clears the CSS explosion animation (drawFireball), pixel-by-pixel
- * @param {*} x x coordinate (full oversampled resolution)
- * @param {*} y y coordinate (full oversampled resolution)
- * @param {*} blastSize blast radius ("downsampled", display size)
- * @param {*} upArc upper blast limit (semicircle) (oversampled)
- * @param {*} lowArc lower blast limit (semicircle) (oversampled)
- * @returns 
- */
-function clearFireballOld(x, y, blastSize, lowArc) {
-    let frameDurationLimit = 1000 / 60;
-    lastTime = undefined;
-    elapsed = 30000;
-    normQuarterArc = semiArcToNormQarc(x, y, lowArc, blastSize);
-    canvCtx2.fillStyle = "rgba(255,255,255,1)";
-    iterator = blastSize;
-    let step;
-
-    return new Promise(resolve => {
-        function animateClearout(timeStamp) {
-            step = 10;
-            if (lastTime === undefined) {
-                lastTime = timeStamp;
-            }
-                for (let j = -step; j < step; j++) {
-                    
-                    // Clears the fireball's upper hemisphere
-                    canvCtx2.clearRect(
-                        xSqz + normQuarterArc[iterator-j] * squeezeFactor,
-                        -0 + ySqz - blastSqz + (iterator-j) * squeezeFactor,
-                        -2 * normQuarterArc[iterator-j] * squeezeFactor,
-                        1);
-
-                    // Clears the fireball's lower hemisphere
-                    canvCtx2.clearRect(
-                        xSqz + normQuarterArc[iterator-j] * squeezeFactor,
-                        -0 + ySqz + blastSqz - (iterator-j) * squeezeFactor,
-                        -2 * normQuarterArc[iterator-j] * squeezeFactor,
-                        1);
-                }
-                iterator -= step;
-            
-            if (elapsed > frameDurationLimit) {
-
-                if (iterator > 0 && iterator >= step) {
-                    requestAnimationFrame(animateClearout);
-                } else if (iterator > 0 && iterator < step) {
-                    iterator = step;
-                    requestAnimationFrame(animateClearout);
-                } else {
-                    //canvCtx2.clearRect(1, 1, canvRef2.width, canvRef2.height);
-                    //drawTerrain(pxMix, squeezeFactor);
-                    canvCtx2.fillStyle = "rgba(0,255,0,1)";
-                    lock = false;
-                    //drawDebris(soilAbove, squeezeFactor, damageSpan, upperArc);
-                    resolve();
-                }
-            }   
-        }
-        requestAnimationFrame(animateClearout);
     })
 }
 
