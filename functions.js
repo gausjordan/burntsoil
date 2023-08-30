@@ -277,7 +277,8 @@ function drawFireball(x, y, blastSize) {
  */
 
 function clearFireball(x, y, blastSqz) {
-    let i = 0;
+    let currentIndex = 0;
+    let lastIndex = 0;
     let quarterCircle = pixelatedArch(blastSqz);
 
     return new Promise(resolve => {
@@ -285,33 +286,34 @@ function clearFireball(x, y, blastSqz) {
         let startTime = performance.now();
 
         function animateFire(timeStamp) {
-            if ( i < blastSqz ) {
+            if ( currentIndex <= blastSqz ) {
+                   
+                lastIndex = currentIndex;
+                currentIndex = Math.round(
+                        Math.min(
+                            (timeStamp - startTime) / 1000 * blastSqz,
+                            blastSqz
+                        )
+                    );
                 
-            // 15 passes are enough to avoid dirty anti-aliasing leftovers
-            for (let j = 0; j < 15; j++ ) {
-
-                canvCtx2.clearRect(
-                    x - quarterCircle[i].width,
-                    y + quarterCircle[i].heigth,
-                    quarterCircle[i].width * 2,
-                    1);
-
-                canvCtx2.clearRect(
-                    x - quarterCircle[i].width,
-                    y - quarterCircle[i].heigth,
-                    quarterCircle[i].width * 2,
-                    1);
-            }
-
-            
-            
-            
-            if (( (timeStamp - startTime) / i) > 16 || ( timeStamp - startTime < 0 )) {
-                console.log((timeStamp - startTime) / i);
-                i++;
+                for (let k = 0; k < 12; k++) {
+                    for (let j = lastIndex; j < currentIndex; j++ ) {
+                        canvCtx2.clearRect(
+                            x - quarterCircle[j].width,
+                            y + quarterCircle[j].heigth,
+                            quarterCircle[j].width * 2,
+                            1);
+        
+                        canvCtx2.clearRect(
+                            x - quarterCircle[j].width,
+                            y - quarterCircle[j].heigth-1,
+                            quarterCircle[j].width * 2,
+                            1);
+                    }
+                }
+                
                 requestAnimationFrame(animateFire);
-            }
-            
+                
             } else {
                 lock = false;
                 resolve();
