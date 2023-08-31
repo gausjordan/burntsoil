@@ -206,9 +206,9 @@ async function explosionOnGround(x, y, blastSize) {
 
     await drawFireball(x, y, blastSize);
     await clearFireball(xSqz, ySqz, blastSqz);
-    //let debris = collectDebris(upArc, lowArc, pxMix);
-    
-    //drawFireball(x, y, blastSize, squeezeFactor, upperArc, lowerArc);
+    let debris = collectDebris(upArc, lowArc, pxMix);
+    drawDebris(debris, squeezeFactor, lowArc, blastSize);
+
     //let soilAbove = soilAboveGenerator(upperArc);
     //let damageSpan = getCarveLimits(lowerArc);
     //carve(lowerArc, drawTerrain);
@@ -217,7 +217,31 @@ async function explosionOnGround(x, y, blastSize) {
 }
 
 
-function collectDebris(upArc, lowArc, pxMix) {
+function collectDebris(upArc, lowArc, pxMix, blastSize) {
+    let debrisAbove = [];
+    for (u in upArc) {
+        if (upArc[u] < pxMix[u]) {
+            debrisAbove.push(
+                {
+                    x: u,
+                    y_top: pxMix[u],
+                    y_middle: upArc[u],
+                    y_bottom: lowArc[u]
+                }
+            );
+        } else {
+            debrisAbove.push(
+                {
+                    x: u,
+                    y_top: upArc[u],
+                    y_middle: upArc[u],
+                    y_bottom: lowArc[u]
+                }
+            );
+        }
+    }
+    return debrisAbove;
+   
     /*
     // debug visualizer
     for (v in upArc) {
@@ -228,6 +252,7 @@ function collectDebris(upArc, lowArc, pxMix) {
             1,
             1);
     }
+
     for (v in lowArc) {
         canvCtx2.fillStyle = "cyan";
         canvCtx2.fillRect(
@@ -237,7 +262,6 @@ function collectDebris(upArc, lowArc, pxMix) {
             1);
     }
     */
-
 }
 
 
@@ -251,7 +275,7 @@ function collectDebris(upArc, lowArc, pxMix) {
 function drawFireball(x, y, blastSize) {
 
     let grad = canvCtx2.createRadialGradient(
-                   xSqz, ySqz, 0, xSqz, ySqz, blastSqz);
+               xSqz, ySqz, 0, xSqz, ySqz, blastSqz);
     grad.addColorStop(0, "red");
     grad.addColorStop(1, "black");
     canvCtx2.fillStyle = grad;
@@ -260,7 +284,6 @@ function drawFireball(x, y, blastSize) {
     canvCtx2.fill();
 
     return new Promise(resolve => {
-
         let currentRadius = 0;
         let startTime = performance.now();
         function animateFire(timeStamp) {
@@ -268,7 +291,7 @@ function drawFireball(x, y, blastSize) {
             if (currentRadius < blastSqz) {
                 requestAnimationFrame(animateFire);
                 currentRadius = Math.min(
-                        (timeStamp - startTime) / 400 * blastSqz, blastSqz
+                        (timeStamp - startTime) / 100 * blastSqz, blastSqz
                     );
                 if ( currentRadius < 0 ) currentRadius = 0;
                 canvCtx2.fillStyle = grad;
@@ -301,16 +324,18 @@ function clearFireball(x, y, blastSqz) {
     return new Promise(resolve => {
         let startTime = performance.now();
         function animateFire(timeStamp) {
-            if ( currentIndex <= blastSqz ) {
+            blastSqz = Math.round(blastSqz);
+            if ( lastIndex < blastSqz ) {
                    
                 lastIndex = currentIndex;
                 currentIndex = Math.round(
                         Math.min(
-                            (timeStamp - startTime) / 500 * blastSqz,
+                            (timeStamp - startTime) / 100 * blastSqz,
                             blastSqz
                         )
                     );
                 
+                // It takes 12 passes to erase all anti-aliasing leftovers
                 for (let k = 0; k < 12; k++) {
                     for (let j = lastIndex; j < currentIndex; j++ ) {
                         canvCtx2.clearRect(
@@ -321,12 +346,13 @@ function clearFireball(x, y, blastSqz) {
         
                         canvCtx2.clearRect(
                             x - quarterCircle[j].width,
-                            y - quarterCircle[j].heigth-1,
+                            y - quarterCircle[j].heigth - 0.55,
                             quarterCircle[j].width * 2,
                             1);
                     }
                 }
                 requestAnimationFrame(animateFire);
+
             } else {
                 lock = false;
                 resolve();
@@ -337,25 +363,69 @@ function clearFireball(x, y, blastSqz) {
 }
 
 
-function drawDebris(soilAbove, squeezeFactor, damageSpan, upperArc) {
-    canvCtx2.fillStyle = "rgb(0,155,100)";
+function drawDebris(debris, squeezeFactor, lowArc, blastSize) {
 
-    // console.log(soilAbove);
-    // console.log(squeezeFactor);
-    // console.log(damageSpan);
-    // console.log(upperArc);
+    let sF = squeezeFactor;
+    let downShift = blastSize * squeezeFactor;
+    canvCtx2.fillStyle = "rgba(255,0,0,1)";
 
-    for (let i = damageSpan[0]; i < damageSpan[1]; i++) {
-        canvCtx2.fillRect(
-            i * squeezeFactor,
-            canvRef2.height - ((soilAbove[i] + upperArc[i]) * squeezeFactor),
-            1,
-            soilAbove[i] * squeezeFactor);
-    }
+    return new Promise(resolve => {
+
+        let first = debris.slice(-debris-length)[0];
+        let last = debris.slice(-1)[0];
+        let startTime = performance.now();
+
+        console.log(debris);
+        console.log(last.x + " ... " + last.y_middle);
+
+        function animateDebris(timeStamp) {
+
+
+            if (downShift > 0) {
+             
+                canvCtx2.fillStyle = "rgba(255,255,0,1)";
+
+                // Most cases: it exploded on-screen, or at the far right
+                if (first.x > 0) {
+                    canvCtx2.fillRect(
+                        first.x * sF,
+                        canvRef2.height - first.y_middle * sF,
+                        (last.x - first.x) * sF,
+                        - Math.max(first.y_top, last.y_top) * sF
+                    );
+                }
+                // Exception: explosion touchs the left edge of the canvas
+                else {
+                    canvCtx2.fillRect(
+                        last.x * sF,
+                        canvRef2.height - last.y_middle * sF,
+                        -50,//- (last.x - first.x) * sF,
+                        -50//- Math.max(first.y_top, last.y_top) * sF
+                    );                    
+                }
+
+                for (d in debris) {
+                    //canvRef2.fillRect();
+                }
+                
+                requestAnimationFrame(animateDebris);
+
+            } else {
+                resolve();
+            }
+
+            downShift--;
+        }
+        requestAnimationFrame(animateDebris);
+    })
 }
 
 
-
+/**
+ * Constructs an array of pixels describing a circle, one (x,y) pair per pixel
+ * @param {*} radius 
+ * @returns an array of pixel coordinate pairs
+ */
 function pixelatedArch(radius) {
     let pxArch = [];
     for (let i = 0; i <= radius; i++) {
@@ -370,7 +440,7 @@ function pixelatedArch(radius) {
 /** Compute a lower semi-circle shape for the future carving */
 function generateUpperArc(dx, dy, r) {
     let upperArc = {};
-    for(let i = 180; i < 360; i += 0.01) {
+    for(let i = 0; i < 180; i += 0.01) {
         let x = Math.round(dx + r * Math.cos(i * Math.PI / 180));
         let y = Math.round(dy + r * Math.sin(i * Math.PI / 180));
         upperArc[x] = y;
@@ -382,7 +452,7 @@ function generateUpperArc(dx, dy, r) {
 /** Compute an upper semi-circle shape above which terrain is unaffected */
 function generateLowerArc(dx, dy, r) {
     let lowerArc = {};
-    for(let i = 0; i < 180; i += 0.01) {
+    for(let i = 180; i < 360; i += 0.01) {
         let x = Math.round(dx + r * Math.cos(i * Math.PI / 180));
         let y = Math.round(dy + r * Math.sin(i * Math.PI / 180));
         lowerArc[x] = y;
@@ -404,21 +474,6 @@ function carve(lowerArc, callback) {
     }
 }
 
-
-/** Creates a dictionary of x and y values defining soil above the explosion */
-function soilAboveGenerator(upperArc) {
-    let soilAbove = {};
-    for (key in upperArc) {
-        if (upperArc[key] < pxMix[key]) {
-            soilAbove[key] = pxMix[key] - upperArc[key];
-        }
-    }
-    console.log("Upper arc:");
-    console.log(upperArc);
-    console.log("Soil above:");
-    console.log(soilAbove);
-    return soilAbove;
-}
 
 
 
