@@ -376,7 +376,7 @@ function drawDebris(debris, squeezeFactor, lowArc, blastSize) {
         let startTime = performance.now();
 
         console.log(debris);
-        console.log(last.x + " ... " + last.y_middle);
+        //console.log(last.x + " ... " + last.y_middle);
 
         function animateDebris(timeStamp) {
 
@@ -385,23 +385,28 @@ function drawDebris(debris, squeezeFactor, lowArc, blastSize) {
              
                 canvCtx2.fillStyle = "rgba(255,255,0,1)";
 
-                // Most cases: it exploded on-screen, or at the far right
-                if (first.x > 0) {
-                    canvCtx2.fillRect(
+                // Most cases: it exploded on-screen, or far to the right
+                if (last.x > 0) {
+                    canvCtx2.clearRect(
                         first.x * sF,
                         canvRef2.height - first.y_middle * sF,
                         (last.x - first.x) * sF,
                         - Math.max(first.y_top, last.y_top) * sF
                     );
                 }
-                // Exception: explosion touchs the left edge of the canvas
+                // Exception: The explosion touches the left edge of a canvas
+                // In this case, the array is shifted: leftmost X value is
+                // zero, followed by positive X's, folowed by negative X's.
                 else {
-                    canvCtx2.fillRect(
-                        last.x * sF,
-                        canvRef2.height - last.y_middle * sF,
-                        -50,//- (last.x - first.x) * sF,
-                        -50//- Math.max(first.y_top, last.y_top) * sF
-                    );                    
+                    let trueFirst = last;
+                    let trueLast = debris[debris.length + Number(trueFirst.x) - 1];
+                    
+                    canvCtx2.clearRect(
+                        trueFirst.x * sF,
+                        canvRef2.height - trueFirst.y_middle * sF,
+                        (trueLast.x - trueFirst.x) * sF,
+                        - Math.max(trueFirst.y_top, trueLast.y_top) * sF
+                    );
                 }
 
                 for (d in debris) {
