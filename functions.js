@@ -291,7 +291,7 @@ function drawFireball(x, y, blastSize) {
             if (currentRadius < blastSqz) {
                 requestAnimationFrame(animateFire);
                 currentRadius = Math.min(
-                        (timeStamp - startTime) / 100 * blastSqz, blastSqz
+                        (timeStamp - startTime) / 600 * blastSqz, blastSqz
                     );
                 if ( currentRadius < 0 ) currentRadius = 0;
                 canvCtx2.fillStyle = grad;
@@ -330,7 +330,7 @@ function clearFireball(x, y, blastSqz) {
                 lastIndex = currentIndex;
                 currentIndex = Math.round(
                         Math.min(
-                            (timeStamp - startTime) / 100 * blastSqz,
+                            (timeStamp - startTime) / 500 * blastSqz,
                             blastSqz
                         )
                     );
@@ -375,16 +375,10 @@ function drawDebris(debris, squeezeFactor, lowArc, blastSize) {
         let last = debris.slice(-1)[0];
         let startTime = performance.now();
 
-        console.log(debris);
-        //console.log(last.x + " ... " + last.y_middle);
-
         function animateDebris(timeStamp) {
 
-
             if (downShift > 0) {
-             
-                canvCtx2.fillStyle = "rgba(255,255,0,1)";
-
+                      
                 // Most cases: it exploded on-screen, or far to the right
                 if (last.x > 0) {
                     canvCtx2.clearRect(
@@ -409,8 +403,14 @@ function drawDebris(debris, squeezeFactor, lowArc, blastSize) {
                     );
                 }
 
+                canvCtx2.fillStyle = "rgba(255,255,0,1)";
                 for (d in debris) {
-                    //canvRef2.fillRect();
+                    canvCtx2.fillRect(
+                        debris[d].x * sF,
+                        canvRef2.height - debris[d].y_top * sF,
+                        1,
+                        (debris[d].y_top - debris[d].y_middle ) * sF
+                    );
                 }
                 
                 requestAnimationFrame(animateDebris);
