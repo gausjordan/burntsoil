@@ -291,7 +291,8 @@ function drawFireball(x, y, blastSize) {
             if (currentRadius < blastSqz) {
                 requestAnimationFrame(animateFire);
                 currentRadius = Math.min(
-                        (timeStamp - startTime) / 600 * blastSqz, blastSqz
+                        (timeStamp - startTime) / blowUpSpeed * blastSqz,
+                        blastSqz
                     );
                 if ( currentRadius < 0 ) currentRadius = 0;
                 canvCtx2.fillStyle = grad;
@@ -330,7 +331,7 @@ function clearFireball(x, y, blastSqz) {
                 lastIndex = currentIndex;
                 currentIndex = Math.round(
                         Math.min(
-                            (timeStamp - startTime) / 500 * blastSqz,
+                            (timeStamp - startTime) / blowUpSpeed * blastSqz,
                             blastSqz
                         )
                     );
@@ -366,8 +367,8 @@ function clearFireball(x, y, blastSqz) {
 function drawDebris(debris, squeezeFactor, lowArc, blastSize) {
 
     let sF = squeezeFactor;
-    let downShift = blastSize * squeezeFactor;
-    canvCtx2.fillStyle = "rgba(255,0,0,1)";
+    let downShift = 3 * blastSize * squeezeFactor;
+    canvCtx2.fillStyle = "rgba(0,255,0,1)";
 
     return new Promise(resolve => {
 
@@ -378,8 +379,8 @@ function drawDebris(debris, squeezeFactor, lowArc, blastSize) {
         function animateDebris(timeStamp) {
 
             if (downShift > 0) {
-                      
-                // Most cases: it exploded on-screen, or far to the right
+                // Erasing area above the explosion...
+                // In most cases: it exploded on-screen, or far to the right
                 if (last.x > 0) {
                     canvCtx2.clearRect(
                         first.x * sF,
@@ -388,7 +389,7 @@ function drawDebris(debris, squeezeFactor, lowArc, blastSize) {
                         - Math.max(first.y_top, last.y_top) * sF
                     );
                 }
-                // Exception: The explosion touches the left edge of a canvas
+                // Exception: An explosion touches the left edge of a canvas
                 // In this case, the array is shifted: leftmost X value is
                 // zero, followed by positive X's, folowed by negative X's.
                 else {
@@ -396,14 +397,15 @@ function drawDebris(debris, squeezeFactor, lowArc, blastSize) {
                     let trueLast = debris[debris.length + Number(trueFirst.x) - 1];
                     
                     canvCtx2.clearRect(
-                        trueFirst.x * sF,
+                        (trueFirst.x) * sF,
                         canvRef2.height - trueFirst.y_middle * sF,
                         (trueLast.x - trueFirst.x) * sF,
                         - Math.max(trueFirst.y_top, trueLast.y_top) * sF
                     );
                 }
 
-                canvCtx2.fillStyle = "rgba(255,255,0,1)";
+                // Redraws area above the explosion
+                //canvCtx2.fillStyle = "rgba(255,255,0,1)";
                 for (d in debris) {
                     canvCtx2.fillRect(
                         debris[d].x * sF,
@@ -413,6 +415,15 @@ function drawDebris(debris, squeezeFactor, lowArc, blastSize) {
                     );
                 }
                 
+                for (d in debris) {
+                    if (debris[d].y_middle > debris[d].y_bottom) {
+                        debris[d].y_top = debris[d].y_top - (1 / squeezeFactor);
+                        debris[d].y_middle = debris[d].y_middle - (1 / squeezeFactor);
+                    }
+                }
+                
+
+
                 requestAnimationFrame(animateDebris);
 
             } else {

@@ -1,5 +1,6 @@
 // Check all players and get the widest screen resolution possible
 // Temporarily hardcoded
+let blowUpSpeed = 500;
 let maxRes = 6000;
 let globalTerrainColor = "rgba(0, 255, 0, 1)";
 let colorValueAtPos = null;
@@ -15,6 +16,7 @@ let rawPoints1 = generateCps(5);    // low frequency terrain
 let rawPoints2 = generateCps(10);   // high frequency terrain
 
 
+/*
 // DEBUG: Fixed points
 
 rawPoints1 = [
@@ -82,6 +84,7 @@ rawPoints2 = [
     "y": 761
   }
 ];
+*/
 
 
 let normPoints1 = normalizeCps(rawPoints1, maxRes, false);
