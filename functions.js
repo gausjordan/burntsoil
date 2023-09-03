@@ -367,55 +367,88 @@ function clearFireball(x, y, blastSqz) {
 function drawDebris(debris, squeezeFactor, lowArc, blastSize) {
 
     let sF = squeezeFactor;
-    let downShift = 3 * blastSize * squeezeFactor;
+    let downShift = 2 * (blastSize + 1) * squeezeFactor;
+    
+    // First and last elements of the debris array
+    let first = debris.slice(-debris-length)[0];
+    let last = debris.slice(-1)[0];
+    
+    // If an explosion touches the left edge of a canvas, the array gets
+    // shifted: leftmost X value is zero, followed by positive X's,
+    // folowed by negative X's. Then, trueFirst/trueLast is used instead.
+    let trueFirst = last;
+    let trueLast = debris[debris.length + Number(trueFirst.x) - 1];
+
+    // Collects data required to redraw erased area below the explosion
+    let path = new Path2D();
+    for (d in debris) {
+        if (debris[d].y_bottom < pxMix[debris[d].x]) {
+            path.lineTo(
+                debris[d].x * sF,
+                canvRef2.height - debris[d].y_bottom * sF
+            );
+        } else {
+            path.lineTo(
+                debris[d].x * sF,
+                canvRef2.height - pxMix[debris[d].x] * sF
+            );
+        }
+    }
+
+    if (last.x > 0) {
+        path.lineTo(debris[debris.length-1].x * sF, canvRef2.height);
+        path.lineTo(debris[0].x * sF, canvRef2.height);
+        path.lineTo(debris[0].x * sF, debris[0].y_bottom * sF);
+    } else {
+        path.lineTo(trueLast.x * sF, canvRef2.height);
+        path.lineTo(trueFirst.x * sF, canvRef2.height);
+        path.lineTo(trueFirst.x * sF, trueFirst.y_bottom * sF);
+    }
+    path.closePath();
+    
+    
     canvCtx2.fillStyle = "rgba(0,255,0,1)";
+
 
     return new Promise(resolve => {
 
-        let first = debris.slice(-debris-length)[0];
-        let last = debris.slice(-1)[0];
         let startTime = performance.now();
-
+   
         function animateDebris(timeStamp) {
 
             if (downShift > 0) {
-                // Erasing area above the explosion...
+                // Erasing area above the explosion
                 // In most cases: it exploded on-screen, or far to the right
                 if (last.x > 0) {
                     canvCtx2.clearRect(
                         first.x * sF,
-                        canvRef2.height - first.y_middle * sF,
+                        0,
                         (last.x - first.x) * sF,
-                        - Math.max(first.y_top, last.y_top) * sF
+                        canvRef2.height
                     );
                 }
                 // Exception: An explosion touches the left edge of a canvas
-                // In this case, the array is shifted: leftmost X value is
-                // zero, followed by positive X's, folowed by negative X's.
-                else {
-                    let trueFirst = last;
-                    let trueLast = debris[debris.length + Number(trueFirst.x) - 1];
-                    
+                else {                  
                     canvCtx2.clearRect(
                         (trueFirst.x) * sF,
-                        canvRef2.height - trueFirst.y_middle * sF,
+                        0,
                         (trueLast.x - trueFirst.x) * sF,
-                        - Math.max(trueFirst.y_top, trueLast.y_top) * sF
+                        canvRef2.height
                     );
                 }
 
+                
                 // Redraws area above the explosion
-                //canvCtx2.fillStyle = "rgba(255,255,0,1)";
+                canvCtx2.fillStyle = "rgba(255,255,0,1)";
                 for (d in debris) {
+
                     canvCtx2.fillRect(
                         debris[d].x * sF,
                         canvRef2.height - debris[d].y_top * sF,
                         1,
                         (debris[d].y_top - debris[d].y_middle ) * sF
                     );
-                }
-                
-                for (d in debris) {
+
                     if (debris[d].y_middle > debris[d].y_bottom) {
                         debris[d].y_top = debris[d].y_top - (1 / squeezeFactor);
                         debris[d].y_middle = debris[d].y_middle - (1 / squeezeFactor);
@@ -424,6 +457,18 @@ function drawDebris(debris, squeezeFactor, lowArc, blastSize) {
                 
 
 
+
+
+
+                
+                
+                
+                
+                
+                // Redraws cleared soil below the explosion
+                canvCtx2.fillStyle = "rgba(255,0,255,1)";
+                canvCtx2.fill(path);
+                
                 requestAnimationFrame(animateDebris);
 
             } else {
