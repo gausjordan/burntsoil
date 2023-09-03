@@ -1,14 +1,11 @@
-// Check all players and get the widest screen resolution possible
-// Temporarily hardcoded
-let maxRes = 6000;
 
-let colorValueAtPos = null;
-let ratio = Math.ceil(window.devicePixelRatio);
-let canvRef1 = document.getElementById("canvas1");
-let canvRef2 = document.getElementById("canvas2");
+
+
+
+
+
 canvasSizeFormatterIndex(10, 10);
-let canvCtx1 = canvRef1.getContext('2d');
-let canvCtx2 = canvRef2.getContext('2d');
+
 document.getElementById("curtain").style.height = canvRef1.height / ratio + "px";
 document.getElementById("curtain").style.width = canvRef1.width / ratio + "px";
 

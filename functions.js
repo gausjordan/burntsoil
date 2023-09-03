@@ -207,7 +207,9 @@ async function explosionOnGround(x, y, blastSize) {
     await drawFireball(x, y, blastSize);
     await clearFireball(xSqz, ySqz, blastSqz);
     let debris = collectDebris(upArc, lowArc, pxMix);
-    drawDebris(debris, squeezeFactor, lowArc, blastSize);
+    await drawDebris(debris, squeezeFactor, lowArc, blastSize);
+    
+
 
     //let soilAbove = soilAboveGenerator(upperArc);
     //let damageSpan = getCarveLimits(lowerArc);
@@ -367,7 +369,7 @@ function clearFireball(x, y, blastSqz) {
 function drawDebris(debris, squeezeFactor, lowArc, blastSize) {
 
     let sF = squeezeFactor;
-    let downShift = 2 * (blastSize + 1) * squeezeFactor;
+    let maxShift = 2 * (blastSize + 1) * squeezeFactor;
     
     // First and last elements of the debris array
     let first = debris.slice(-debris-length)[0];
@@ -381,6 +383,7 @@ function drawDebris(debris, squeezeFactor, lowArc, blastSize) {
 
     // Collects data required to redraw erased area below the explosion
     let path = new Path2D();
+
     for (d in debris) {
         if (debris[d].y_bottom < pxMix[debris[d].x]) {
             path.lineTo(
@@ -406,17 +409,21 @@ function drawDebris(debris, squeezeFactor, lowArc, blastSize) {
     }
     path.closePath();
     
-    
     canvCtx2.fillStyle = "rgba(0,255,0,1)";
-
 
     return new Promise(resolve => {
 
+        let brakeDown;
         let startTime = performance.now();
    
         function animateDebris(timeStamp) {
 
-            if (downShift > 0) {
+            console.log(
+                (timeStamp - startTime) / 16
+                
+                );
+
+            if (maxShift > 0) {
                 // Erasing area above the explosion
                 // In most cases: it exploded on-screen, or far to the right
                 if (last.x > 0) {
@@ -449,33 +456,32 @@ function drawDebris(debris, squeezeFactor, lowArc, blastSize) {
                         (debris[d].y_top - debris[d].y_middle ) * sF
                     );
 
+                    brakeDown = startTime / blowUpSpeed / 30;
+
+                    // Shifts the debris field array down by one
                     if (debris[d].y_middle > debris[d].y_bottom) {
-                        debris[d].y_top = debris[d].y_top - (1 / squeezeFactor);
-                        debris[d].y_middle = debris[d].y_middle - (1 / squeezeFactor);
+                        debris[d].y_top = debris[d].y_top - (1 / sF);
+                        debris[d].y_middle = debris[d].y_middle - (1 / sF);
                     }
                 }
                 
-
-
-
-
-
-                
-                
-                
-                
-                
                 // Redraws cleared soil below the explosion
-                canvCtx2.fillStyle = "rgba(255,0,255,1)";
+                //canvCtx2.fillStyle = "rgba(255,0,255,1)";
                 canvCtx2.fill(path);
                 
                 requestAnimationFrame(animateDebris);
+
+                startTime = timeStamp;
 
             } else {
                 resolve();
             }
 
-            downShift--;
+            maxShift--;
+
+            //downShift = downShift - 3;
+
+            
         }
         requestAnimationFrame(animateDebris);
     })
@@ -527,7 +533,7 @@ function generateLowerArc(dx, dy, r) {
  * @param {*} lowerArc a dictionary of coordinates to be carved out
  * @returns left and right blast limit on the x axis (array)
  */
-function carve(lowerArc, callback) {
+function carve(lowerArc) {
     for (key in lowerArc) {
         if (lowerArc[key] < pxMix[key]) {
             pxMix[key] = lowerArc[key];

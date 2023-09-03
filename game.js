@@ -1,16 +1,4 @@
-// Check all players and get the widest screen resolution possible
-// Temporarily hardcoded
-let blowUpSpeed = 500;
-let maxRes = 6000;
-let globalTerrainColor = "rgba(0, 255, 0, 1)";
-let colorValueAtPos = null;
-let ratio = Math.ceil(window.devicePixelRatio);
-let canvRef1 = document.getElementById("canvas1");
-let canvRef2 = document.getElementById("canvas2");
 canvasSizeFormatterGame(12, 12);
-let canvCtx1 = canvRef1.getContext('2d');
-let canvCtx2 = canvRef2.getContext('2d');
-
 
 let rawPoints1 = generateCps(5);    // low frequency terrain
 let rawPoints2 = generateCps(10);   // high frequency terrain
