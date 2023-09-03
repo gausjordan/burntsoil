@@ -369,7 +369,6 @@ function clearFireball(x, y, blastSqz) {
 function drawDebris(debris, squeezeFactor, lowArc, blastSize) {
 
     let sF = squeezeFactor;
-    let maxShift = 2 * (blastSize + 1) * squeezeFactor;
     
     // First and last elements of the debris array
     let first = debris.slice(-debris-length)[0];
@@ -413,74 +412,69 @@ function drawDebris(debris, squeezeFactor, lowArc, blastSize) {
 
     return new Promise(resolve => {
 
-        let brakeDown;
         let startTime = performance.now();
+        let changesCount = 0;
    
         function animateDebris(timeStamp) {
 
-            console.log(
-                (timeStamp - startTime) / 16
-                
+
+            // Erasing area above the explosion
+            // In most cases: it exploded on-screen, or far to the right
+            if (last.x > 0) {
+                canvCtx2.clearRect(
+                    first.x * sF,
+                    0,
+                    (last.x - first.x) * sF,
+                    canvRef2.height
                 );
-
-            if (maxShift > 0) {
-                // Erasing area above the explosion
-                // In most cases: it exploded on-screen, or far to the right
-                if (last.x > 0) {
-                    canvCtx2.clearRect(
-                        first.x * sF,
-                        0,
-                        (last.x - first.x) * sF,
-                        canvRef2.height
-                    );
-                }
-                // Exception: An explosion touches the left edge of a canvas
-                else {                  
-                    canvCtx2.clearRect(
-                        (trueFirst.x) * sF,
-                        0,
-                        (trueLast.x - trueFirst.x) * sF,
-                        canvRef2.height
-                    );
-                }
-
-                
-                // Redraws area above the explosion
-                canvCtx2.fillStyle = "rgba(255,255,0,1)";
-                for (d in debris) {
-
-                    canvCtx2.fillRect(
-                        debris[d].x * sF,
-                        canvRef2.height - debris[d].y_top * sF,
-                        1,
-                        (debris[d].y_top - debris[d].y_middle ) * sF
-                    );
-
-                    brakeDown = startTime / blowUpSpeed / 30;
-
-                    // Shifts the debris field array down by one
-                    if (debris[d].y_middle > debris[d].y_bottom) {
-                        debris[d].y_top = debris[d].y_top - (1 / sF);
-                        debris[d].y_middle = debris[d].y_middle - (1 / sF);
-                    }
-                }
-                
-                // Redraws cleared soil below the explosion
-                //canvCtx2.fillStyle = "rgba(255,0,255,1)";
-                canvCtx2.fill(path);
-                
-                requestAnimationFrame(animateDebris);
-
-                startTime = timeStamp;
-
-            } else {
-                resolve();
+            }
+            // Exception: An explosion touches the left edge of a canvas
+            else {                  
+                canvCtx2.clearRect(
+                    (trueFirst.x) * sF,
+                    0,
+                    (trueLast.x - trueFirst.x) * sF,
+                    canvRef2.height
+                );
             }
 
-            maxShift--;
+            // Number of soil shifts per iteration
+            // Animation is done once 0 changes are made
+            changesCount = 0;                
 
-            //downShift = downShift - 3;
+            // Redraws area above the explosion
+            canvCtx2.fillStyle = "rgba(255,255,0,1)";
 
+            for (d in debris) {
+
+                canvCtx2.fillRect(
+                    debris[d].x * sF,
+                    canvRef2.height - debris[d].y_top * sF,
+                    1,
+                    (debris[d].y_top - debris[d].y_middle ) * sF
+                );
+
+                // Shifts the debris field array down by one
+                if (debris[d].y_middle > debris[d].y_bottom
+                    && debris[d].y_bottom < pxMix[debris[d].x])
+                {
+                    debris[d].y_top = debris[d].y_top - (1 / sF);
+                    debris[d].y_middle = debris[d].y_middle - (1 / sF);
+                    changesCount++;
+                }
+
+            }
+            
+            // Redraws cleared soil below the explosion
+            //canvCtx2.fillStyle = "rgba(255,0,255,1)";
+            canvCtx2.fill(path);
+            
+            if (changesCount == 0) {
+                resolve();
+            } else {
+                startTime = timeStamp;
+                requestAnimationFrame(animateDebris);
+            }
             
         }
         requestAnimationFrame(animateDebris);
