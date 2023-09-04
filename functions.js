@@ -256,28 +256,7 @@ function collectDebris(upArc, lowArc, pxMix, blastSize) {
             );
         }
     }
-    return debrisAbove;
-   
-    /*
-    // debug visualizer
-    for (v in upArc) {
-        canvCtx2.fillStyle = "pink";
-        canvCtx2.fillRect(
-            v*squeezeFactor,
-            (canvRef2.height - upArc[v] * squeezeFactor), 
-            1,
-            1);
-    }
-
-    for (v in lowArc) {
-        canvCtx2.fillStyle = "cyan";
-        canvCtx2.fillRect(
-            v*squeezeFactor,
-            (canvRef2.height - lowArc[v] * squeezeFactor), 
-            1,
-            1);
-    }
-    */
+    return debrisAbove;    
 }
 
 
@@ -431,18 +410,18 @@ function drawDebris(debris, squeezeFactor, lowArc, blastSize) {
             // In most cases: it exploded on-screen, or far to the right
             if (last.x > 0) {
                 canvCtx2.clearRect(
-                    first.x * sF,
+                    (first.x * sF) + 1,
                     0,
-                    (last.x - first.x) * sF,
+                    ((last.x - first.x) * sF) - 2,
                     canvRef2.height
                 );
             }
             // Exception: An explosion touches the left edge of a canvas
             else {                  
                 canvCtx2.clearRect(
-                    (trueFirst.x) * sF,
+                    ((trueFirst.x) * sF) + 1,
                     0,
-                    (trueLast.x - trueFirst.x) * sF,
+                    ((trueLast.x - trueFirst.x) * sF) - 2,
                     canvRef2.height
                 );
             }
@@ -473,7 +452,7 @@ function drawDebris(debris, squeezeFactor, lowArc, blastSize) {
             // Redraws cleared soil below the explosion
             //canvCtx2.fillStyle = "rgba(255,0,255,1)";
             canvCtx2.fill(path);
-            if (changesCount == 0) {
+            if (changesCount <= 0) {
                 resolve();
             } else {
                 startTime = timeStamp;

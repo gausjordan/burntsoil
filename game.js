@@ -88,22 +88,3 @@ let squeezeFactor = canvRef2.width / pxMix.length;
 drawBackdrop(canvRef1.width, canvRef1.height, "blue");
 
 drawTerrain(pxMix, squeezeFactor);
-
-
-/*
-let path2 = new Path2D();
-
-path2.moveTo(220, 60);
-path2.lineTo(230, 65);
-path2.lineTo(240, 55);
-path2.lineTo(250, 95);
-path2.lineTo(260, 65);
-path2.lineTo(270, 60);
-path2.lineTo(270, 60);
-path2.lineTo(270,300);
-path2.lineTo(220, 300);
-path2.lineTo(220, 60);
-path2.closePath();
-
-canvCtx2.fill(path2);
-*/

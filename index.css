@@ -178,6 +178,7 @@ main h1, h2 {
     color: white;
     text-align: center;
     z-index: 1;
+    user-select: none;
 }
 
 
