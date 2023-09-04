@@ -226,6 +226,7 @@ function carveArray(debris, sF) {
                 pxMix[debris[d].x] = debris[d].y_top;
             }
         }
+        lock = false;
         resolve();
     });
 }
@@ -317,7 +318,6 @@ function drawFireball(x, y, blastSize) {
                 canvCtx2.fill();
             }
             else {
-                lock = false;
                 resolve();
             }
         }
@@ -371,7 +371,6 @@ function clearFireball(x, y, blastSqz) {
                 requestAnimationFrame(animateFire);
 
             } else {
-                lock = false;
                 resolve();
             }
         }
