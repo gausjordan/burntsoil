@@ -208,15 +208,28 @@ async function explosionOnGround(x, y, blastSize) {
     await clearFireball(xSqz, ySqz, blastSqz);
     let debris = collectDebris(upArc, lowArc, pxMix);
     await drawDebris(debris, squeezeFactor, lowArc, blastSize);
+    await carveArray(debris, squeezeFactor);
+    drawTerrain(pxMix, squeezeFactor);
     
-
-
-    //let soilAbove = soilAboveGenerator(upperArc);
-    //let damageSpan = getCarveLimits(lowerArc);
-    //carve(lowerArc, drawTerrain);
-    // drawTerrain(pxMix, squeezeFactor);
-    //drawDebris(soilAbove, squeezeFactor, damageSpan, upperArc);
 }
+
+
+/**
+ * Changes (carves) the existing landscape after an explosion event
+ * @param {*} debris an array of objects containing 4 explosion values
+  */
+function carveArray(debris, sF) {
+    canvCtx2.fillStyle = "rgb(255,0,255)";
+    return new Promise(resolve => {
+        for (d in debris) {
+            if (pxMix[debris[d].x] > debris[d].y_top) {
+                pxMix[debris[d].x] = debris[d].y_top;
+            }
+        }
+        resolve();
+    });
+}
+
 
 
 function collectDebris(upArc, lowArc, pxMix, blastSize) {
@@ -288,6 +301,7 @@ function drawFireball(x, y, blastSize) {
     return new Promise(resolve => {
         let currentRadius = 0;
         let startTime = performance.now();
+
         function animateFire(timeStamp) {
 
             if (currentRadius < blastSqz) {
@@ -409,15 +423,11 @@ function drawDebris(debris, squeezeFactor, lowArc, blastSize) {
     path.closePath();
     
     canvCtx2.fillStyle = "rgba(0,255,0,1)";
-
     return new Promise(resolve => {
-
         let startTime = performance.now();
         let changesCount = 0;
-   
+
         function animateDebris(timeStamp) {
-
-
             // Erasing area above the explosion
             // In most cases: it exploded on-screen, or far to the right
             if (last.x > 0) {
@@ -437,23 +447,20 @@ function drawDebris(debris, squeezeFactor, lowArc, blastSize) {
                     canvRef2.height
                 );
             }
-
             // Number of soil shifts per iteration
             // Animation is done once 0 changes are made
             changesCount = 0;                
 
             // Redraws area above the explosion
-            canvCtx2.fillStyle = "rgba(255,255,0,1)";
+            // canvCtx2.fillStyle = "rgba(255,255,0,1)";
 
             for (d in debris) {
-
                 canvCtx2.fillRect(
                     debris[d].x * sF,
                     canvRef2.height - debris[d].y_top * sF,
                     1,
                     (debris[d].y_top - debris[d].y_middle ) * sF
                 );
-
                 // Shifts the debris field array down by one
                 if (debris[d].y_middle > debris[d].y_bottom
                     && debris[d].y_bottom < pxMix[debris[d].x])
@@ -462,24 +469,22 @@ function drawDebris(debris, squeezeFactor, lowArc, blastSize) {
                     debris[d].y_middle = debris[d].y_middle - (1 / sF);
                     changesCount++;
                 }
-
             }
             
             // Redraws cleared soil below the explosion
             //canvCtx2.fillStyle = "rgba(255,0,255,1)";
             canvCtx2.fill(path);
-            
             if (changesCount == 0) {
                 resolve();
             } else {
                 startTime = timeStamp;
                 requestAnimationFrame(animateDebris);
             }
-            
         }
         requestAnimationFrame(animateDebris);
     })
 }
+
 
 
 /**
@@ -519,29 +524,4 @@ function generateLowerArc(dx, dy, r) {
         lowerArc[x] = y;
     }
     return lowerArc;
-}
-
-
-/**
- * Changes (carves) the existing landscape after an explosion event
- * @param {*} lowerArc a dictionary of coordinates to be carved out
- * @returns left and right blast limit on the x axis (array)
- */
-function carve(lowerArc) {
-    for (key in lowerArc) {
-        if (lowerArc[key] < pxMix[key]) {
-            pxMix[key] = lowerArc[key];
-        }
-    }
-}
-
-
-
-
-function getCarveLimits(lowerArc) {
-    let beginning = Object.keys(lowerArc)[0];
-    let end = Object.keys(lowerArc)[Object.keys(lowerArc).length - 1];
-    console.log("Carve limit beginning: " + beginning);
-    console.log("Carve limit ending: " + end);
-    return [beginning, end];
 }
