@@ -374,7 +374,6 @@ function drawDebris(debris, squeezeFactor, lowArc, blastSize) {
 
     // Collects data required to redraw erased area below the explosion
     let path = new Path2D();
-
     for (d in debris) {
         if (debris[d].y_bottom < pxMix[debris[d].x]) {
             path.lineTo(
@@ -388,7 +387,6 @@ function drawDebris(debris, squeezeFactor, lowArc, blastSize) {
             );
         }
     }
-
     if (last.x > 0) {
         path.lineTo(debris[debris.length-1].x * sF, canvRef2.height);
         path.lineTo(debris[0].x * sF, canvRef2.height);
@@ -397,17 +395,15 @@ function drawDebris(debris, squeezeFactor, lowArc, blastSize) {
         path.lineTo(trueLast.x * sF, canvRef2.height);
         path.lineTo(trueFirst.x * sF, canvRef2.height);
         path.lineTo(trueFirst.x * sF, trueFirst.y_bottom * sF);
-    }
-    path.closePath();
+    } path.closePath();
     
     canvCtx2.fillStyle = "rgba(0,255,0,1)";
+
     return new Promise(resolve => {
         let startTime = performance.now();
-        let changesCount = 0;
-
         function animateDebris(timeStamp) {
-            // Erasing area above the explosion
-            // In most cases: it exploded on-screen, or far to the right
+            // Erases area above the explosion
+            // In most cases: it exploded on-screen, or at the far right
             if (last.x > 0) {
                 canvCtx2.clearRect(
                     (first.x * sF) + 1,
@@ -424,13 +420,10 @@ function drawDebris(debris, squeezeFactor, lowArc, blastSize) {
                     ((trueLast.x - trueFirst.x) * sF) - 2,
                     canvRef2.height
                 );
-            }
-            // Number of soil shifts per iteration
-            // Animation is done once 0 changes are made
-            changesCount = 0;                
+            }         
 
             // Redraws area above the explosion
-            // canvCtx2.fillStyle = "rgba(255,255,0,1)";
+            let changesCount = 0;
 
             for (d in debris) {
                 canvCtx2.fillRect(
@@ -439,10 +432,12 @@ function drawDebris(debris, squeezeFactor, lowArc, blastSize) {
                     1,
                     (debris[d].y_top - debris[d].y_middle ) * sF
                 );
-                // Shifts the debris field array down by one
-                if (debris[d].y_middle > debris[d].y_bottom
-                    && debris[d].y_bottom < pxMix[debris[d].x])
-                {
+
+                // Exit condition: the soil either hit the ground
+                // Or it was a mid-air explosion, so it never will
+                if (debris[d].y_middle >= debris[d].y_bottom
+                    && debris[d].y_middle != debris[d].y_top) {
+                    // Shift all the debris down by one
                     debris[d].y_top = debris[d].y_top - (1 / sF);
                     debris[d].y_middle = debris[d].y_middle - (1 / sF);
                     changesCount++;
@@ -452,15 +447,26 @@ function drawDebris(debris, squeezeFactor, lowArc, blastSize) {
             // Redraws cleared soil below the explosion
             //canvCtx2.fillStyle = "rgba(255,0,255,1)";
             canvCtx2.fill(path);
+
             if (changesCount <= 0) {
+                changesCount = 0;
+                // Updates landscape pixel array instantly one animation
+                // gets stopped because there's nothing left to animate
+                debris.forEach(v => {
+                    if (pxMix[v.x] > v.y_bottom) {
+                        pxMix[v.x] = v.y_bottom - (v.y_middle - v.y_top);
+                    }
+                });
                 resolve();
+              
             } else {
+                changesCount = 0;
                 startTime = timeStamp;
                 requestAnimationFrame(animateDebris);
             }
         }
         requestAnimationFrame(animateDebris);
-    })
+    });
 }
 
 
