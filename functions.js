@@ -445,13 +445,12 @@ function drawDebris(debris, squeezeFactor, lowArc, blastSize) {
             }
             
             // Redraws cleared soil below the explosion
-            //canvCtx2.fillStyle = "rgba(255,0,255,1)";
             canvCtx2.fill(path);
 
             if (changesCount <= 0) {
                 changesCount = 0;
-                // Updates landscape pixel array instantly one animation
-                // gets stopped because there's nothing left to animate
+                // Updates landscape pixel array instantly, once animation
+                // gets skipped since there's nothing left to animate
                 debris.forEach(v => {
                     if (pxMix[v.x] > v.y_bottom) {
                         pxMix[v.x] = v.y_bottom - (v.y_middle - v.y_top);
