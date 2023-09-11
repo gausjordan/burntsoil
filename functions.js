@@ -490,3 +490,32 @@ function generateLowerArc(dx, dy, r) {
     }
     return lowerArc;
 }
+
+
+class Tank {
+    constructor(name, xPercentage) {
+        let halfWidth, xPos, yPos, xCenter;
+        this.xPercentage = xPercentage;
+        this.name = name;
+        this.halfWidth = Math.round(tankWidth / 2);
+        this.xPos = Math.round(maxRes / 100 * xPercentage);
+        this.xCenter = this.xPos + this.halfWidth;
+     
+        // TODO: make sure it's above ground zero
+        this.yPos = Math.round(pxMix[this.xCenter]);
+        
+    }
+}
+
+function spawnTank(percentage) {
+    let tank = new Tank("Player 1", Number(percentage));
+    return tank;    
+}
+
+
+// canvCtx2.fillStyle = "rgba(255,0,0,1)";
+// canvCtx2.fillRect(
+//     position * squeezeFactor,
+//     canvRef2.height - pxMix[position] * squeezeFactor,
+//     tankWidth * squeezeFactor,
+//     tankWidth / 2 * squeezeFactor);
