@@ -27,10 +27,11 @@ tanks.push(spawnTank(20));
 
 canvCtx2.fillStyle = "rgba(255,0,0,1)"; 
 
-console.log(tanks[0]);
-
-canvCtx2.fillRect(
+/* canvCtx2.fillRect(
     tanks[0].xPos * squeezeFactor,
     canvRef2.height - (tanks[0].yPos * squeezeFactor),
     100,
     50);
+*/
+
+drawTank(255, 0, 0);

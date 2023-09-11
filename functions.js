@@ -497,10 +497,10 @@ class Tank {
         let halfWidth, xPos, yPos, xCenter;
         this.xPercentage = xPercentage;
         this.name = name;
-        this.halfWidth = Math.round(tankWidth / 2);
+        this.halfWidth = Math.round(tankSize / 2);
         this.xPos = Math.round(maxRes / 100 * xPercentage);
         this.xCenter = this.xPos + this.halfWidth;
-     
+
         // TODO: make sure it's above ground zero
         this.yPos = Math.round(pxMix[this.xCenter]);
         
@@ -511,6 +511,85 @@ function spawnTank(percentage) {
     let tank = new Tank("Player 1", Number(percentage));
     return tank;    
 }
+
+
+function drawTank(r, g, b) {
+
+    // Caterpillar tracks
+    let styleString;
+    styleString = `rgba(${r-70},${g-70},${b-70},1)`;
+    canvCtx2.fillStyle = styleString;
+    canvCtx2.beginPath();
+    canvCtx2.moveTo(2    * tankSize / 30, 6   * tankSize / 20);
+    canvCtx2.lineTo(2    * tankSize / 30, 8   * tankSize / 20);
+    canvCtx2.lineTo(3    * tankSize / 30, 9   * tankSize / 20);
+    canvCtx2.lineTo(27   * tankSize / 30, 9   * tankSize / 20);
+    canvCtx2.lineTo(28   * tankSize / 30, 8   * tankSize / 20);
+    canvCtx2.lineTo(28   * tankSize / 30, 6   * tankSize / 20);
+    canvCtx2.lineTo(1    * tankSize / 30, 6   * tankSize / 20);
+    canvCtx2.fill();
+
+    // Wheels and sprockets
+    styleString = `rgba(${r+70},${g+70},${b+70},1)`;
+    canvCtx2.fillStyle = styleString;
+    canvCtx2.beginPath();
+    canvCtx2.arc(
+        3.5 * tankSize / 30,
+        6.8 * tankSize / 20,
+        0.035 * tankSize,
+        0,
+        2 * Math.PI);
+    canvCtx2.arc(
+        26.5 * tankSize / 30,
+        6.8 * tankSize / 20,
+        0.035 * tankSize,
+        0,
+        2 * Math.PI);
+    canvCtx2.fill();
+    canvCtx2.beginPath();
+        for (let i = 1; i < 4; i += 0.65) {
+            canvCtx2.arc(
+            i * 6.5 * tankSize / 30,
+            7.5 * tankSize / 20,
+            0.06 * tankSize,
+            0,
+            2 * Math.PI);
+        }
+    canvCtx2.fill();
+    
+    // Fender
+    styleString = `rgba(${r},${g},${b},1)`;
+    canvCtx2.fillStyle = styleString;
+    canvCtx2.beginPath();
+    canvCtx2.moveTo(0    * tankSize / 30, 5   * tankSize / 20);
+    canvCtx2.lineTo(0.4  * tankSize / 30, 4.3 * tankSize / 20);
+    canvCtx2.lineTo(1    * tankSize / 30, 4   * tankSize / 20);
+    canvCtx2.lineTo(29   * tankSize / 30, 4   * tankSize / 20);
+    canvCtx2.lineTo(29.6 * tankSize / 30, 4.3 * tankSize / 20);
+    canvCtx2.lineTo(30   * tankSize / 30, 5   * tankSize / 20);
+    canvCtx2.lineTo(30   * tankSize / 30, 7   * tankSize / 20);
+    canvCtx2.lineTo(28   * tankSize / 30, 7   * tankSize / 20);
+    canvCtx2.lineTo(27   * tankSize / 30, 6   * tankSize / 20);
+    canvCtx2.lineTo(3    * tankSize / 30, 6   * tankSize / 20);
+    canvCtx2.lineTo(2    * tankSize / 30, 7   * tankSize / 20);
+    canvCtx2.lineTo(0    * tankSize / 30, 7   * tankSize / 20);
+    canvCtx2.lineTo(0    * tankSize / 30, 5   * tankSize / 20);
+    canvCtx2.fill();
+
+    // Turret
+    styleString = `rgba(${r},${g},${b},1)`;
+    canvCtx2.fillStyle = styleString;
+    canvCtx2.beginPath();
+    canvCtx2.moveTo(7    * tankSize / 30, 4   * tankSize / 20);
+    canvCtx2.lineTo(9    * tankSize / 30, 2   * tankSize / 20);
+    canvCtx2.lineTo(21   * tankSize / 30, 2   * tankSize / 20);
+    canvCtx2.lineTo(23   * tankSize / 30, 4   * tankSize / 20);
+    canvCtx2.fill();
+    
+}
+
+
+
 
 
 // canvCtx2.fillStyle = "rgba(255,0,0,1)";
