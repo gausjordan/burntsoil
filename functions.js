@@ -221,11 +221,12 @@ async function explosionOnGround(x, y, blastSize) {
 function carveArray(debris, sF) {
     canvCtx2.fillStyle = "rgb(255,0,255)";
     return new Promise(resolve => {
-        for (d in debris) {
-            if (pxMix[debris[d].x] > debris[d].y_top) {
-                pxMix[debris[d].x] = debris[d].y_top;
+        // Update debris to reflect it's final shape
+        debris.forEach(v => {
+            if (pxMix[v.x] > v.y_top) {
+                pxMix[v.x] = v.y_bottom + (v.y_top - v.y_middle);
             }
-        }
+        });
         lock = false;
         resolve();
     });
@@ -351,7 +352,7 @@ function clearFireball(x, y, blastSqz) {
 
             } else {
                 resolve();
-            }
+            7}
         }
         requestAnimationFrame(animateFire);
     })
@@ -359,105 +360,86 @@ function clearFireball(x, y, blastSqz) {
 
 
 function drawDebris(debris, squeezeFactor, lowArc, blastSize) {
-
+    // Changes made while animating are only made on a disposable copy
+    let debrisCopy = JSON.parse(JSON.stringify(debris));
     let sF = squeezeFactor;
-    
     // First and last elements of the debris array
-    let first = debris.slice(-debris-length)[0];
-    let last = debris.slice(-1)[0];
-    
+    let first = debrisCopy.slice(-debrisCopy-length)[0];
+    let last = debrisCopy.slice(-1)[0];
     // If an explosion touches the left edge of a canvas, the array gets
     // shifted: leftmost X value is zero, followed by positive X's,
-    // folowed by negative X's. Then, trueFirst/trueLast is used instead.
-    let trueFirst = last;
-    let trueLast = debris[debris.length + Number(trueFirst.x) - 1];
+    // folowed by negative X's. Then, new first/last are defined instead.
+    if (last.x < 0) {
+        first = last;
+        last = debrisCopy[debrisCopy.length + Number(first.x) - 1];
+    }
 
     // Collects data required to redraw erased area below the explosion
     let path = new Path2D();
-    for (d in debris) {
-        if (debris[d].y_bottom < pxMix[debris[d].x]) {
+    for (d in debrisCopy) {
+        if (debrisCopy[d].y_bottom < pxMix[debrisCopy[d].x]) {
             path.lineTo(
-                debris[d].x * sF,
-                canvRef2.height - debris[d].y_bottom * sF
+                debrisCopy[d].x * sF,
+                canvRef2.height - debrisCopy[d].y_bottom * sF
             );
         } else {
             path.lineTo(
-                debris[d].x * sF,
-                canvRef2.height - pxMix[debris[d].x] * sF
+                debrisCopy[d].x * sF,
+                canvRef2.height - pxMix[debrisCopy[d].x] * sF
             );
         }
     }
-    if (last.x > 0) {
-        path.lineTo(debris[debris.length-1].x * sF, canvRef2.height);
-        path.lineTo(debris[0].x * sF, canvRef2.height);
-        path.lineTo(debris[0].x * sF, debris[0].y_bottom * sF);
-    } else {
-        path.lineTo(trueLast.x * sF, canvRef2.height);
-        path.lineTo(trueFirst.x * sF, canvRef2.height);
-        path.lineTo(trueFirst.x * sF, trueFirst.y_bottom * sF);
-    } path.closePath();
     
+    path.lineTo(last.x * sF, canvRef2.height);
+    path.lineTo(first.x * sF, canvRef2.height);
+    path.lineTo(first.x * sF, first.y_bottom * sF);
+    path.closePath();
     canvCtx2.fillStyle = "rgba(0,255,0,1)";
 
     return new Promise(resolve => {
         let startTime = performance.now();
+        let dropSpeed;
+        
         function animateDebris(timeStamp) {
-            // Erases area above the explosion
-            // In most cases: it exploded on-screen, or at the far right
-            if (last.x > 0) {
-                canvCtx2.clearRect(
-                    (first.x * sF) + 1,
-                    0,
-                    ((last.x - first.x) * sF) - 2,
-                    canvRef2.height
-                );
-            }
-            // Exception: An explosion touches the left edge of a canvas
-            else {                  
-                canvCtx2.clearRect(
-                    ((trueFirst.x) * sF) + 1,
-                    0,
-                    ((trueLast.x - trueFirst.x) * sF) - 2,
-                    canvRef2.height
-                );
-            }         
+            dropSpeed = (timeStamp - startTime) * blowUpSpeed / 1800;
+            canvCtx2.clearRect(
+                (first.x * sF) + 1,
+                0,
+                ((last.x - first.x) * sF) - 2,
+                canvRef2.height
+            );
 
             // Redraws area above the explosion
             let changesCount = 0;
-
-            for (d in debris) {
+            debrisCopy.forEach(v => {
+                if (pxMix[v.x] > v.y_bottom) {
+                    pxMix[v.x] = v.y_bottom - (v.y_middle - v.y_top);
+                }
+            });
+            for (d in debrisCopy) {
                 canvCtx2.fillRect(
-                    debris[d].x * sF,
-                    canvRef2.height - debris[d].y_top * sF,
+                    debrisCopy[d].x * sF,
+                    canvRef2.height - debrisCopy[d].y_top * sF,
                     1,
-                    (debris[d].y_top - debris[d].y_middle ) * sF
+                    (debrisCopy[d].y_top - debrisCopy[d].y_middle ) * sF
                 );
-
-                // Exit condition: the soil either hit the ground
-                // Or it was a mid-air explosion, so it never will
-                if (debris[d].y_middle >= debris[d].y_bottom
-                    && debris[d].y_middle != debris[d].y_top) {
+               
+                // Exit condition: the soil either hits the ground
+                // or it was a mid-air explosion; there's nothing to fall
+                if (debrisCopy[d].y_middle >= debrisCopy[d].y_bottom
+                    && debrisCopy[d].y_middle != debrisCopy[d].y_top) {
                     // Shift all the debris down by one
-                    debris[d].y_top = debris[d].y_top - (1 / sF);
-                    debris[d].y_middle = debris[d].y_middle - (1 / sF);
+                    debrisCopy[d].y_top = debrisCopy[d].y_top - dropSpeed;
+                    debrisCopy[d].y_middle = debrisCopy[d].y_middle - dropSpeed;
                     changesCount++;
                 }
             }
-            
+
             // Redraws cleared soil below the explosion
             canvCtx2.fill(path);
-
             if (changesCount <= 0) {
                 changesCount = 0;
-                // Updates landscape pixel array instantly, once animation
-                // gets skipped since there's nothing left to animate
-                debris.forEach(v => {
-                    if (pxMix[v.x] > v.y_bottom) {
-                        pxMix[v.x] = v.y_bottom - (v.y_middle - v.y_top);
-                    }
-                });
                 resolve();
-              
             } else {
                 changesCount = 0;
                 startTime = timeStamp;
