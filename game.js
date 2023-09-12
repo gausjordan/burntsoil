@@ -34,4 +34,4 @@ canvCtx2.fillStyle = "rgba(255,0,0,1)";
     50);
 */
 
-drawTank(255, 0, 0, 300, 200);
+drawTank(255, 0, 0, 300, 200, squeezeFactor);

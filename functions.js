@@ -352,7 +352,7 @@ function clearFireball(x, y, blastSqz) {
 
             } else {
                 resolve();
-            7}
+            }
         }
         requestAnimationFrame(animateFire);
     })
@@ -513,35 +513,36 @@ function spawnTank(percentage) {
 }
 
 
-function drawTank(r, g, b, xPos, yPos) {
+function drawTank(r, g, b, xPos, yPos, sF) {
 
     // Caterpillar tracks
     let styleString;
-    styleString = `rgba(${r-70},${g-70},${b-70},1)`;
+    tankSize *= sF;
+    styleString = `rgba(${r-140},${g-140},${b-140},1)`;
     canvCtx2.fillStyle = styleString;
     canvCtx2.beginPath();
-    canvCtx2.moveTo(2  * tankSize / 30, 4 * tankSize / 20);
-    canvCtx2.lineTo(2  * tankSize / 30, 6 * tankSize / 20);
-    canvCtx2.lineTo(3  * tankSize / 30, 7 *  tankSize / 20);
-    canvCtx2.lineTo(27 * tankSize / 30, 7 * tankSize / 20);
-    canvCtx2.lineTo(28 * tankSize / 30, 6 * tankSize / 20);
-    canvCtx2.lineTo(28 * tankSize / 30, 4 * tankSize / 20);
-    canvCtx2.lineTo(1  * tankSize / 30, 4 * tankSize / 20);
+    canvCtx2.moveTo(xPos + 0  * tankSize / 30, 4 * tankSize / 20 + yPos);
+    canvCtx2.lineTo(xPos + 3  * tankSize / 30, 6 * tankSize / 20 + yPos);
+    canvCtx2.lineTo(xPos + 5  * tankSize / 30, 7 *  tankSize / 20 + yPos);
+    canvCtx2.lineTo(xPos + 25 * tankSize / 30, 7 * tankSize / 20 + yPos);
+    canvCtx2.lineTo(xPos + 27 * tankSize / 30, 6 * tankSize / 20 + yPos);
+    canvCtx2.lineTo(xPos + 30 * tankSize / 30, 4 * tankSize / 20 + yPos);
+    canvCtx2.lineTo(xPos + 1  * tankSize / 30, 4 * tankSize / 20 + yPos);
     canvCtx2.fill();
 
     // Wheels and sprockets
-    styleString = `rgba(${r+70},${g+70},${b+70},1)`;
+    styleString = `rgba(${r+80},${g+80},${b+80},1)`;
     canvCtx2.fillStyle = styleString;
     canvCtx2.beginPath();
     canvCtx2.arc(
-        3.5 * tankSize / 30,
-        4.8 * tankSize / 20,
+        xPos + 3.5 * tankSize / 30,
+        yPos + 4.8 * tankSize / 20,
         0.035 * tankSize,
         0,
         2 * Math.PI);
     canvCtx2.arc(
-        26.5 * tankSize / 30,
-        4.8 * tankSize / 20,
+        xPos + 26.5 * tankSize / 30,
+        yPos + 4.8 * tankSize / 20,
         0.035 * tankSize,
         0,
         2 * Math.PI);
@@ -549,8 +550,8 @@ function drawTank(r, g, b, xPos, yPos) {
     canvCtx2.beginPath();
         for (let i = 1; i < 4; i += 0.65) {
             canvCtx2.arc(
-            i * 6.5 * tankSize / 30,
-            5.5 * tankSize / 20,
+            xPos + i * 6.5 * tankSize / 30,
+            yPos + 5.5 * tankSize / 20,
             0.06 * tankSize,
             0,
             2 * Math.PI);
@@ -561,40 +562,28 @@ function drawTank(r, g, b, xPos, yPos) {
     styleString = `rgba(${r},${g},${b},1)`;
     canvCtx2.fillStyle = styleString;
     canvCtx2.beginPath();
-    canvCtx2.moveTo(0    * tankSize / 30, 3   * tankSize / 20);
-    canvCtx2.lineTo(0.4  * tankSize / 30, 2.3 * tankSize / 20);
-    canvCtx2.lineTo(1    * tankSize / 30, 2   * tankSize / 20);
-    canvCtx2.lineTo(29   * tankSize / 30, 2   * tankSize / 20);
-    canvCtx2.lineTo(29.6 * tankSize / 30, 2.3 * tankSize / 20);
-    canvCtx2.lineTo(30   * tankSize / 30, 3   * tankSize / 20);
-    canvCtx2.lineTo(30   * tankSize / 30, 5   * tankSize / 20);
-    canvCtx2.lineTo(28   * tankSize / 30, 5   * tankSize / 20);
-    canvCtx2.lineTo(27   * tankSize / 30, 4   * tankSize / 20);
-    canvCtx2.lineTo(3    * tankSize / 30, 4   * tankSize / 20);
-    canvCtx2.lineTo(2    * tankSize / 30, 5   * tankSize / 20);
-    canvCtx2.lineTo(0    * tankSize / 30, 5   * tankSize / 20);
-    canvCtx2.lineTo(0    * tankSize / 30, 3   * tankSize / 20);
+    canvCtx2.moveTo(xPos + 0    * tankSize / 30, 3   * tankSize / 20 + yPos);
+    canvCtx2.lineTo(xPos + 0.4  * tankSize / 30, 2.3 * tankSize / 20 + yPos);
+    canvCtx2.lineTo(xPos + 1    * tankSize / 30, 2   * tankSize / 20 + yPos);
+    canvCtx2.lineTo(xPos + 29   * tankSize / 30, 2   * tankSize / 20 + yPos);
+    canvCtx2.lineTo(xPos + 29.6 * tankSize / 30, 2.3 * tankSize / 20 + yPos);
+    canvCtx2.lineTo(xPos + 30   * tankSize / 30, 3   * tankSize / 20 + yPos);
+    canvCtx2.lineTo(xPos + 30   * tankSize / 30, 5   * tankSize / 20 + yPos);
+    canvCtx2.lineTo(xPos + 28   * tankSize / 30, 5   * tankSize / 20 + yPos);
+    canvCtx2.lineTo(xPos + 27   * tankSize / 30, 4   * tankSize / 20 + yPos);
+    canvCtx2.lineTo(xPos + 3    * tankSize / 30, 4   * tankSize / 20 + yPos);
+    canvCtx2.lineTo(xPos + 2    * tankSize / 30, 5   * tankSize / 20 + yPos);
+    canvCtx2.lineTo(xPos + 0    * tankSize / 30, 5   * tankSize / 20 + yPos);
+    canvCtx2.lineTo(xPos + 0    * tankSize / 30, 3   * tankSize / 20 + yPos);
     canvCtx2.fill();
 
     // Turret
     styleString = `rgba(${r},${g},${b},1)`;
     canvCtx2.fillStyle = styleString;
     canvCtx2.beginPath();
-    canvCtx2.moveTo(7    * tankSize / 30, 2   * tankSize / 20);
-    canvCtx2.lineTo(9    * tankSize / 30, 0   * tankSize / 20);
-    canvCtx2.lineTo(21   * tankSize / 30, 0   * tankSize / 20);
-    canvCtx2.lineTo(23   * tankSize / 30, 2   * tankSize / 20);
+    canvCtx2.moveTo(xPos + 7  * tankSize / 30, 2   * tankSize / 20 + yPos);
+    canvCtx2.lineTo(xPos + 9  * tankSize / 30, 0   * tankSize / 20 + yPos);
+    canvCtx2.lineTo(xPos + 21 * tankSize / 30, 0   * tankSize / 20 + yPos);
+    canvCtx2.lineTo(xPos + 23 * tankSize / 30, 2   * tankSize / 20 + yPos);
     canvCtx2.fill();
-    
 }
-
-
-
-
-
-// canvCtx2.fillStyle = "rgba(255,0,0,1)";
-// canvCtx2.fillRect(
-//     position * squeezeFactor,
-//     canvRef2.height - pxMix[position] * squeezeFactor,
-//     tankWidth * squeezeFactor,
-//     tankWidth / 2 * squeezeFactor);
