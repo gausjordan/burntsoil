@@ -1,7 +1,7 @@
 // Check all players and get the widest screen resolution possible
 // Temporarily hardcoded
 let maxRes = 6000;
-let tankSize = 220;
+let tankSize = 1020;
 let blowUpSpeed = 500;
 let globalTerrainColor = "rgba(0, 255, 0, 1)";
 let colorValueAtPos = null;

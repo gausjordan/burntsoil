@@ -22,16 +22,11 @@ let squeezeFactor = canvRef2.width / pxMix.length;
 drawBackdrop(canvRef1.width, canvRef1.height, "blue");
 drawTerrain(pxMix, squeezeFactor);
 
-let tanks = [];
-tanks.push(spawnTank(20));
+
+// drawTank(255, 0, 0, 300, 200, squeezeFactor);
 
 canvCtx2.fillStyle = "rgba(255,0,0,1)"; 
 
-/* canvCtx2.fillRect(
-    tanks[0].xPos * squeezeFactor,
-    canvRef2.height - (tanks[0].yPos * squeezeFactor),
-    100,
-    50);
-*/
-
-drawTank(255, 0, 0, 300, 200, squeezeFactor);
+let tanks = [];
+tanks.push(spawnTank(255, 0, 0, "Joe", 20, 0));
+tanks[0].drawTank();
