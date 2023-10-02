@@ -504,107 +504,135 @@ class Tank {
         this.yPos = 500;
     }
 
+    angleInc() {
+        this.angle += 1;
+    }
+
+    angleDec() {
+        this.angle -= 1;
+    }
+
     drawTank() {
         // Caterpillar tracks
         let styleString;
         let sF = squeezeFactor;
         let tS = tankSize;
         tS *= sF;
-        styleString = `rgba(${this.r-140},${this.g-140},${this.b-140},1)`;
+        styleString = `rgba(${this.r-150},${this.g-150},${this.b-150},1)`;
         canvCtx2.fillStyle = styleString;
         canvCtx2.beginPath();
-        canvCtx2.moveTo(this.xPos + 0  * tS / 30, 4 * tS / 20 + this.yPos);
-        canvCtx2.lineTo(this.xPos + 3  * tS / 30, 6 * tS / 20 + this.yPos);
-        canvCtx2.lineTo(this.xPos + 5  * tS / 30, 7 * tS / 20 + this.yPos);
-        canvCtx2.lineTo(this.xPos + 25 * tS / 30, 7 * tS / 20 + this.yPos);
-        canvCtx2.lineTo(this.xPos + 27 * tS / 30, 6 * tS / 20 + this.yPos);
-        canvCtx2.lineTo(this.xPos + 30 * tS / 30, 4 * tS / 20 + this.yPos);
-        canvCtx2.lineTo(this.xPos + 1  * tS / 30, 4 * tS / 20 + this.yPos);
+        canvCtx2.moveTo(this.xPos + 0  * tS, 6   * tS + this.yPos);
+        canvCtx2.lineTo(this.xPos + 1  * tS, 7.5 * tS + this.yPos);
+        canvCtx2.lineTo(this.xPos + 3  * tS, 8.5 * tS + this.yPos);
+        canvCtx2.lineTo(this.xPos + 5  * tS, 9   * tS + this.yPos);
+        canvCtx2.lineTo(this.xPos + 25 * tS, 9   * tS + this.yPos);
+        canvCtx2.lineTo(this.xPos + 27 * tS, 8.5 * tS + this.yPos);
+        canvCtx2.lineTo(this.xPos + 29 * tS, 7.5 * tS + this.yPos);
+        canvCtx2.lineTo(this.xPos + 30 * tS, 5   * tS + this.yPos);
+        canvCtx2.lineTo(this.xPos + 1  * tS, 5   * tS + this.yPos);
         canvCtx2.fill();
 
+
+
         // Wheels and sprockets
-        styleString = `rgba(${this.r+80},${this.g+80},${this.b+80},1)`;
+        styleString = `rgba(${this.r+80},${this.g+100},${this.b+100},1)`;
         canvCtx2.fillStyle = styleString;
         canvCtx2.beginPath();
         canvCtx2.arc(
-            this.xPos + 3.5 * tS / 30,
-            this.yPos + 4.8 * tS / 20,
-            0.035 * tS,
+            this.xPos + 3.5 * tS,
+            this.yPos + 6 * tS,
+            0.7 * tS,
             0,
             2 * Math.PI);
         canvCtx2.arc(
-            this.xPos + 26.5 * tS / 30,
-            this.yPos + 4.8 * tS / 20,
-            0.035 * tS,
+            this.xPos + 26.5 * tS,
+            this.yPos + 6 * tS,
+            0.7 * tS,
             0,
             2 * Math.PI);
         canvCtx2.fill();
         canvCtx2.beginPath();
             for (let i = 1; i < 4; i += 0.65) {
                 canvCtx2.arc(
-                this.xPos + i * 6.5 * tS / 30,
-                this.yPos + 5.5 * tS / 20,
-                0.06 * tS,
+                this.xPos + i * 6.5 * tS,
+                this.yPos + 6.8 * tS,
+                1.8 * tS,
                 0,
                 2 * Math.PI);
             }
         canvCtx2.fill();
+
         
         // Fender
         styleString = `rgba(${this.r},${this.g},${this.b},1)`;
         canvCtx2.fillStyle = styleString;
         canvCtx2.beginPath();
-        canvCtx2.moveTo(this.xPos + 0    * tS / 30, 3   * tS / 20 + this.yPos);
-        canvCtx2.lineTo(this.xPos + 0.4  * tS / 30, 2.3 * tS / 20 + this.yPos);
-        canvCtx2.lineTo(this.xPos + 1    * tS / 30, 2   * tS / 20 + this.yPos);
-        canvCtx2.lineTo(this.xPos + 29   * tS / 30, 2   * tS / 20 + this.yPos);
-        canvCtx2.lineTo(this.xPos + 29.6 * tS / 30, 2.3 * tS / 20 + this.yPos);
-        canvCtx2.lineTo(this.xPos + 30   * tS / 30, 3   * tS / 20 + this.yPos);
-        canvCtx2.lineTo(this.xPos + 30   * tS / 30, 5   * tS / 20 + this.yPos);
-        canvCtx2.lineTo(this.xPos + 28   * tS / 30, 5   * tS / 20 + this.yPos);
-        canvCtx2.lineTo(this.xPos + 27   * tS / 30, 4   * tS / 20 + this.yPos);
-        canvCtx2.lineTo(this.xPos + 3    * tS / 30, 4   * tS / 20 + this.yPos);
-        canvCtx2.lineTo(this.xPos + 2    * tS / 30, 5   * tS / 20 + this.yPos);
-        canvCtx2.lineTo(this.xPos + 0    * tS / 30, 5   * tS / 20 + this.yPos);
-        canvCtx2.lineTo(this.xPos + 0    * tS / 30, 3   * tS / 20 + this.yPos);
+        canvCtx2.moveTo(this.xPos + 0    * tS, 5   * tS + this.yPos);
+        canvCtx2.lineTo(this.xPos + 0.4  * tS, 4.3 * tS + this.yPos);
+        canvCtx2.lineTo(this.xPos + 2    * tS, 3   * tS + this.yPos);
+        canvCtx2.lineTo(this.xPos + 28   * tS, 3   * tS + this.yPos);
+        canvCtx2.lineTo(this.xPos + 29.6 * tS, 4.3 * tS + this.yPos);
+        canvCtx2.lineTo(this.xPos + 30   * tS, 5   * tS + this.yPos);
+        canvCtx2.lineTo(this.xPos + 30   * tS, 7   * tS + this.yPos);
+        canvCtx2.lineTo(this.xPos + 28   * tS, 7   * tS + this.yPos);
+        canvCtx2.lineTo(this.xPos + 27.5 * tS, 5   * tS + this.yPos);
+        canvCtx2.lineTo(this.xPos + 2.5  * tS, 5   * tS + this.yPos);
+        canvCtx2.lineTo(this.xPos + 2    * tS, 7   * tS + this.yPos);
+        canvCtx2.lineTo(this.xPos + 0    * tS, 7   * tS + this.yPos);
+        canvCtx2.lineTo(this.xPos + 0    * tS, 5   * tS + this.yPos);
         canvCtx2.fill();
     
         // Turret
         styleString = `rgba(${this.r},${this.g},${this.b},1)`;
         canvCtx2.fillStyle = styleString;
         canvCtx2.beginPath();
-        canvCtx2.moveTo(this.xPos + 7  * tS / 30, 2   * tS / 20 + this.yPos);
-        canvCtx2.lineTo(this.xPos + 9  * tS / 30, 0   * tS / 20 + this.yPos);
-        canvCtx2.lineTo(this.xPos + 21 * tS / 30, 0   * tS / 20 + this.yPos);
-        canvCtx2.lineTo(this.xPos + 23 * tS / 30, 2   * tS / 20 + this.yPos);
+        canvCtx2.moveTo(this.xPos + 7  * tS, 4   * tS + this.yPos);
+        canvCtx2.lineTo(this.xPos + 7.5  * tS, 2   * tS + this.yPos);
+        canvCtx2.lineTo(this.xPos + 8  * tS, 1   * tS + this.yPos);
+        canvCtx2.lineTo(this.xPos + 9  * tS, 0   * tS + this.yPos);
+        canvCtx2.lineTo(this.xPos + 21 * tS, 0   * tS + this.yPos);
+        canvCtx2.lineTo(this.xPos + 22 * tS, 1   * tS + this.yPos);
+        canvCtx2.lineTo(this.xPos + 22.5 * tS, 2   * tS + this.yPos);
+        canvCtx2.lineTo(this.xPos + 23 * tS, 4   * tS + this.yPos);
         canvCtx2.fill();
 
         // Barrel
-        styleString = `rgba(${this.r},${this.g+255},${this.b+100},1)`;
+        styleString = `rgba(${this.r},${this.g},${this.b},1)`;
         canvCtx2.fillStyle = styleString;
-        canvCtx2.beginPath();
-        this.angle = (Math.PI / 180) * this.angle; // Degrees to radians
-        
+        canvCtx2.beginPath();        
+        // Center of the turret, middle of the barrel at the bottom
+        let bottomX = 15;
+        let bottomY = 1;
+        // Top of the barrel, centerline
+        let topX = 15 + Math.cos(Math.PI / 180 * this.angle) * 15;
+        let topY = 1 - Math.sin(Math.PI / 180 * this.angle) * 15;
+        // Slope & unit vector calculation
+        let slope = (topY - bottomY) / (topX - bottomX);
+        let perpSlope = -(1/slope);
+        let xSlope = 1;
+        let ySlope = perpSlope;
+        let magnitude = Math.sqrt(xSlope*xSlope + perpSlope*perpSlope);
+        let normXslope = xSlope / magnitude;
+        let normYslope = ySlope / magnitude;
+        if (this.angle == 0) {
+            normXslope = 0;
+            normYslope = 1;
+        }
         canvCtx2.moveTo(
-            this.xPos + (15) * tS / 30,
-            (0)  * tS / 20 + this.yPos);
-        
+            this.xPos + (bottomX - 0.5 * normXslope) * tS,
+            this.yPos + (bottomY - 0.5 * normYslope) * tS);
+
         canvCtx2.lineTo(
-            // this.xPos + (30) * tS / 30,
-            // (0)  * tS / 20 + this.yPos);
-            //this.xPos + (15 * (Math.cos(this.angle))) * tS / 30,
-            // (0 - (15 * Math.sin(this.angle)))  * tS / 20 + this.yPos);
-            
-            this.xPos + (15 + Math.cos(this.angle) * 15) * tS / 30,
-            (0 - Math.sin(this.angle)*15) * tS / 30 + this.yPos);
-        
+            this.xPos + (topX - 0.5 * normXslope) * tS,
+            this.yPos + (topY - 0.5 * normYslope) * tS);
+
         canvCtx2.lineTo(
-            this.xPos + (30) * tS / 30,
-            (1)  * tS / 20 + this.yPos);
-        
+            this.xPos + (topX + 0.5 * normXslope) * tS,
+            this.yPos + (topY + 0.5 * normYslope) * tS);
+
         canvCtx2.lineTo(
-            this.xPos + (15)  * tS / 30,
-            (1) * tS / 20 + this.yPos);
+            this.xPos + (bottomX + 0.5 * normXslope) * tS,
+            this.yPos + (bottomY + 0.5 * normYslope) * tS);
         canvCtx2.fill();
     }
 }

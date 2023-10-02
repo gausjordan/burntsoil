@@ -27,3 +27,36 @@ window.addEventListener("resize", (ev) => {
  */
 document.addEventListener('DOMContentLoaded', function() {
 });
+
+
+document.addEventListener('keydown', function(event) {
+    const key = event.key;
+    switch (event.key) {
+        case "ArrowLeft":
+            tanks[0].angleInc();
+            tanks[0].drawTank();
+
+            canvCtx2.clearRect(
+                tanks[0].xPos,
+                tanks[0].yPos - 15 * tankSize * squeezeFactor,
+                30 * tankSize * squeezeFactor,
+                (15+9) * tankSize * squeezeFactor);
+            tanks[0].drawTank();
+            break;
+        case "ArrowRight":
+            tanks[0].angleDec();
+            canvCtx2.clearRect(
+                tanks[0].xPos,
+                tanks[0].yPos - 15 * tankSize * squeezeFactor,
+                30 * tankSize * squeezeFactor,
+                (15+9) * tankSize * squeezeFactor);
+            tanks[0].drawTank();
+            break;
+        case "ArrowUp":
+            // Up pressed
+            break;
+        case "ArrowDown":
+            // Down pressed
+            break;
+    }
+});

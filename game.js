@@ -28,5 +28,5 @@ drawTerrain(pxMix, squeezeFactor);
 canvCtx2.fillStyle = "rgba(255,0,0,1)"; 
 
 let tanks = [];
-tanks.push(spawnTank(255, 0, 0, "Joe", 20, 0));
+tanks.push(spawnTank(255, 0, 0, "Joe", 20, 60));
 tanks[0].drawTank();
