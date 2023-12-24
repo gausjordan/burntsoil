@@ -22,9 +22,6 @@ let squeezeFactor = canvRef2.width / pxMix.length;
 drawBackdrop(canvRef1.width, canvRef1.height, "blue");
 drawTerrain(pxMix, squeezeFactor);
 
-
-// drawTank(255, 0, 0, 300, 200, squeezeFactor);
-
 canvCtx2.fillStyle = "rgba(255,0,0,1)"; 
 
 let tanks = [];

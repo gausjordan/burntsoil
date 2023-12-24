@@ -23,8 +23,8 @@ function drawBackdrop(width, height, styleCode) {
                     g += 8;
                     b += 14;
                 } else if (i > 8*step && i <= 17 * step) {
-                    g -= 5;     // -4
-                    b -= 15;    // -14
+                    g -= 5;
+                    b -= 15;
                 } else if (i > 19 * step) {
                     g += 14;
                     b -= 14;
@@ -505,11 +505,19 @@ class Tank {
     }
 
     angleInc() {
-        this.angle += 1;
+        if (this.angle >= 180)
+            this.angle = 0;
+        else 
+            this.angle += 1;
+        console.log(this.angle);
     }
 
     angleDec() {
-        this.angle -= 1;
+        if (this.angle <= 0)
+            this.angle = 180;
+        else 
+            this.angle -= 1;
+        console.log(this.angle);
     }
 
     drawTank() {
@@ -619,20 +627,20 @@ class Tank {
             normYslope = 1;
         }
         canvCtx2.moveTo(
-            this.xPos + (bottomX - 0.5 * normXslope) * tS,
-            this.yPos + (bottomY - 0.5 * normYslope) * tS);
+            this.xPos + (bottomX - 1 * normXslope) * tS,
+            this.yPos + (bottomY - 1 * normYslope) * tS);
 
         canvCtx2.lineTo(
-            this.xPos + (topX - 0.5 * normXslope) * tS,
-            this.yPos + (topY - 0.5 * normYslope) * tS);
+            this.xPos + (topX - 1 * normXslope) * tS,
+            this.yPos + (topY - 1 * normYslope) * tS);
 
         canvCtx2.lineTo(
-            this.xPos + (topX + 0.5 * normXslope) * tS,
-            this.yPos + (topY + 0.5 * normYslope) * tS);
+            this.xPos + (topX + 1 * normXslope) * tS,
+            this.yPos + (topY + 1 * normYslope) * tS);
 
         canvCtx2.lineTo(
-            this.xPos + (bottomX + 0.5 * normXslope) * tS,
-            this.yPos + (bottomY + 0.5 * normYslope) * tS);
+            this.xPos + (bottomX + 1 * normXslope) * tS,
+            this.yPos + (bottomY + 1 * normYslope) * tS);
         canvCtx2.fill();
     }
 }
