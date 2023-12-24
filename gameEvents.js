@@ -36,20 +36,25 @@ document.addEventListener('keydown', function(event) {
             tanks[0].angleInc();
             tanks[0].drawTank();
 
+            canvCtx2.fillStyle = "rgb(255,255,255)";
+            
             canvCtx2.clearRect(
-                tanks[0].xPos,
-                tanks[0].yPos - 15 * tankSize * squeezeFactor,
+                tanks[0].xPos * squeezeFactor,
+                tanks[0].yPos * squeezeFactor - 500 * tankSize * squeezeFactor,
                 30 * tankSize * squeezeFactor,
-                (15+9) * tankSize * squeezeFactor);
+                505 * tankSize * squeezeFactor);
+            
             tanks[0].drawTank();
             break;
+            
         case "ArrowRight":
             tanks[0].angleDec();
             canvCtx2.clearRect(
-                tanks[0].xPos,
-                tanks[0].yPos - 15 * tankSize * squeezeFactor,
+                tanks[0].xPos * squeezeFactor,
+                tanks[0].yPos * squeezeFactor - 500 * tankSize * squeezeFactor,
                 30 * tankSize * squeezeFactor,
-                (15+9) * tankSize * squeezeFactor);
+                505 * tankSize * squeezeFactor);
+
             tanks[0].drawTank();
             break;
         case "ArrowUp":
