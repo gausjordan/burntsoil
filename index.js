@@ -1,9 +1,3 @@
-
-
-
-
-
-
 canvasSizeFormatterIndex(10, 10);
 
 document.getElementById("curtain").style.height = canvRef1.height / ratio + "px";

@@ -501,7 +501,53 @@ class Tank {
         this.xPercent = xPercent;
         this.name = name;
         this.xPos = Math.round(maxRes * squeezeFactor / 100 * this.xPercent);
-        this.yPos = 500;
+        
+        // Magic number 4.5 is expressed in "TankSize" units, and is half
+        // the hight of the tank's lower body (from the bottom to the base of
+        // the cannon)
+        //
+        // We need to find out how high the terrain is at a given X coordinate
+        // where the tank is to be spawned. It will be the hight of the
+        // terrain in the middle of the tank (15 TankSize units).
+        
+
+        this.yPos = Math.round(
+                canvRef2.height
+              - ( (pxMix[Math.round((this.xPos+(15*tankSize)*squeezeFactor)/squeezeFactor)] + 4.5 * tankSize)
+              * squeezeFactor)
+            );
+
+
+        let tanksBottomHeight = (canvRef2.height
+            - this.yPos - 9*tankSize*squeezeFactor) / squeezeFactor;
+
+        console.log("TanksBottomHeight: " + tanksBottomHeight);
+        console.log("Blah: " + pxMix[Math.round(this.xPos / squeezeFactor)] );
+
+        canvCtx2.fillRect(0, canvRef2.height - tanksBottomHeight*squeezeFactor, 2000, 1);
+
+        for (let i = 0; i < 30*tankSize; i++) {
+            
+            if ((canvRef2.height-tanksBottomHeight) < (this.yPos / squeezeFactor) + i) {
+                // pxMix[Math.round(this.xPos / squeezeFactor) + i] = tanksBottomHeight;
+            }
+            
+                
+        }
+
+
+        // TRACKS
+        // canvCtx2.moveTo(this.xPos + 0  * tS, 6   * tS + this.yPos);
+        // canvCtx2.lineTo(this.xPos + 1  * tS, 7.5 * tS + this.yPos);
+        // canvCtx2.lineTo(this.xPos + 3  * tS, 8.5 * tS + this.yPos);
+        // canvCtx2.lineTo(this.xPos + 5  * tS, 9   * tS + this.yPos);
+        // canvCtx2.lineTo(this.xPos + 25 * tS, 9   * tS + this.yPos);
+        // canvCtx2.lineTo(this.xPos + 27 * tS, 8.5 * tS + this.yPos);
+        // canvCtx2.lineTo(this.xPos + 29 * tS, 7.5 * tS + this.yPos);
+        // canvCtx2.lineTo(this.xPos + 30 * tS, 5   * tS + this.yPos);
+        // canvCtx2.lineTo(this.xPos + 1  * tS, 5   * tS + this.yPos);
+        
+
     }
 
     angleInc() {
@@ -539,8 +585,6 @@ class Tank {
         canvCtx2.lineTo(this.xPos + 30 * tS, 5   * tS + this.yPos);
         canvCtx2.lineTo(this.xPos + 1  * tS, 5   * tS + this.yPos);
         canvCtx2.fill();
-
-
 
         // Wheels and sprockets
         styleString = `rgba(${this.r+80},${this.g+100},${this.b+100},1)`;
@@ -642,6 +686,11 @@ class Tank {
             this.xPos + (bottomX + 1 * normXslope) * tS,
             this.yPos + (bottomY + 1 * normYslope) * tS);
         canvCtx2.fill();
+
+
+        // DEBUG - tank origin coordinates
+        // canvCtx2.fillStyle = "rgba(255,255,0,1)";
+        // canvCtx2.fillRect(this.xPos + (15*tankSize*squeezeFactor), this.yPos, 2, 2);
     }
 }
 

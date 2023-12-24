@@ -20,10 +20,11 @@ let squeezeFactor = canvRef2.width / pxMix.length;
 
 // Backdrop always uses canvas1. Game elements use canvas2.
 drawBackdrop(canvRef1.width, canvRef1.height, "blue");
-drawTerrain(pxMix, squeezeFactor);
 
 canvCtx2.fillStyle = "rgba(255,0,0,1)"; 
 
 let tanks = [];
 tanks.push(spawnTank(255, 0, 0, "Joe", 20, 60));
 tanks[0].drawTank();
+
+drawTerrain(pxMix, squeezeFactor);
