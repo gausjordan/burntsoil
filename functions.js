@@ -685,18 +685,18 @@ class Tank {
 
 
         // DEBUG midpoint
-        canvCtx2.fillStyle = "rgb(255,255,0)";
-        canvCtx2.fillRect(
-            (this.midBottomPoint.x) * squeezeFactor,
-            (this.midBottomPoint.y),
-            2, 2);
+        // canvCtx2.fillStyle = "rgb(255,255,0)";
+        // canvCtx2.fillRect(
+        //     (this.midBottomPoint.x) * squeezeFactor,
+        //     (this.midBottomPoint.y),
+        //     2, 2);
 
         // DEBUG xPos & yPos
-        canvCtx2.fillStyle = "rgb(255,0,255)";
-        canvCtx2.fillRect(
-            this.xPos * squeezeFactor,
-            this.yPos,
-            2, 2);
+        // canvCtx2.fillStyle = "rgb(255,0,255)";
+        // canvCtx2.fillRect(
+        //     this.xPos * squeezeFactor,
+        //     this.yPos,
+        //     2, 2);
 
     }
 }
