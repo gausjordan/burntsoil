@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html style="display: grid; place-items: center;">
+<div class="penis" style="height:200px; width:200px; display: grid; place-items: center;"></div>
+<div id="funk"></div>
+
+<script>
+    
+    let power = 200;
+    let currPos;
+    let initPos;
+    let deltaX;
+    let funk = document.getElementById('funk');
+    
+    let objekt = document.getElementsByClassName('penis')[0];
+
+    objekt.style.backgroundColor = "teal";
+    objekt.setAttribute("draggable", "true");
+    
+
+    function pocetak(e) {
+        objekt.addEventListener("drag", rad);
+        objekt.addEventListener("dragend", kraj);
+        initPos = e.clientX;
+    }
+
+    function rad(e)
+    {
+        if (e.clientX !== 0) {
+            currPos = e.clientX;
+            deltaX = - (initPos - currPos);
+            funk.innerHTML = power + Math.round(0.125 * deltaX);
+        }
+    }
+
+
+    function kraj(e)
+    {
+        objekt.removeEventListener("drag", rad);
+    }
+
+    objekt.addEventListener("dragstart", pocetak);
+
+    objekt.addEventListener("touchstart", (e) => funk.innerHTML = "Touched!");
+
+
+</script>
+</html>

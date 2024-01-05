@@ -13,6 +13,8 @@ window.addEventListener("click", (ev) => {
 });
 
 
+
+
 /** On resize - reset */
 window.addEventListener("resize", (ev) => {
     canvasSizeFormatterGame(12, 12);

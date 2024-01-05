@@ -524,8 +524,6 @@ class Tank {
             let bottom = canvRef2.height - this.midBottomPoint.y;
             let top = pxMix[this.xPos + i] * squeezeFactor;
 
-            console.log(bottom + " ... " + top);
-
             if (bottom < top ) {
                 pxMix[this.xPos + i] = bottom / squeezeFactor;
             }
@@ -684,19 +682,28 @@ class Tank {
         canvCtx2.fill();
 
 
-        // DEBUG midpoint
-        // canvCtx2.fillStyle = "rgb(255,255,0)";
-        // canvCtx2.fillRect(
-        //     (this.midBottomPoint.x) * squeezeFactor,
-        //     (this.midBottomPoint.y),
-        //     2, 2);
-
-        // DEBUG xPos & yPos
-        // canvCtx2.fillStyle = "rgb(255,0,255)";
-        // canvCtx2.fillRect(
-        //     this.xPos * squeezeFactor,
-        //     this.yPos,
-        //     2, 2);
+        // DEBUG Tank Bounding Box
+        canvCtx2.fillStyle = "rgb(255,255,0)";
+        canvCtx2.fillRect(
+            this.xPos * squeezeFactor,
+            this.yPos,
+            tankSize * squeezeFactor * 30,
+            1);
+        canvCtx2.fillRect(
+            this.xPos * squeezeFactor,
+            this.yPos + (tankSize * squeezeFactor * 9),
+            tankSize * squeezeFactor * 30,
+            1);
+        canvCtx2.fillRect(
+            this.xPos * squeezeFactor,
+            this.yPos,
+            1,
+            tankSize * squeezeFactor * 9);
+        canvCtx2.fillRect(
+            (this.xPos + tankSize * 30) * squeezeFactor,
+            this.yPos,
+            1,
+            tankSize * squeezeFactor * 9);
 
     }
 }
