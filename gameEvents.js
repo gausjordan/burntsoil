@@ -1,6 +1,9 @@
 let posX = 0;
 let posY = 0;
 let lock = false;
+
+// Do not delete, it will be required
+/*
 window.addEventListener("click", (ev) => {
     posX = getMousePos(canvRef2, ev).x * ratio;
     posY = getMousePos(canvRef2, ev).y * ratio;
@@ -11,16 +14,19 @@ window.addEventListener("click", (ev) => {
         explosionOnGround(corrX, corrY, 250);        
     }
 });
-
+*/
 
 
 
 /** On resize - reset */
 window.addEventListener("resize", (ev) => {
+    oldSqueezeFactor = squeezeFactor;
+    squeezeFactor = canvRef2.width / pxMix.length;
     canvasSizeFormatterGame(12, 12);
     squeezeFactor = canvRef2.width / pxMix.length;
     drawBackdrop(canvRef1.width, canvRef1.height, "blue");
     drawTerrain(pxMix, squeezeFactor);
+    tanks.forEach(tank => tank.drawTank());
 });
 
 

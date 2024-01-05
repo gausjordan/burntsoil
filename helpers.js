@@ -72,7 +72,7 @@ function canvasSizeFormatterGame(hMargin, vMargin) {
     }
     else if (aspect => 2.2) {
         document.getElementsByClassName("main-element")[0].style.width =
-            document.getElementsByTagName("html")[0].clientHeight * 2.2 + "px";
+            document.getElementsByTagName("html")[0].clientHeight * 1.9 + "px";
     }   
     updateCanvasSize(hMargin, vMargin);
 }
