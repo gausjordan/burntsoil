@@ -10,3 +10,5 @@ let canvRef1 = document.getElementById("canvas1");
 let canvRef2 = document.getElementById("canvas2");
 let canvCtx1 = canvRef1.getContext('2d');
 let canvCtx2 = canvRef2.getContext('2d');
+let oldSqueezeFactor; // Old aspect ratio (before resizing)
+let squeezeFactor; // Current aspect Ratio

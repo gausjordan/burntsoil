@@ -16,8 +16,7 @@ let pixels2 = cpsToPxs(normPoints2);
 
 // Two sets of (pixel-defined) curves merged into one
 let pxMix = pixels1.map( (e, index) => { return e + 0.2 * pixels2[index]; });
-let squeezeFactor = canvRef2.width / pxMix.length;
-let oldSqueezeFactor = null;
+squeezeFactor = canvRef2.width / pxMix.length;
 
 // Backdrop always uses canvas1. Game elements use canvas2.
 drawBackdrop(canvRef1.width, canvRef1.height, "blue");
@@ -25,8 +24,8 @@ drawBackdrop(canvRef1.width, canvRef1.height, "blue");
 canvCtx2.fillStyle = "rgba(255,0,0,1)"; 
 
 let tanks = [];
-tanks.push(spawnTank(255, 0, 0, "Joe", 20, 60));
-tanks.push(spawnTank(0, 160, 0, "Mike", 80, 60));
+tanks.push(spawnTank(255, 0, 0, "Joe", 20, randomInteger(0, 180) ));
+tanks.push(spawnTank(0, 160, 0, "Mike", 80, randomInteger(0, 180) ));
 tanks.forEach(tank => tank.drawTank());
 
 drawTerrain(pxMix, squeezeFactor);

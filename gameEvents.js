@@ -17,7 +17,6 @@ window.addEventListener("click", (ev) => {
 */
 
 
-
 /** On resize - reset */
 window.addEventListener("resize", (ev) => {
     oldSqueezeFactor = squeezeFactor;
@@ -48,7 +47,7 @@ document.addEventListener('keydown', function(event) {
             
             canvCtx2.clearRect(
                 tanks[0].xPos * squeezeFactor,
-                tanks[0].yPos - 500 * tankSize * squeezeFactor,
+                tanks[0].yCorrPos - 500 * tankSize * squeezeFactor,
                 30 * tankSize * squeezeFactor,
                 505 * tankSize * squeezeFactor);
             
@@ -59,7 +58,7 @@ document.addEventListener('keydown', function(event) {
             tanks[0].angleDec();
             canvCtx2.clearRect(
                 tanks[0].xPos * squeezeFactor,
-                tanks[0].yPos - 500 * tankSize * squeezeFactor,
+                tanks[0].yCorrPos - 500 * tankSize * squeezeFactor,
                 30 * tankSize * squeezeFactor,
                 505 * tankSize * squeezeFactor);
 

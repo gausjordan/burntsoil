@@ -9,6 +9,7 @@ class Tank {
         this.name = name;
         this.xPos = Math.round(maxRes / 100 * this.xPercent);
         this.midBottomPoint = null;
+        this.yCorrPos;
 
         // Magic numbers 15, 9 and 4.5 are expressed in "TankSize" units,
         // and represent width (15), length (9) or mid-point (4.5) of the tank
@@ -27,6 +28,12 @@ class Tank {
                 + 9 * tankSize)
                 * squeezeFactor
             );
+
+        // If the terrain is too low, raises the tank to ground level
+        if ( (canvRef2.height - this.yPos) < (tankSize * squeezeFactor * 9) ) {
+            this.yPos = canvRef2.height - (tankSize * squeezeFactor * 9);
+        }
+            
 
         this.midBottomPoint = {
             x: (this.xPos +  15 * tankSize),
@@ -63,13 +70,13 @@ class Tank {
     drawTank() {
 
         // May be corrected for aspect ratio later, if required
-        let yCorrPos = this.yPos;
+        this.yCorrPos = this.yPos;
 
         // In the event of resizing in the middle of the game, this
         // calculates new Y position values (for rendering purposes only).
         // Initial 'Y' coordinates of each tank remain intact.
         if (oldSqueezeFactor != null && oldSqueezeFactor != squeezeFactor) {
-            yCorrPos = Math.round(
+            this.yCorrPos = Math.round(
                 canvRef2.height
                 - (pxMix[Math.round(this.xPos + 15 * tankSize)] 
                 + 9 * tankSize)
@@ -87,15 +94,15 @@ class Tank {
         styleString = `rgba(${this.r-150},${this.g-150},${this.b-150},1)`;
         canvCtx2.fillStyle = styleString;
         canvCtx2.beginPath();
-        canvCtx2.moveTo(this.xPos * sF + 0  * tS, 6   * tS + yCorrPos);
-        canvCtx2.lineTo(this.xPos * sF + 1  * tS, 7.5 * tS + yCorrPos);
-        canvCtx2.lineTo(this.xPos * sF + 3  * tS, 8.5 * tS + yCorrPos);
-        canvCtx2.lineTo(this.xPos * sF + 5  * tS, 9   * tS + yCorrPos);
-        canvCtx2.lineTo(this.xPos * sF + 25 * tS, 9   * tS + yCorrPos);
-        canvCtx2.lineTo(this.xPos * sF + 27 * tS, 8.5 * tS + yCorrPos);
-        canvCtx2.lineTo(this.xPos * sF + 29 * tS, 7.5 * tS + yCorrPos);
-        canvCtx2.lineTo(this.xPos * sF + 30 * tS, 5   * tS + yCorrPos);
-        canvCtx2.lineTo(this.xPos * sF + 1  * tS, 5   * tS + yCorrPos);
+        canvCtx2.moveTo(this.xPos * sF + 0  * tS, 6   * tS + this.yCorrPos);
+        canvCtx2.lineTo(this.xPos * sF + 1  * tS, 7.5 * tS + this.yCorrPos);
+        canvCtx2.lineTo(this.xPos * sF + 3  * tS, 8.5 * tS + this.yCorrPos);
+        canvCtx2.lineTo(this.xPos * sF + 5  * tS, 9   * tS + this.yCorrPos);
+        canvCtx2.lineTo(this.xPos * sF + 25 * tS, 9   * tS + this.yCorrPos);
+        canvCtx2.lineTo(this.xPos * sF + 27 * tS, 8.5 * tS + this.yCorrPos);
+        canvCtx2.lineTo(this.xPos * sF + 29 * tS, 7.5 * tS + this.yCorrPos);
+        canvCtx2.lineTo(this.xPos * sF + 30 * tS, 5   * tS + this.yCorrPos);
+        canvCtx2.lineTo(this.xPos * sF + 1  * tS, 5   * tS + this.yCorrPos);
         canvCtx2.fill();
 
         // Wheels and sprockets
@@ -104,13 +111,13 @@ class Tank {
         canvCtx2.beginPath();
         canvCtx2.arc(
             this.xPos * sF + 3.5 * tS,
-            yCorrPos + 6 * tS,
+            this.yCorrPos + 6 * tS,
             0.7 * tS,
             0,
             2 * Math.PI);
         canvCtx2.arc(
             this.xPos * sF + 26.5 * tS,
-            yCorrPos + 6 * tS,
+            this.yCorrPos + 6 * tS,
             0.7 * tS,
             0,
             2 * Math.PI);
@@ -119,7 +126,7 @@ class Tank {
             for (let i = 1; i < 4; i += 0.65) {
                 canvCtx2.arc(
                 this.xPos * sF + i * 6.5 * tS,
-                yCorrPos + 6.8 * tS,
+                this.yCorrPos + 6.8 * tS,
                 1.8 * tS,
                 0,
                 2 * Math.PI);
@@ -130,33 +137,33 @@ class Tank {
         styleString = `rgba(${this.r},${this.g},${this.b},1)`;
         canvCtx2.fillStyle = styleString;
         canvCtx2.beginPath();
-        canvCtx2.moveTo(this.xPos * sF + 0    * tS, 5   * tS + yCorrPos);
-        canvCtx2.lineTo(this.xPos * sF + 0.4  * tS, 4.3 * tS + yCorrPos);
-        canvCtx2.lineTo(this.xPos * sF + 2    * tS, 3   * tS + yCorrPos);
-        canvCtx2.lineTo(this.xPos * sF + 28   * tS, 3   * tS + yCorrPos);
-        canvCtx2.lineTo(this.xPos * sF + 29.6 * tS, 4.3 * tS + yCorrPos);
-        canvCtx2.lineTo(this.xPos * sF + 30   * tS, 5   * tS + yCorrPos);
-        canvCtx2.lineTo(this.xPos * sF + 30   * tS, 7   * tS + yCorrPos);
-        canvCtx2.lineTo(this.xPos * sF + 28   * tS, 7   * tS + yCorrPos);
-        canvCtx2.lineTo(this.xPos * sF + 27.5 * tS, 5   * tS + yCorrPos);
-        canvCtx2.lineTo(this.xPos * sF + 2.5  * tS, 5   * tS + yCorrPos);
-        canvCtx2.lineTo(this.xPos * sF + 2    * tS, 7   * tS + yCorrPos);
-        canvCtx2.lineTo(this.xPos * sF + 0    * tS, 7   * tS + yCorrPos);
-        canvCtx2.lineTo(this.xPos * sF + 0    * tS, 5   * tS + yCorrPos);
+        canvCtx2.moveTo(this.xPos * sF + 0    * tS, 5   * tS + this.yCorrPos);
+        canvCtx2.lineTo(this.xPos * sF + 0.4  * tS, 4.3 * tS + this.yCorrPos);
+        canvCtx2.lineTo(this.xPos * sF + 2    * tS, 3   * tS + this.yCorrPos);
+        canvCtx2.lineTo(this.xPos * sF + 28   * tS, 3   * tS + this.yCorrPos);
+        canvCtx2.lineTo(this.xPos * sF + 29.6 * tS, 4.3 * tS + this.yCorrPos);
+        canvCtx2.lineTo(this.xPos * sF + 30   * tS, 5   * tS + this.yCorrPos);
+        canvCtx2.lineTo(this.xPos * sF + 30   * tS, 7   * tS + this.yCorrPos);
+        canvCtx2.lineTo(this.xPos * sF + 28   * tS, 7   * tS + this.yCorrPos);
+        canvCtx2.lineTo(this.xPos * sF + 27.5 * tS, 5   * tS + this.yCorrPos);
+        canvCtx2.lineTo(this.xPos * sF + 2.5  * tS, 5   * tS + this.yCorrPos);
+        canvCtx2.lineTo(this.xPos * sF + 2    * tS, 7   * tS + this.yCorrPos);
+        canvCtx2.lineTo(this.xPos * sF + 0    * tS, 7   * tS + this.yCorrPos);
+        canvCtx2.lineTo(this.xPos * sF + 0    * tS, 5   * tS + this.yCorrPos);
         canvCtx2.fill();
     
         // Turret
         styleString = `rgba(${this.r},${this.g},${this.b},1)`;
         canvCtx2.fillStyle = styleString;
         canvCtx2.beginPath();
-        canvCtx2.moveTo(this.xPos * sF + 7  * tS, 4   * tS + yCorrPos);
-        canvCtx2.lineTo(this.xPos * sF + 7.5  * tS, 2   * tS + yCorrPos);
-        canvCtx2.lineTo(this.xPos * sF + 8  * tS, 1   * tS + yCorrPos);
-        canvCtx2.lineTo(this.xPos * sF + 9  * tS, 0   * tS + yCorrPos);
-        canvCtx2.lineTo(this.xPos * sF + 21 * tS, 0   * tS + yCorrPos);
-        canvCtx2.lineTo(this.xPos * sF + 22 * tS, 1   * tS + yCorrPos);
-        canvCtx2.lineTo(this.xPos * sF + 22.5 * tS, 2   * tS + yCorrPos);
-        canvCtx2.lineTo(this.xPos * sF + 23 * tS, 4   * tS + yCorrPos);
+        canvCtx2.moveTo(this.xPos * sF + 7  * tS, 4   * tS + this.yCorrPos);
+        canvCtx2.lineTo(this.xPos * sF + 7.5  * tS, 2   * tS + this.yCorrPos);
+        canvCtx2.lineTo(this.xPos * sF + 8  * tS, 1   * tS + this.yCorrPos);
+        canvCtx2.lineTo(this.xPos * sF + 9  * tS, 0   * tS + this.yCorrPos);
+        canvCtx2.lineTo(this.xPos * sF + 21 * tS, 0   * tS + this.yCorrPos);
+        canvCtx2.lineTo(this.xPos * sF + 22 * tS, 1   * tS + this.yCorrPos);
+        canvCtx2.lineTo(this.xPos * sF + 22.5 * tS, 2   * tS + this.yCorrPos);
+        canvCtx2.lineTo(this.xPos * sF + 23 * tS, 4   * tS + this.yCorrPos);
         canvCtx2.fill();
 
         // Barrel
@@ -183,19 +190,19 @@ class Tank {
         }
         canvCtx2.moveTo(
             this.xPos * sF + (bottomX - 1 * normXslope) * tS,
-            yCorrPos + (bottomY - 1 * normYslope) * tS);
+            this.yCorrPos + (bottomY - 1 * normYslope) * tS);
 
         canvCtx2.lineTo(
             this.xPos * sF + (topX - 1 * normXslope) * tS,
-            yCorrPos + (topY - 1 * normYslope) * tS);
+            this.yCorrPos + (topY - 1 * normYslope) * tS);
 
         canvCtx2.lineTo(
             this.xPos * sF + (topX + 1 * normXslope) * tS,
-            yCorrPos + (topY + 1 * normYslope) * tS);
+            this.yCorrPos + (topY + 1 * normYslope) * tS);
 
         canvCtx2.lineTo(
             this.xPos * sF + (bottomX + 1 * normXslope) * tS,
-            yCorrPos + (bottomY + 1 * normYslope) * tS);
+            this.yCorrPos + (bottomY + 1 * normYslope) * tS);
         canvCtx2.fill();
 
 

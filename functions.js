@@ -104,7 +104,7 @@ function generateCps(pointCount) {
 */
 function normalizeCps(cps, cWidth, isLowered) {
     cWidth--;   // Array starts at 0, no need for the last one
-    let ceiling = isLowered ? 0.35 : 0.60
+    let ceiling = isLowered ? 0.35 : 0.6 // treba biti 0.35 : 0.60
     let normalized = [];
     let upperLimit = cps[cps.length-2].x;       // second-to-last x
     let lowerLimit = cps[1].x                   // second x value
