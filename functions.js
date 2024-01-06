@@ -115,7 +115,7 @@ function normalizeCps(cps, cWidth, isLowered) {
             // Width goes from 0 to the furtherest horizontal pixel
             x: (e.x - lowerLimit) * squeezeFactor,
             // Height goes up to "ceiling" percent, assuming a 16:9 ratio.
-            y: (e.y * cWidth / (16/9) / 1000 * ceiling) }
+            y: (e.y * cWidth / (16/9) / 1000 * ceiling)}
         }
     );
 
@@ -491,7 +491,22 @@ function generateLowerArc(dx, dy, r) {
     return lowerArc;
 }
 
+function spawnTank(r, g, b, name, xPerc, angle) {
+    let tank = new Tank(r, g, b, name, xPerc, angle);
+    return tank;
+}
 
-
-
+function updateStatusBar() {
+    let displayAngle = tanks[whoseTurn].angle;
+    if (displayAngle > 90)
+        displayAngle = 180 - displayAngle;
+    statusBar.children[0].innerHTML = "Power: " + tanks[whoseTurn].power;
+    
+    statusBar.children[1].innerHTML = "Angle: " + displayAngle;
+    let styleString = "rgb(" + tanks[whoseTurn].r + ", "
+        + tanks[whoseTurn].g + ", "
+        + tanks[whoseTurn].b + ")";
+    statusBar.children[2].style.color = styleString;
+    statusBar.children[2].innerHTML = tanks[whoseTurn].name;
+}
 

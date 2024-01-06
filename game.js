@@ -23,20 +23,84 @@ drawBackdrop(canvRef1.width, canvRef1.height, "blue");
 
 canvCtx2.fillStyle = "rgba(255,0,0,1)"; 
 
+let statusBar = document.getElementById('statusBar');
+
 let tanks = [];
+let whoseTurn = 0;
+
 tanks.push(spawnTank(255, 0, 0, "Joe", 20, randomInteger(0, 180) ));
 tanks.push(spawnTank(0, 160, 0, "Mike", 80, randomInteger(0, 180) ));
 tanks.forEach(tank => tank.drawTank());
-
 drawTerrain(pxMix, squeezeFactor);
+updateStatusBar();
 
-document.addEventListener('click', dragStart);
+document.addEventListener('mousedown', dragStart);
 document.addEventListener('touchstart', dragStart);
 
-function dragStart(e) {
-    let startPosition = {
-        x: e.clientX || e.touches[0].clientX,
-        y: e.clientY || e.touches[0].clientY
-    };
+let startPosition;
 
+function dragStart(e) {
+    
+    // Only do sometning when primary mouse button is pressed
+    if (e.button === 0) {
+        startPosition = {
+            x: e.clientX,
+            y: e.clientY
+        }
+        document.addEventListener("mousemove", dragging);
+        document.addEventListener("mouseup", dragStop);
+    }
+    // Only do something there WAS a touch event
+    if (e.touches && e.touches[0]) {
+        startPosition = {
+            x: e.touches[0].clientX,
+            y: e.touches[0].clientY
+        };
+        document.addEventListener("touchmove", dragging);
+        document.addEventListener("touchend", dragStop);
+    }
+
+}
+
+function dragging(e) {
+    if (e.button === 0) {
+        // Only inc/dec once on every two move events (slower)
+        if (e.clientX < startPosition.x && e.clientX % 2) {
+            tanks[whoseTurn].angleInc();
+        } else if (e.clientX % 2) {
+            tanks[whoseTurn].angleDec();
+        }
+        tanks[whoseTurn].clearTank();
+        tanks[whoseTurn].drawTank();
+        updateStatusBar();
+        startPosition = {
+            x: e.clientX,
+            y: e.clientY
+        };
+    }
+
+    if (e.touches && e.touches[0]) {
+        // Only inc/dec once on every three move events (much slower)
+        if (e.touches[0].clientX < startPosition.x && e.touches[0].clientX % 3) {
+            tanks[whoseTurn].angleInc();
+        } else if (e.touches[0].clientX % 3) {
+            tanks[whoseTurn].angleDec();
+        }
+        tanks[whoseTurn].clearTank();
+        tanks[whoseTurn].drawTank();
+        updateStatusBar();
+        startPosition = {
+            x: e.touches[0].clientX,
+            y: e.touches[0].clientY
+        };
+    }
+
+}
+
+
+function dragStop(e) {
+    document.removeEventListener("mousemove", dragging);
+    document.removeEventListener("mouseend", dragStop);
+    document.removeEventListener("touchmove", dragging);
+    document.removeEventListener("touchend", dragStop);
 }

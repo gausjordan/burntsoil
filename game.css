@@ -35,6 +35,10 @@
     flex-shrink: 0;
 }
 
+#statusBar {
+    gap: 40px;
+}
+
 header {
     display: flex;
     background-color: var(--basic-background);

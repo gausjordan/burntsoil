@@ -36,33 +36,22 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 
-document.addEventListener('keydown', function(event) {
+document.addEventListener('keydown', keyDown);
+
+
+function keyDown(event) {
     const key = event.key;
     switch (event.key) {
         case "ArrowLeft":
-            tanks[0].angleInc();
-            tanks[0].drawTank();
-
-            canvCtx2.fillStyle = "rgb(255,255,255)";
-            
-            canvCtx2.clearRect(
-                tanks[0].xPos * squeezeFactor,
-                tanks[0].yCorrPos - 500 * tankSize * squeezeFactor,
-                30 * tankSize * squeezeFactor,
-                505 * tankSize * squeezeFactor);
-            
-            tanks[0].drawTank();
+            tanks[whoseTurn].angleInc();
+            tanks[whoseTurn].clearTank();
+            tanks[whoseTurn].drawTank();
             break;
             
         case "ArrowRight":
-            tanks[0].angleDec();
-            canvCtx2.clearRect(
-                tanks[0].xPos * squeezeFactor,
-                tanks[0].yCorrPos - 500 * tankSize * squeezeFactor,
-                30 * tankSize * squeezeFactor,
-                505 * tankSize * squeezeFactor);
-
-            tanks[0].drawTank();
+            tanks[whoseTurn].angleDec();
+            tanks[whoseTurn].clearTank();
+            tanks[whoseTurn].drawTank();
             break;
         case "ArrowUp":
             // Up pressed
@@ -71,4 +60,4 @@ document.addEventListener('keydown', function(event) {
             // Down pressed
             break;
     }
-});
+}

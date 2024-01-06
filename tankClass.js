@@ -7,6 +7,7 @@ class Tank {
         this.b = b;
         this.xPercent = xPercent;
         this.name = name;
+        this.power = 200;
         this.xPos = Math.round(maxRes / 100 * this.xPercent);
         this.midBottomPoint = null;
         this.yCorrPos;
@@ -14,14 +15,6 @@ class Tank {
         // Magic numbers 15, 9 and 4.5 are expressed in "TankSize" units,
         // and represent width (15), length (9) or mid-point (4.5) of the tank
         
-        // THIS WORKS
-        // this.yPos = Math.round(
-        //         canvRef2.height
-        //         - (pxMix[Math.round(this.xPos + 15 * tankSize)] 
-        //         + 9 * tankSize)
-        //         * squeezeFactor
-        //    );
-
         this.yPos = Math.round(
                 canvRef2.height
                 - (pxMix[Math.round(this.xPos + 15 * tankSize)] 
@@ -58,6 +51,7 @@ class Tank {
             this.angle = 0;
         else 
             this.angle += 1;
+        updateStatusBar();
     }
 
     angleDec() {
@@ -65,6 +59,7 @@ class Tank {
             this.angle = 180;
         else 
             this.angle -= 1;
+        updateStatusBar();
     }
 
     drawTank() {
@@ -257,9 +252,14 @@ class Tank {
         //     1,
         //     tankSize * squeezeFactor * 9);            
     }
+
+    clearTank() {
+        canvCtx2.clearRect(
+            tanks[whoseTurn].xPos * squeezeFactor,
+            tanks[whoseTurn].yCorrPos - 500 * tankSize * squeezeFactor,
+            30 * tankSize * squeezeFactor,
+            505 * tankSize * squeezeFactor);
+    }
 }
 
-function spawnTank(r, g, b, name, xPerc, angle) {
-    let tank = new Tank(r, g, b, name, xPerc, angle);
-    return tank;
-}
+
