@@ -49,18 +49,45 @@ class Tank {
     angleInc() {
         if (this.angle >= 180)
             this.angle = 0;
-        else 
+        else {
             this.angle += 1;
-        updateStatusBar();
+            updateStatusBar();
+            this.clearTank();
+            this.drawTank();
+        }
     }
 
     angleDec() {
         if (this.angle <= 0)
             this.angle = 180;
-        else 
+        else {
             this.angle -= 1;
+            updateStatusBar();
+            this.clearTank();
+            this.drawTank();
+        }
+    }
+
+    powerInc(value) {
+        if (typeof value == "undefined")
+            value = 2;
+        if (this.power + value >= 1000)
+            this.power = 1000;
+        else 
+            this.power += value;
         updateStatusBar();
     }
+
+    powerDec(value) {
+        if (typeof value == "undefined")
+            value = 2;
+        if (this.power - value <= 0)
+            this.power = 0;
+        else 
+            this.power -= value;
+        updateStatusBar();
+    }
+    
 
     drawTank() {
 

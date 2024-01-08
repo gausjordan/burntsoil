@@ -1,4 +1,4 @@
-// Check all players and get the widest screen resolution possible
+// Check all players, and get the widest screen resolution possible
 // Temporarily hardcoded
 let maxRes = 6000;
 let tankSize = 20;

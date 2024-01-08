@@ -37,6 +37,7 @@
 
 #statusBar {
     gap: 40px;
+    user-select: none;
 }
 
 header {
@@ -66,4 +67,45 @@ canvas {
     box-shadow: 0px 0px 0px 2px var(--basic-background),
                 0px 0px 0px 4px black,
                 0px 0px 0px 6px var(--basic-background);
+}
+
+
+main nav {
+    user-select: none;
+    z-index: 1;
+    display: flex;
+    margin: 1em;
+    height: 3em;
+    width: calc(100% - 16px);
+    gap: 0.5em;
+}
+
+main nav div {
+    display: flex;
+    gap: 0.5em;
+    width: 100%;    
+}
+
+/* Single button properties */
+main nav div div {
+    display: flex;
+    width: 3rem;
+    border-radius: 2em;
+    background-color: rgba(192, 192, 192, 0.4);
+    border: 0.2em inset;
+    border-color: rgba(255, 255, 255, 0.5);
+    justify-content: center;
+    align-items: center;
+    color: black;
+    font-weight: bolder;
+    font-size: x-large;
+    font-stretch: narrower;
+}
+
+#leftButtonCluster {
+    display: flex;
+}
+
+#rightButtonCluster {
+    flex-direction: row-reverse;
 }

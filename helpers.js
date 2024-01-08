@@ -64,6 +64,7 @@ function canvasSizeFormatterIndex(hMargin, vMargin) {
 
 /** Ensures correct aspect ratio an most display types */
 function canvasSizeFormatterGame(hMargin, vMargin) {
+    updateCanvasSize(hMargin, vMargin);
     let aspect = document.getElementsByTagName("html")[0].clientWidth /
                  document.getElementsByTagName("html")[0].clientHeight;
 

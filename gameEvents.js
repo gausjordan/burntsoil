@@ -44,20 +44,21 @@ function keyDown(event) {
     switch (event.key) {
         case "ArrowLeft":
             tanks[whoseTurn].angleInc();
-            tanks[whoseTurn].clearTank();
-            tanks[whoseTurn].drawTank();
             break;
-            
         case "ArrowRight":
             tanks[whoseTurn].angleDec();
-            tanks[whoseTurn].clearTank();
-            tanks[whoseTurn].drawTank();
             break;
         case "ArrowUp":
-            // Up pressed
+            tanks[whoseTurn].powerInc();
             break;
         case "ArrowDown":
-            // Down pressed
+            tanks[whoseTurn].powerDec();
+            break;
+        case "PageUp":
+            tanks[whoseTurn].powerInc(100);
+            break;
+        case "PageDown":
+            tanks[whoseTurn].powerDec(100);
             break;
     }
 }

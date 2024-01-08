@@ -498,11 +498,12 @@ function spawnTank(r, g, b, name, xPerc, angle) {
 
 function updateStatusBar() {
     let displayAngle = tanks[whoseTurn].angle;
+    // Internally, angle ranges 0 to 180, but only shows 0-90
     if (displayAngle > 90)
         displayAngle = 180 - displayAngle;
     statusBar.children[0].innerHTML = "Power: " + tanks[whoseTurn].power;
-    
     statusBar.children[1].innerHTML = "Angle: " + displayAngle;
+    // Player name (in plain text) matches it's tank's color
     let styleString = "rgb(" + tanks[whoseTurn].r + ", "
         + tanks[whoseTurn].g + ", "
         + tanks[whoseTurn].b + ")";

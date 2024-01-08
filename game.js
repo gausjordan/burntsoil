@@ -37,10 +37,37 @@ updateStatusBar();
 document.addEventListener('mousedown', dragStart);
 document.addEventListener('touchstart', dragStart);
 
+document.getElementById('rotateCCW').addEventListener('mousedown', fineTuneButtons);
+document.getElementById('rotateCCW').addEventListener('touchstart', fineTuneButtons);
+document.getElementById('rotateCW').addEventListener('mousedown', fineTuneButtons);
+document.getElementById('rotateCW').addEventListener('touchstart', fineTuneButtons);
+document.getElementById('incButton').addEventListener('mousedown', fineTuneButtons);
+document.getElementById('incButton').addEventListener('touchstart', fineTuneButtons);
+document.getElementById('decButton').addEventListener('mousedown', fineTuneButtons);
+document.getElementById('decButton').addEventListener('touchstart', fineTuneButtons);
+
+// Prevents refreshing upon a swipe down gesture on mobile browsers
+document.addEventListener('touchmove', (e) => {e.preventDefault()}, { passive: false });
+
 let startPosition;
 
+function fineTuneButtons(e) {
+    // Prevents touch devices from registering multiple touch events
+    e.stopPropagation();
+    e.preventDefault();
+    if (e.srcElement.id == 'rotateCCW') {
+        tanks[whoseTurn].angleInc(1);
+    } else if (e.srcElement.id == 'rotateCW') {
+        tanks[whoseTurn].angleDec(1);
+    } else if (e.srcElement.id == 'incButton') {
+        tanks[whoseTurn].powerInc(1);
+    } else if (e.srcElement.id == 'decButton') {
+        tanks[whoseTurn].powerDec(1);
+    }
+}
+
+
 function dragStart(e) {
-    
     // Only do sometning when primary mouse button is pressed
     if (e.button === 0) {
         startPosition = {
@@ -56,22 +83,28 @@ function dragStart(e) {
             x: e.touches[0].clientX,
             y: e.touches[0].clientY
         };
+
         document.addEventListener("touchmove", dragging);
         document.addEventListener("touchend", dragStop);
     }
-
 }
 
 function dragging(e) {
     if (e.button === 0) {
-        // Only inc/dec once on every two move events (slower)
-        if (e.clientX < startPosition.x && e.clientX % 2) {
+        // Set new angle via mouse
+        if (e.clientX < startPosition.x) {
             tanks[whoseTurn].angleInc();
-        } else if (e.clientX % 2) {
+        } else if (e.clientX > startPosition.x) {
             tanks[whoseTurn].angleDec();
         }
-        tanks[whoseTurn].clearTank();
-        tanks[whoseTurn].drawTank();
+        
+        // Set new power level via mouse
+        if (e.clientY < startPosition.y) {
+            tanks[whoseTurn].powerInc();
+        } else {
+            tanks[whoseTurn].powerDec();
+        }
+
         updateStatusBar();
         startPosition = {
             x: e.clientX,
@@ -80,14 +113,20 @@ function dragging(e) {
     }
 
     if (e.touches && e.touches[0]) {
-        // Only inc/dec once on every three move events (much slower)
-        if (e.touches[0].clientX < startPosition.x && e.touches[0].clientX % 3) {
+        // Set new angle via touch
+        if (e.touches[0].clientX < startPosition.x) {
             tanks[whoseTurn].angleInc();
-        } else if (e.touches[0].clientX % 3) {
+        } else if (e.touches[0].clientX > startPosition.x) {
             tanks[whoseTurn].angleDec();
         }
-        tanks[whoseTurn].clearTank();
-        tanks[whoseTurn].drawTank();
+
+        // Set new power level via touch
+        if (e.touches[0].clientY < startPosition.y) {
+            tanks[whoseTurn].powerInc();
+        } else if (e.touches[0].clientY > startPosition.y) {
+            tanks[whoseTurn].powerDec();
+        }
+
         updateStatusBar();
         startPosition = {
             x: e.touches[0].clientX,
