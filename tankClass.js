@@ -27,20 +27,34 @@ class Tank {
             this.yPos = canvRef2.height - (tankSize * squeezeFactor * 9);
         }
             
-
         this.midBottomPoint = {
             x: (this.xPos +  15 * tankSize),
             y: Math.round( (this.yPos + (9 * tankSize) * squeezeFactor) )
         }
 
-
-        for (let i = 0; i < 30 * tankSize; i++) {
+        // Creates a hole in the terrain, in such a way that at least 50% of
+        // the tank's length lies on the flat ground. The loop overshoots by 10
+        // tankSize units in order to blend out sharp rectangular carves.
+        for (let i = 0 - 10*tankSize; i < 30 * tankSize + 10*tankSize; i++) {
             
             let bottom = canvRef2.height - this.midBottomPoint.y;
             let top = pxMix[this.xPos + i] * squeezeFactor;
+            let weight1 = -i/(10*tankSize); // Drops from 1 to 0
+            let weight2 = -(i-40*tankSize)/(10*tankSize);
 
-            if (bottom < top ) {
-                pxMix[this.xPos + i] = bottom / squeezeFactor;
+            if ( bottom < top ) {
+                if (i < 0) {
+                    pxMix[this.xPos + i] =
+                        bottom/squeezeFactor
+                        + (pxMix[this.xPos+i] - bottom/squeezeFactor)
+                                * weight1;
+                } else if (i > 30 * tankSize) {
+                    pxMix[this.xPos + i] =
+                        bottom/squeezeFactor
+                        + (pxMix[this.xPos+i] - bottom/squeezeFactor)
+                                * (1-weight2);
+                } else
+                    pxMix[this.xPos + i] = bottom / squeezeFactor;
             }
 
         }

@@ -14,7 +14,7 @@ let normPoints2 = normalizeCps(rawPoints2, maxRes, false);
 let pixels1 = cpsToPxs(normPoints1);
 let pixels2 = cpsToPxs(normPoints2);
 
-// Two sets of (pixel-defined) curves merged into one
+// Two sets of (pixel-defined) curves merged into one (ratio 0.8 : 0.2)
 let pxMix = pixels1.map( (e, index) => { return e + 0.2 * pixels2[index]; });
 squeezeFactor = canvRef2.width / pxMix.length;
 
@@ -34,27 +34,63 @@ tanks.forEach(tank => tank.drawTank());
 drawTerrain(pxMix, squeezeFactor);
 updateStatusBar();
 
+// Prevents a page refresh upon "swipe down" gesture on mobile browsers
+document.addEventListener(
+    'touchmove',
+    (e) => {e.preventDefault()},
+    { passive: false });
+    
 document.addEventListener('mousedown', dragStart);
 document.addEventListener('touchstart', dragStart);
-
-document.getElementById('rotateCCW').addEventListener('mousedown', fineTuneButtons);
-document.getElementById('rotateCCW').addEventListener('touchstart', fineTuneButtons);
-document.getElementById('rotateCW').addEventListener('mousedown', fineTuneButtons);
-document.getElementById('rotateCW').addEventListener('touchstart', fineTuneButtons);
-document.getElementById('incButton').addEventListener('mousedown', fineTuneButtons);
-document.getElementById('incButton').addEventListener('touchstart', fineTuneButtons);
-document.getElementById('decButton').addEventListener('mousedown', fineTuneButtons);
-document.getElementById('decButton').addEventListener('touchstart', fineTuneButtons);
-
-// Prevents refreshing upon a swipe down gesture on mobile browsers
-document.addEventListener('touchmove', (e) => {e.preventDefault()}, { passive: false });
+// Captures events from all control buttons at once
+document.getElementsByTagName('nav')[0]
+    .addEventListener('mousedown', fineTuneButtons);
+document.getElementsByTagName('nav')[0]
+    .addEventListener('touchstart', fineTuneButtons);
 
 let startPosition;
 
+// What happens when one touches any of the in-game butttons
 function fineTuneButtons(e) {
+    
     // Prevents touch devices from registering multiple touch events
     e.stopPropagation();
     e.preventDefault();
+    
+    // Performs a button function once
+    fineTuneButtonAction(e);
+    
+    // If a button stays pushed, rapid repetition begins
+    let timerId1, timerId2;
+    timerId1 = setTimeout( () =>   { 
+                timerId2 = setInterval(() => { fineTuneButtonAction(e); }, 20);
+            }, 600);
+
+    // Auto repeating is canceled if button wasn't held down or we moved away
+    document.getElementsByTagName('nav')[0]
+        .addEventListener('mouseup', () => {
+            clearInterval(timerId1);
+            clearInterval(timerId2);
+         });
+    document.getElementsByTagName('nav')[0]
+        .addEventListener('mouseleave', () => {
+            clearInterval(timerId1);
+            clearInterval(timerId2);
+         });
+    
+    function timer(timerId) {
+        setInterval(() => { fineTuneButtonAction(e); }, 20);
+    }
+
+    function repeater(timerId) {
+        setInterval(() => { fineTuneButtonAction(e); }, 20);
+    }
+}
+
+
+
+
+function fineTuneButtonAction(e) {
     if (e.srcElement.id == 'rotateCCW') {
         tanks[whoseTurn].angleInc(1);
     } else if (e.srcElement.id == 'rotateCW') {
@@ -64,6 +100,10 @@ function fineTuneButtons(e) {
     } else if (e.srcElement.id == 'decButton') {
         tanks[whoseTurn].powerDec(1);
     }
+}
+
+function killButtonRepeater() {
+
 }
 
 
@@ -77,7 +117,7 @@ function dragStart(e) {
         document.addEventListener("mousemove", dragging);
         document.addEventListener("mouseup", dragStop);
     }
-    // Only do something there WAS a touch event
+    // Only do something if there WAS a touch event
     if (e.touches && e.touches[0]) {
         startPosition = {
             x: e.touches[0].clientX,
