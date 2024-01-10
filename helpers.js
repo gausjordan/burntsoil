@@ -62,7 +62,11 @@ function canvasSizeFormatterIndex(hMargin, vMargin) {
 }
 
 
-/** Ensures correct aspect ratio an most display types */
+/**
+ * Ensures correct aspect ratio on resize, for most display types.
+ * Subtracts some margin (in pixels) taken by the border.
+ * Invokes updateCanvasSize().
+ */
 function canvasSizeFormatterGame(hMargin, vMargin) {
     updateCanvasSize(hMargin, vMargin);
     let aspect = document.getElementsByTagName("html")[0].clientWidth /
@@ -79,7 +83,7 @@ function canvasSizeFormatterGame(hMargin, vMargin) {
 }
 
 
-/** Gets (new) available screen size for the canvas */
+/** Sets (new) available screen estate for the canvas */
 function updateCanvasSize(hMargin, vMargin) {
     canvRef1.width = getCanvSize(canvRef1, hMargin, vMargin)[0] * ratio;
     canvRef1.height = getCanvSize(canvRef1, hMargin, vMargin)[1] * ratio;
@@ -93,7 +97,7 @@ function updateCanvasSize(hMargin, vMargin) {
 
 
 /** Converts a semicircle - defined by a dictionary - to a normalized array
- * of pixel width deltas, defining a quarter of a circle, and having 0 as a
+ * of pixel width differences, defining a quarter of a circle,  having 0 as a
  * centerline. Keys are X-axis coordinates, values are Y-axis coordinates.
  * Edge case: First key is not necessarily at position 0! */
 function semiArcToNormQarc(x, y, semiArc, blastSize) {

@@ -47,10 +47,10 @@ header {
     border: 2px outset;
     box-sizing: border-box;
     padding: 0.2em;
-    border-color:   var(--up-bord-color)
-                    var(--right-bord-color)
-                    var(--bottom-bord-color)
-                    var(--left-bord-color);
+    border-color: var(--up-bord-color)
+                  var(--right-bord-color)
+                  var(--bottom-bord-color)
+                  var(--left-bord-color);
 }
 
 main {

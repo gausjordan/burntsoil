@@ -1,95 +1,53 @@
+/*
+// DEBUG: Fixed points
+rawPoints1 = [{"x": 227,"y": 40}, {"x": 452,"y": 939}, {"x": 708,"y": 71}, {"x": 932,"y": 778}, {"x": 1147,"y": 165}];
+rawPoints2 = [{"x": 74,"y": 933}, {"x": 202,"y": 800}, {"x": 303,"y": 518},{"x": 408,"y": 902}, {"x": 482,"y": 224},
+             {"x": 588,"y": 315},{"x": 669,"y": 98},{"x": 774,"y": 889},{"x": 893,"y": 500},{"x": 982,"y": 761}];
+*/
+
+// Subtract total margin width from canvas, (re)size the canvas
 canvasSizeFormatterGame(12, 12);
 
 let rawPoints1 = generateCps(5);    // low frequency terrain
 let rawPoints2 = generateCps(10);   // high frequency terrain
-
-/*
-// DEBUG: Fixed points
-rawPoints1 = [{"x": 227,"y": 40}, {"x": 452,"y": 939}, {"x": 708,"y": 71}, {"x": 932,"y": 778}, {"x": 1147,"y": 165}];
-rawPoints2 = [{"x": 74,"y": 933}, {"x": 202,"y": 800}, {"x": 303,"y": 518},{"x": 408,"y": 902}, {"x": 482,"y": 224},{"x": 588,"y": 315},{"x": 669,"y": 98},{"x": 774,"y": 889},{"x": 893,"y": 500},{"x": 982,"y": 761}];
-*/
-
 let normPoints1 = normalizeCps(rawPoints1, maxRes, false);
 let normPoints2 = normalizeCps(rawPoints2, maxRes, false);
 let pixels1 = cpsToPxs(normPoints1);
 let pixels2 = cpsToPxs(normPoints2);
 
-// Two sets of (pixel-defined) curves merged into one (ratio 0.8 : 0.2)
+// Two arrays of unscaled (pixel-defined) curves, combined into one
 let pxMix = pixels1.map( (e, index) => { return e + 0.2 * pixels2[index]; });
 squeezeFactor = canvRef2.width / pxMix.length;
 
 // Backdrop always uses canvas1. Game elements use canvas2.
 drawBackdrop(canvRef1.width, canvRef1.height, "blue");
 
-canvCtx2.fillStyle = "rgba(255,0,0,1)"; 
-
-let statusBar = document.getElementById('statusBar');
-
-let tanks = [];
-let whoseTurn = 0;
-
+// Hardcoded players for testing purposes
+let tanks = [];         // An array of tank objects (all players)
+let whoseTurn = 0;      // A pointer to the current player
 tanks.push(spawnTank(255, 0, 0, "Joe", 20, randomInteger(0, 180) ));
 tanks.push(spawnTank(0, 160, 0, "Mike", 80, randomInteger(0, 180) ));
 tanks.forEach(tank => tank.drawTank());
+
+let statusBar = document.getElementById('statusBar');
+let navBar = document.getElementsByTagName('nav')[0];
 drawTerrain(pxMix, squeezeFactor);
 updateStatusBar();
 
-// Prevents a page refresh upon "swipe down" gesture on mobile browsers
-document.addEventListener(
-    'touchmove',
-    (e) => {e.preventDefault()},
-    { passive: false });
+// Prevent page refreshing on "swipe down" gesture (mobile browsers)
+document.addEventListener('touchmove',(e)=>e.preventDefault(),{passive:false});
     
+
+// Set drag and touch events anywhere on screen
 document.addEventListener('mousedown', dragStart);
 document.addEventListener('touchstart', dragStart);
-// Captures events from all control buttons at once
-document.getElementsByTagName('nav')[0]
-    .addEventListener('mousedown', fineTuneButtons);
-document.getElementsByTagName('nav')[0]
-    .addEventListener('touchstart', fineTuneButtons);
 
-let startPosition;
-
-// What happens when one touches any of the in-game butttons
-function fineTuneButtons(e) {
-    
-    // Prevents touch devices from registering multiple touch events
-    e.stopPropagation();
-    e.preventDefault();
-    
-    // Performs a button function once
-    fineTuneButtonAction(e);
-    
-    // If a button stays pushed, rapid repetition begins
-    let timerId1, timerId2;
-    timerId1 = setTimeout( () =>   { 
-                timerId2 = setInterval(() => { fineTuneButtonAction(e); }, 20);
-            }, 600);
-
-    // Auto repeating is canceled if button wasn't held down or we moved away
-    document.getElementsByTagName('nav')[0]
-        .addEventListener('mouseup', () => {
-            clearInterval(timerId1);
-            clearInterval(timerId2);
-         });
-    document.getElementsByTagName('nav')[0]
-        .addEventListener('mouseleave', () => {
-            clearInterval(timerId1);
-            clearInterval(timerId2);
-         });
-    
-    function timer(timerId) {
-        setInterval(() => { fineTuneButtonAction(e); }, 20);
-    }
-
-    function repeater(timerId) {
-        setInterval(() => { fineTuneButtonAction(e); }, 20);
-    }
-}
+// Set drag and touch eventsfrom in-game control buttons
+navBar.addEventListener('mousedown', fineTuneButtons);
+navBar.addEventListener('touchstart', fineTuneButtons);
 
 
-
-
+/** Do stuff, depending on what was touched or clicked */
 function fineTuneButtonAction(e) {
     if (e.srcElement.id == 'rotateCCW') {
         tanks[whoseTurn].angleInc(1);
@@ -101,14 +59,46 @@ function fineTuneButtonAction(e) {
         tanks[whoseTurn].powerDec(1);
     }
 }
+    
 
-function killButtonRepeater() {
+/** Define how buttons respond to either long press or long click */
+ function fineTuneButtons(e) {
+    
+    if (typeof e.button !== 'undefined')
+        // Only respond to primary clicks
+        if (e.button !== 0)
+            return;
 
+    if (typeof e.button !== 'undefined' || e.touches[0] !== 'undefined') {
+        e.preventDefault();             
+        e.stopPropagation();            // Prevent double touch events
+        fineTuneButtonAction(e);        // Do whatever is needed once
+        
+        // If a button stays pushed - rapid repetition
+        let timerId1, timerId2;
+        timerId1 = setTimeout( () =>   { 
+            timerId2 = setInterval(() => fineTuneButtonAction(e), 20); }, 600);
+
+        // Cancel repetition if a pointing device was let go or moved away
+        navBar.addEventListener('mouseup', () => clearTimers() );
+        navBar.addEventListener('mouseleave', () => clearTimers());
+        navBar.addEventListener('touchend', () => clearTimers() );
+        navBar.addEventListener('touchleave', () => clearTimers());
+
+        function clearTimers() {
+            clearInterval(timerId1);
+            clearInterval(timerId2);
+        }
+    }
 }
 
 
-function dragStart(e) {
-    // Only do sometning when primary mouse button is pressed
+let startPosition;  // Starting pointer position, before dragging
+
+/** What to do if a pointer is engaged, anywhere on screen */
+ function dragStart(e) {
+
+    // Only do something when primary mouse button is pressed
     if (e.button === 0) {
         startPosition = {
             x: e.clientX,
@@ -123,13 +113,15 @@ function dragStart(e) {
             x: e.touches[0].clientX,
             y: e.touches[0].clientY
         };
-
         document.addEventListener("touchmove", dragging);
         document.addEventListener("touchend", dragStop);
     }
 }
 
+
+/** What to do if an engaged pointer starts moving */
 function dragging(e) {
+    
     if (e.button === 0) {
         // Set new angle via mouse
         if (e.clientX < startPosition.x) {
@@ -176,7 +168,7 @@ function dragging(e) {
 
 }
 
-
+/** This happens when dragging on the canvas ends  */
 function dragStop(e) {
     document.removeEventListener("mousemove", dragging);
     document.removeEventListener("mouseend", dragStop);
