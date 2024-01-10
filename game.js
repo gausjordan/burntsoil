@@ -24,6 +24,7 @@ drawBackdrop(canvRef1.width, canvRef1.height, "blue");
 
 // Hardcoded players for testing purposes
 let tanks = [];         // An array of tank objects (all players)
+let isBlocked = false;
 let whoseTurn = 0;      // A pointer to the current player
 tanks.push(spawnTank(255, 0, 0, "Joe", 20, randomInteger(0, 180) ));
 tanks.push(spawnTank(0, 160, 0, "Mike", 80, randomInteger(0, 180) ));
@@ -48,7 +49,7 @@ navBar.addEventListener('touchstart', fineTuneButtons);
 
 
 /** Do stuff, depending on what was touched or clicked */
-function fineTuneButtonAction(e) {
+async function fineTuneButtonAction(e) {
     if (e.srcElement.id == 'rotateCCW') {
         tanks[whoseTurn].angleInc(1);
     } else if (e.srcElement.id == 'rotateCW') {
@@ -57,6 +58,12 @@ function fineTuneButtonAction(e) {
         tanks[whoseTurn].powerInc(1);
     } else if (e.srcElement.id == 'decButton') {
         tanks[whoseTurn].powerDec(1);
+    } else if (e.srcElement.id == 'fireButton') {
+        isBlocked = true;
+        removeFireListeners();
+        await tanks[whoseTurn].fire();
+        restoreFireListeners();
+        isBlocked = false;
     }
 }
     
@@ -73,11 +80,14 @@ function fineTuneButtonAction(e) {
         e.preventDefault();             
         e.stopPropagation();            // Prevent double touch events
         fineTuneButtonAction(e);        // Do whatever is needed once
+        if (e.srcElement.id             // Don't auto-repeat firing
+            == 'fireButton')
+            return;
         
         // If a button stays pushed - rapid repetition
         let timerId1, timerId2;
         timerId1 = setTimeout( () =>   { 
-            timerId2 = setInterval(() => fineTuneButtonAction(e), 20); }, 600);
+            timerId2 = setInterval(() => fineTuneButtonAction(e), 16); }, 600);
 
         // Cancel repetition if a pointing device was let go or moved away
         navBar.addEventListener('mouseup', () => clearTimers() );
@@ -101,8 +111,7 @@ let startPosition;  // Starting pointer position, before dragging
     // Only do something when primary mouse button is pressed
     if (e.button === 0) {
         startPosition = {
-            x: e.clientX,
-            y: e.clientY
+            x: e.clientX, y: e.clientY
         }
         document.addEventListener("mousemove", dragging);
         document.addEventListener("mouseup", dragStop);
@@ -110,8 +119,7 @@ let startPosition;  // Starting pointer position, before dragging
     // Only do something if there WAS a touch event
     if (e.touches && e.touches[0]) {
         startPosition = {
-            x: e.touches[0].clientX,
-            y: e.touches[0].clientY
+            x: e.touches[0].clientX, y: e.touches[0].clientY
         };
         document.addEventListener("touchmove", dragging);
         document.addEventListener("touchend", dragStop);
@@ -174,4 +182,29 @@ function dragStop(e) {
     document.removeEventListener("mouseend", dragStop);
     document.removeEventListener("touchmove", dragging);
     document.removeEventListener("touchend", dragStop);
+}
+
+
+/** Blocks controls while the projectile is in the air */
+function restoreFireListeners() {
+    document.addEventListener('mousedown', dragStart);
+    document.addEventListener('touchstart', dragStart);
+    navBar.addEventListener('mousedown', fineTuneButtons);
+    navBar.addEventListener('touchstart', fineTuneButtons);
+    document.addEventListener('keydown', (keyDown));
+}
+
+/** Unblocks controls once the projectile hits it's target */
+function removeFireListeners() {
+    document.removeEventListener('mousedown', dragStart);
+    document.removeEventListener('touchstart', dragStart);
+    navBar.removeEventListener('mousedown', fineTuneButtons);
+    navBar.removeEventListener('touchstart', fineTuneButtons);
+    document.removeEventListener('keydown', keyDown);
+
+    // DEBUG
+    document.addEventListener('keydown', () => {
+        isBlocked = false;
+        //alert("Gay");
+    }, {once: true});
 }

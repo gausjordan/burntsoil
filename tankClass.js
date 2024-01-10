@@ -61,8 +61,11 @@ class Tank {
     }
 
     angleInc() {
-        if (this.angle >= 180)
+        if (this.angle == 180) {
             this.angle = 0;
+            this.clearTank();
+            this.drawTank();
+        }
         else {
             this.angle += 1;
             updateStatusBar();
@@ -72,9 +75,11 @@ class Tank {
     }
 
     angleDec() {
-        if (this.angle <= 0)
+        if (this.angle == 0) {
             this.angle = 180;
-        else {
+            this.clearTank();
+            this.drawTank();
+        } else {
             this.angle -= 1;
             updateStatusBar();
             this.clearTank();
@@ -101,6 +106,51 @@ class Tank {
             this.power -= value;
         updateStatusBar();
     }
+
+  
+    async fire() {
+        await this.computeTrajectory();
+    }
+
+    computeTrajectory(whoseTurn) {
+
+        return new Promise(resolve => {
+            let startTime = performance.now();
+            canvCtx2.fillStyle = "rgb(255,255,255)";
+            let angle = this.angle;
+            let xPos = this.xPos;
+            let yPos = this.yPos;
+            let yCorrPos = this.yCorrPos
+            let topX = 15 + Math.cos(Math.PI / 180 * angle) * 16;
+            let topY = 1 - Math.sin(Math.PI / 180 * angle) * 16;
+
+            let i = 0;
+
+            function drawProjectile(timeStamp) {
+                
+                if (i < 1 && isBlocked ) {
+                       
+                    i++;
+                    //canvCtx2.fillRect(200+2*i, 200, 10, 10);
+                    
+                    canvCtx2.fillRect(
+                        (xPos * squeezeFactor + topX * tankSize * squeezeFactor)-1,
+                        (yCorrPos + topY * tankSize * squeezeFactor)-1,
+                        2,
+                        2);
+                    // Animate here
+                    
+                    requestAnimationFrame(drawProjectile);
+    
+                } else {
+                    //canvCtx2.clearRect(200, 200, 10+2*i, 10);
+                    resolve();
+                }
+            }
+            requestAnimationFrame(drawProjectile);
+        })
+    }
+
     
 
     drawTank() {

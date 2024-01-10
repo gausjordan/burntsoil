@@ -38,7 +38,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
 document.addEventListener('keydown', keyDown);
 
-
 function keyDown(event) {
     const key = event.key;
     switch (event.key) {

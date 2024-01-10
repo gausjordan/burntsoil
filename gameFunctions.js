@@ -318,32 +318,3 @@ function updateStatusBar() {
     statusBar.children[2].style.color = styleString;
     statusBar.children[2].innerHTML = tanks[whoseTurn].name;
 }
-
-
-function computeTrajectory(whoseTurn) {
-
-    return new Promise(resolve => {
-        let startTime = performance.now();
-        function drawProjectile(timeStamp) {
-            
-            if ( lastIndex < blastSqz ) {
-                   
-                lastIndex = currentIndex;
-                currentIndex = Math.round(
-                        Math.min(
-                            (timeStamp - startTime) / blowUpSpeed * blastSqz,
-                            blastSqz
-                        )
-                    );
-                
-                // Animate here
-                
-                requestAnimationFrame(drawProjectile);
-
-            } else {
-                resolve();
-            }
-        }
-        requestAnimationFrame(drawProjectile);
-    })
-}
