@@ -38,9 +38,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
 document.addEventListener('keydown', keyDown);
 
-function keyDown(event) {
-    const key = event.key;
-    switch (event.key) {
+async function keyDown(event) {
+    const code = event.code;
+    switch (event.code) {
         case "ArrowLeft":
             tanks[whoseTurn].angleInc();
             break;
@@ -58,6 +58,10 @@ function keyDown(event) {
             break;
         case "PageDown":
             tanks[whoseTurn].powerDec(100);
+            break;
+        case "Enter":
+        case "Space":
+            await tanks[whoseTurn].fire();
             break;
     }
 }

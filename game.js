@@ -26,7 +26,7 @@ drawBackdrop(canvRef1.width, canvRef1.height, "blue");
 let tanks = [];         // An array of tank objects (all players)
 let isBlocked = false;
 let whoseTurn = 0;      // A pointer to the current player
-tanks.push(spawnTank(255, 0, 0, "Joe", 20, randomInteger(0, 180) ));
+tanks.push(spawnTank(255, 0, 0, "Joe", 20, 60 ));
 tanks.push(spawnTank(0, 160, 0, "Mike", 80, randomInteger(0, 180) ));
 tanks.forEach(tank => tank.drawTank());
 
@@ -59,11 +59,7 @@ async function fineTuneButtonAction(e) {
     } else if (e.srcElement.id == 'decButton') {
         tanks[whoseTurn].powerDec(1);
     } else if (e.srcElement.id == 'fireButton') {
-        isBlocked = true;
-        removeFireListeners();
         await tanks[whoseTurn].fire();
-        restoreFireListeners();
-        isBlocked = false;
     }
 }
     
@@ -205,6 +201,5 @@ function removeFireListeners() {
     // DEBUG
     document.addEventListener('keydown', () => {
         isBlocked = false;
-        //alert("Gay");
     }, {once: true});
 }

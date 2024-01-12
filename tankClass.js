@@ -109,7 +109,12 @@ class Tank {
 
   
     async fire() {
+        isBlocked = true;
+        removeFireListeners();
         await this.computeTrajectory();
+        whoseTurn = whoseTurn==1 ? 0 : 1;
+        restoreFireListeners();
+        isBlocked = false;
     }
 
     computeTrajectory(whoseTurn) {
@@ -119,7 +124,7 @@ class Tank {
             canvCtx2.fillStyle = "rgb(255,255,255)";
             let angle = this.angle;
             let xPos = this.xPos;
-            let yPos = this.yPos;
+            //let yPos = this.yPos;
             let yCorrPos = this.yCorrPos
             let topX = 15 + Math.cos(Math.PI / 180 * angle) * 16;
             let topY = 1 - Math.sin(Math.PI / 180 * angle) * 16;
@@ -128,22 +133,37 @@ class Tank {
 
             function drawProjectile(timeStamp) {
                 
-                if (i < 1 && isBlocked ) {
+                if ( isBlocked ) {
                        
                     i++;
+                    //canvCtx2.clearRect(200+2*i, 200, -10, 10);
                     //canvCtx2.fillRect(200+2*i, 200, 10, 10);
                     
+                    let x0 = (xPos * squeezeFactor + topX * tankSize * squeezeFactor)-1;
+                    let y0 = (yCorrPos + topY * tankSize * squeezeFactor)-1;
+                    let tempAngle = - angle*Math.PI/180;
+
+                    console.log(angle);
                     canvCtx2.fillRect(
-                        (xPos * squeezeFactor + topX * tankSize * squeezeFactor)-1,
-                        (yCorrPos + topY * tankSize * squeezeFactor)-1,
+                        x0 + Math.cos(tempAngle)*i/1,
+                        y0 + Math.sin(tempAngle)*i/1,
                         2,
                         2);
-                    // Animate here
+
+
+                   
+                    // BACKUP - CENTAR CIJEVI NA IZLAZU
+                    // canvCtx2.fillRect(
+                    //     (xPos * squeezeFactor + topX * tankSize * squeezeFactor)-1,
+                    //     (yCorrPos + topY * tankSize * squeezeFactor)-1,
+                    //     2,
+                    //     2);
                     
+                    // let slope = (topY - bottomY) / (topX - bottomX);
                     requestAnimationFrame(drawProjectile);
-    
-                } else {
-                    //canvCtx2.clearRect(200, 200, 10+2*i, 10);
+                }
+                
+                else {
                     resolve();
                 }
             }
