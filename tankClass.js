@@ -112,7 +112,10 @@ class Tank {
         isBlocked = true;
         removeFireListeners();
         await this.computeTrajectory();
-        whoseTurn = whoseTurn==1 ? 0 : 1;
+        
+            whoseTurn = whoseTurn==1 ? 0 : 1;  // DEBUG
+            updateStatusBar();
+        
         restoreFireListeners();
         isBlocked = false;
     }
