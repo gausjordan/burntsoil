@@ -132,28 +132,48 @@ class Tank {
             let topX = 15 + Math.cos(Math.PI / 180 * angle) * 16;
             let topY = 1 - Math.sin(Math.PI / 180 * angle) * 16;
 
+            let x0 = (xPos * squeezeFactor + topX * tankSize * squeezeFactor)-1;
+            let y0 = (yCorrPos + topY * tankSize * squeezeFactor)-1;
+            let tempAngle = -angle*Math.PI/180;
+
+            alert (x0, " ... ", y0);
+            let missile = { x: x0, y: x0 };
+
             let i = 0;
+            let g = 0;
+
+            
+
+            let dx = Math.cos(tempAngle) * this.power/20;
+            let dy = Math.sin(tempAngle) * this.power/20;
 
             function drawProjectile(timeStamp) {
                 
+
                 if ( isBlocked ) {
-                       
-                    i++;
+
+                    g++;
+                    x0 += dx;
+                    y0 += dy + g;
+
                     //canvCtx2.clearRect(200+2*i, 200, -10, 10);
                     //canvCtx2.fillRect(200+2*i, 200, 10, 10);
-                    
-                    let x0 = (xPos * squeezeFactor + topX * tankSize * squeezeFactor)-1;
-                    let y0 = (yCorrPos + topY * tankSize * squeezeFactor)-1;
-                    let tempAngle = - angle*Math.PI/180;
-
-                    console.log(angle);
+                                        
+                    //i++;
                     canvCtx2.fillRect(
-                        x0 + Math.cos(tempAngle)*i/1,
-                        y0 + Math.sin(tempAngle)*i/1,
+                        x0,
+                        y0,
                         2,
                         2);
 
 
+                    // BACKUP - OVO CRTA PRAVAC
+                    // i++;
+                    // canvCtx2.fillRect(
+                    //     x0 + Math.cos(tempAngle)*i/0.2,
+                    //     y0 + Math.sin(tempAngle)*i/0.2,
+                    //     2,
+                    //     2);
                    
                     // BACKUP - CENTAR CIJEVI NA IZLAZU
                     // canvCtx2.fillRect(
