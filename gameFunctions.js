@@ -41,7 +41,7 @@ function carveArray(debris, sF) {
 }
 
 
-
+/** Returns coordinates where there's some dirt left ABOVE */
 function collectDebris(upArc, lowArc, pxMix, blastSize) {
     let debrisAbove = [];
     for (u in upArc) {
@@ -115,7 +115,7 @@ function drawFireball(x, y, blastSize) {
 
 
 /**
- * Clears the (animated) explosion, leaving a transparent patch on the canvas
+ * Clears an (animated) explosion, leaving a transparent patch on canvas
  * @param {*} x x coordinate (full oversampled resolution)
  * @param {*} y y coordinate (full oversampled resolution)
  * @param {*} blastSize blast radius ("downsampled", display size)
@@ -127,7 +127,9 @@ function clearFireball(x, y, blastSqz) {
     let quarterCircle = pixelatedArch(blastSqz);
 
     return new Promise(resolve => {
+
         let startTime = performance.now();
+
         function animateFire(timeStamp) {
             blastSqz = Math.round(blastSqz);
             if ( lastIndex < blastSqz ) {
@@ -139,8 +141,8 @@ function clearFireball(x, y, blastSqz) {
                             blastSqz
                         )
                     );
-                
-                // It takes 12 passes to erase all anti-aliasing leftovers
+
+                    // It takes 12 passes to erase all anti-aliasing leftovers
                 for (let k = 0; k < 12; k++) {
                     for (let j = lastIndex; j < currentIndex; j++ ) {
                         canvCtx2.clearRect(
@@ -166,7 +168,7 @@ function clearFireball(x, y, blastSqz) {
     })
 }
 
-
+/** Any dirt left above the blast falls down and fills the hole */
 function drawDebris(debris, squeezeFactor, lowArc, blastSize) {
     // Changes made while animating are only made on a disposable copy
     let debrisCopy = JSON.parse(JSON.stringify(debris));
@@ -276,7 +278,7 @@ function pixelatedArch(radius) {
 }
 
 
-/** Compute a lower semi-circle shape for the future carving */
+/** Computes a lower semi-circle shape for the future carving */
 function generateUpperArc(dx, dy, r) {
     let upperArc = {};
     for(let i = 0; i < 180; i += 0.01) {
@@ -299,11 +301,22 @@ function generateLowerArc(dx, dy, r) {
     return lowerArc;
 }
 
+/**
+ * Creates a new player (Tank object) to be added to the array.
+ * @param {*} r red
+ * @param {*} g green
+ * @param {*} b blue
+ * @param {*} name name
+ * @param {*} xPerc Where to place the tank horizontally (0 = left, 100 = right)
+ * @param {*} angle Once spawned, the turret will be angled this far.
+ * @returns 
+ */
 function spawnTank(r, g, b, name, xPerc, angle) {
     let tank = new Tank(r, g, b, name, xPerc, angle);
     return tank;
 }
 
+/** Update power, angle, name and weapon stats */
 function updateStatusBar() {
     let displayAngle = tanks[whoseTurn].angle;
     // Internally, angle ranges 0 to 180, but only shows 0-90

@@ -173,7 +173,6 @@ class Tank {
             requestAnimationFrame(drawProjectile);
         })
     }
-
     
 
     drawTank() {
@@ -194,7 +193,6 @@ class Tank {
         }
 
         
-
         // Caterpillar tracks
         let styleString;
         let sF = squeezeFactor;
@@ -314,57 +312,8 @@ class Tank {
             this.yCorrPos + (bottomY + 1 * normYslope) * tS);
         canvCtx2.fill();
 
-
         canvCtx2.fillStyle = "rgb(0,255,255)";
 
-        //console.log("x: " + this.xPos + ", y: " + this.yPos);
-
-        // DEBUG Tank Bounding Box
-        // canvCtx2.fillStyle = "rgb(255,255,0)";
-        // canvCtx2.fillRect(
-        //     this.xPos * squeezeFactor,
-        //     this.yPos,
-        //     tankSize * squeezeFactor * 30,
-        //     1);
-        // canvCtx2.fillRect(
-        //     this.xPos * squeezeFactor,
-        //     this.yPos + (tankSize * squeezeFactor * 9),
-        //     tankSize * squeezeFactor * 30,
-        //     1);
-        // canvCtx2.fillRect(
-        //     this.xPos * squeezeFactor,
-        //     this.yPos,
-        //     1,
-        //     tankSize * squeezeFactor * 9);
-        // canvCtx2.fillRect(
-        //     (this.xPos + tankSize * 30) * squeezeFactor,
-        //     this.yPos,
-        //     1,
-        //     tankSize * squeezeFactor * 9);
-
-
-        // DEBUG Tank Bounding Box backup - THIS WORKS
-        // canvCtx2.fillStyle = "rgb(255,255,0)";
-        // canvCtx2.fillRect(
-        //     this.xPos * squeezeFactor,
-        //     this.yPos,
-        //     tankSize * squeezeFactor * 30,
-        //     1);
-        // canvCtx2.fillRect(
-        //     this.xPos * squeezeFactor,
-        //     this.yPos + (tankSize * squeezeFactor * 9),
-        //     tankSize * squeezeFactor * 30,
-        //     1);
-        // canvCtx2.fillRect(
-        //     this.xPos * squeezeFactor,
-        //     this.yPos,
-        //     1,
-        //     tankSize * squeezeFactor * 9);
-        // canvCtx2.fillRect(
-        //     (this.xPos + tankSize * 30) * squeezeFactor,
-        //     this.yPos,
-        //     1,
-        //     tankSize * squeezeFactor * 9);            
     }
 
     clearTank() {

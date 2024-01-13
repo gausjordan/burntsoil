@@ -2,20 +2,6 @@ let posX = 0;
 let posY = 0;
 let lock = false;
 
-// Do not delete, it will be required
-/*
-window.addEventListener("click", (ev) => {
-    posX = getMousePos(canvRef2, ev).x * ratio;
-    posY = getMousePos(canvRef2, ev).y * ratio;
-    corrX = posX / squeezeFactor;
-    corrY = (canvRef2.height - posY) / squeezeFactor;
-    if (!lock) {
-        lock = true;
-        explosionOnGround(corrX, corrY, 250);        
-    }
-});
-*/
-
 
 /** On resize - reset */
 window.addEventListener("resize", (ev) => {
@@ -29,15 +15,13 @@ window.addEventListener("resize", (ev) => {
 });
 
 
-/**
- * Things to do once the document is fully loaded
- */
+/** Things to do once the document is fully loaded; TODO */
 document.addEventListener('DOMContentLoaded', function() {
 });
 
 
+/** Primary keyboard controls */
 document.addEventListener('keydown', keyDown);
-
 async function keyDown(event) {
     const code = event.code;
     switch (event.code) {
@@ -65,3 +49,18 @@ async function keyDown(event) {
             break;
     }
 }
+
+
+// DEBUG - Do not delete / will be required
+/*
+window.addEventListener("click", (ev) => {
+    posX = getMousePos(canvRef2, ev).x * ratio;
+    posY = getMousePos(canvRef2, ev).y * ratio;
+    corrX = posX / squeezeFactor;
+    corrY = (canvRef2.height - posY) / squeezeFactor;
+    if (!lock) {
+        lock = true;
+        explosionOnGround(corrX, corrY, 250);        
+    }
+});
+*/

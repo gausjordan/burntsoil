@@ -24,10 +24,17 @@ drawBackdrop(canvRef1.width, canvRef1.height, "blue");
 
 // Hardcoded players for testing purposes
 let tanks = [];         // An array of tank objects (all players)
-let isBlocked = false;
-let whoseTurn = 0;      // A pointer to the current player
-tanks.push(spawnTank(255, 0, 0, "Joe", 20, 60 ));
-tanks.push(spawnTank(0, 160, 0, "Mike", 80, randomInteger(0, 180) ));
+let isBlocked = false;  // Block user controls while missiles fly
+let whoseTurn = 0;      // Points to the current player
+
+tanks.push(spawnTank(255, 0, 0, "Joe",
+           randomInteger(10, 30),
+           randomInteger(0,180) ));
+
+tanks.push(spawnTank(0, 160, 0, "Mike",
+           randomInteger(70, 90),
+           randomInteger(0, 180) ));
+
 tanks.forEach(tank => tank.drawTank());
 
 let statusBar = document.getElementById('statusBar');
@@ -181,7 +188,7 @@ function dragStop(e) {
 }
 
 
-/** Blocks controls while the projectile is in the air */
+/** Blocks controls while the missle is in the air */
 function restoreFireListeners() {
     document.addEventListener('mousedown', dragStart);
     document.addEventListener('touchstart', dragStart);
@@ -190,7 +197,7 @@ function restoreFireListeners() {
     document.addEventListener('keydown', (keyDown));
 }
 
-/** Unblocks controls once the projectile hits it's target */
+/** Unblocks controls once the missle hits it's target */
 function removeFireListeners() {
     document.removeEventListener('mousedown', dragStart);
     document.removeEventListener('touchstart', dragStart);
@@ -198,7 +205,7 @@ function removeFireListeners() {
     navBar.removeEventListener('touchstart', fineTuneButtons);
     document.removeEventListener('keydown', keyDown);
 
-    // DEBUG
+    // DEBUG... any key abruptly ends the animation
     document.addEventListener('keydown', () => {
         isBlocked = false;
     }, {once: true});

@@ -3,7 +3,6 @@ canvasSizeFormatterIndex(10, 10);
 document.getElementById("curtain").style.height = canvRef1.height / ratio + "px";
 document.getElementById("curtain").style.width = canvRef1.width / ratio + "px";
 
-
 let rawPoints1 = generateCps(5);    // low frequency terrain
 let rawPoints2 = generateCps(10);   // high frequency terrain
 let normPoints1 = normalizeCps(rawPoints1, maxRes, true);
