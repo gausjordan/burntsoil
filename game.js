@@ -137,7 +137,7 @@ function dragging(e) {
         // Set new power level via mouse
         if (e.clientY < startPosition.y) {
             tanks[whoseTurn].powerInc();
-        } else {
+        } else if (e.clientY > startPosition.y){
             tanks[whoseTurn].powerDec();
         }
 

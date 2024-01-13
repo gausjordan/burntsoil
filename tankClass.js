@@ -14,7 +14,6 @@ class Tank {
 
         // Magic numbers 15, 9 and 4.5 are expressed in "TankSize" units,
         // and represent width (15), length (9) or mid-point (4.5) of the tank
-        
         this.yPos = Math.round(
                 canvRef2.height
                 - (pxMix[Math.round(this.xPos + 15 * tankSize)] 
@@ -112,81 +111,62 @@ class Tank {
         isBlocked = true;
         removeFireListeners();
         await this.computeTrajectory();
-        
-            whoseTurn = whoseTurn==1 ? 0 : 1;  // DEBUG
-            updateStatusBar();
-        
+        whoseTurn = whoseTurn==1 ? 0 : 1;  // DEBUG, HARDCODED
+        updateStatusBar();
         restoreFireListeners();
         isBlocked = false;
     }
 
     computeTrajectory(whoseTurn) {
-
+        let angle = this.angle;
+        let xPos = this.xPos;
+        let yCorrPos = this.yCorrPos;
+        let topX = 15 + Math.cos(Math.PI / 180 * angle) * 16;
+        let topY = 1 - Math.sin(Math.PI / 180 * angle) * 16;
+        let radianAngle = -angle*Math.PI/180;
+        let y0 = (yCorrPos + topY * tankSize * squeezeFactor)-1;
+        let x0 = ((xPos * squeezeFactor + topX * tankSize * squeezeFactor)
+                 -1) / squeezeFactor;
+        canvCtx2.fillStyle = "rgb(255,255,255)";
+                
         return new Promise(resolve => {
             let startTime = performance.now();
-            canvCtx2.fillStyle = "rgb(255,255,255)";
-            let angle = this.angle;
-            let xPos = this.xPos;
-            //let yPos = this.yPos;
-            let yCorrPos = this.yCorrPos
-            let topX = 15 + Math.cos(Math.PI / 180 * angle) * 16;
-            let topY = 1 - Math.sin(Math.PI / 180 * angle) * 16;
+            let missile = { x: x0, y: canvRef2.height - y0 };
 
-            let x0 = (xPos * squeezeFactor + topX * tankSize * squeezeFactor)-1;
-            let y0 = (yCorrPos + topY * tankSize * squeezeFactor)-1;
-            let tempAngle = -angle*Math.PI/180;
-
-            alert (x0, " ... ", y0);
-            let missile = { x: x0, y: x0 };
-
-            let i = 0;
-            let g = 0;
-
+            let dx = Math.cos(radianAngle) * this.power/20;
+            let dy = Math.sin(radianAngle) * this.power/20;
             
-
-            let dx = Math.cos(tempAngle) * this.power/20;
-            let dy = Math.sin(tempAngle) * this.power/20;
+            let i = 0;
 
             function drawProjectile(timeStamp) {
                 
-
+                // Animation loops until something unsets the isBlocked flag
                 if ( isBlocked ) {
 
-                    g++;
-                    x0 += dx;
-                    y0 += dy + g;
-
-                    //canvCtx2.clearRect(200+2*i, 200, -10, 10);
-                    //canvCtx2.fillRect(200+2*i, 200, 10, 10);
-                                        
-                    //i++;
+                    i++;
                     canvCtx2.fillRect(
-                        x0,
-                        y0,
-                        2,
-                        2);
+                        missile.x * squeezeFactor,
+                        canvRef2.height - missile.y,
+                        2, 2);
 
+                    missile.x = missile.x + dx / squeezeFactor;
+                    missile.y = missile.y - dy - i*0.5;
 
-                    // BACKUP - OVO CRTA PRAVAC
-                    // i++;
-                    // canvCtx2.fillRect(
-                    //     x0 + Math.cos(tempAngle)*i/0.2,
-                    //     y0 + Math.sin(tempAngle)*i/0.2,
-                    //     2,
-                    //     2);
-                   
-                    // BACKUP - CENTAR CIJEVI NA IZLAZU
-                    // canvCtx2.fillRect(
-                    //     (xPos * squeezeFactor + topX * tankSize * squeezeFactor)-1,
-                    //     (yCorrPos + topY * tankSize * squeezeFactor)-1,
-                    //     2,
-                    //     2);
-                    
-                    // let slope = (topY - bottomY) / (topX - bottomX);
-                    requestAnimationFrame(drawProjectile);
-                }
-                
-                else {
+                    // If a missile hits terrain or goes off screen...
+                    if (missile.y <= pxMix[Math.round(Math.round(missile.x))]
+                        * squeezeFactor)
+                    {
+                        isBlocked = false;
+                        explosionOnGround(missile.x,
+                            missile.y/squeezeFactor, 250);
+                        resolve();
+                    } else if (missile.y < 0) {
+                        isBlocked = false;
+                        resolve();
+                    } else {
+                        requestAnimationFrame(drawProjectile);
+                    }
+                } else {
                     resolve();
                 }
             }

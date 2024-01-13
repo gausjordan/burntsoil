@@ -18,7 +18,7 @@ async function explosionOnGround(x, y, blastSize) {
     await drawDebris(debris, squeezeFactor, lowArc, blastSize);
     await carveArray(debris, squeezeFactor);
     drawTerrain(pxMix, squeezeFactor);
-    
+    tanks.forEach(t => t.drawTank());
 }
 
 
