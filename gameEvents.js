@@ -59,15 +59,14 @@ async function keyDown(event) {
 
 
 // DEBUG - Do not delete / will be required
-/*
-window.addEventListener("click", (ev) => {
-    posX = getMousePos(canvRef2, ev).x * ratio;
-    posY = getMousePos(canvRef2, ev).y * ratio;
-    corrX = posX / squeezeFactor;
-    corrY = (canvRef2.height - posY) / squeezeFactor;
-    if (!lock) {
-        lock = true;
-        explosionOnGround(corrX, corrY, 250);        
-    }
-});
-*/
+
+// window.addEventListener("click", (ev) => {
+//     posX = getMousePos(canvRef2, ev).x * ratio;
+//     posY = getMousePos(canvRef2, ev).y * ratio;
+//     corrX = posX / squeezeFactor;
+//     corrY = (canvRef2.height - posY) / squeezeFactor;
+//     if (!lock) {
+//         lock = true;
+//         explosionOnGround(corrX, corrY, 250);        
+//     }
+// });

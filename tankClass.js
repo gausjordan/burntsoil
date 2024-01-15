@@ -117,7 +117,6 @@ class Tank {
     }
     
     computeTrajectory(whoseTurn) {
-
         // Coordinates of the missile position in the previoes step
         let prevMissile;
 

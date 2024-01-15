@@ -17,6 +17,7 @@ async function explosionOnGround(x, y, blastSize) {
     let debris = collectDebris(upArc, lowArc, pxMix);
     await drawDebris(debris, squeezeFactor, lowArc, blastSize);
     await carveArray(debris, squeezeFactor);
+    tanks.forEach(t => t.drawTank());
 }
 
 
@@ -217,7 +218,9 @@ function drawDebris(debris, squeezeFactor, lowArc, blastSize) {
                 canvRef2.height
             );
             // Redraws tanks while animating terrain underneath them
-            tanks.forEach(t => t.drawTank());
+            
+            // Buggy debris animation
+            //tanks.forEach(t => t.drawTank());
             canvCtx2.fillStyle = globalTerrainColor;
 
             // Redraws area above the explosion
