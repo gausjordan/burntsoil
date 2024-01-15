@@ -21,7 +21,7 @@ class Tank {
                 * squeezeFactor
             );
 
-        // If the terrain is too low, raises the tank to ground level
+        // If the terrain is too low, raise the tank to a 0 ground level
         if ( (canvRef2.height - this.yPos) < (tankSize * squeezeFactor * 9) ) {
             this.yPos = canvRef2.height - (tankSize * squeezeFactor * 9);
         }
@@ -105,69 +105,92 @@ class Tank {
             this.power -= value;
         updateStatusBar();
     }
-
   
     async fire() {
         isBlocked = true;
         removeFireListeners();
         await this.computeTrajectory();
-        whoseTurn = whoseTurn==1 ? 0 : 1;  // DEBUG, HARDCODED
+        whoseTurn = (whoseTurn == numberOfPlayers - 1) ? 0 : (whoseTurn + 1);
         updateStatusBar();
         restoreFireListeners();
         isBlocked = false;
     }
-
+    
     computeTrajectory(whoseTurn) {
-        let angle = this.angle;
-        let xPos = this.xPos;
+
+        // Coordinates of the missile position in the previoes step
+        let prevMissile;
+
+        // Y position corrected for (new) aspect ratio after resizing
         let yCorrPos = this.yCorrPos;
+
+        let angle = this.angle;
+        let radianAngle = -angle*Math.PI/180;
+        let xPos = this.xPos;
         let topX = 15 + Math.cos(Math.PI / 180 * angle) * 16;
         let topY = 1 - Math.sin(Math.PI / 180 * angle) * 16;
-        let radianAngle = -angle*Math.PI/180;
-        let y0 = (yCorrPos + topY * tankSize * squeezeFactor)-1;
+
+        // Where's the tip of the cannon barrel (x0, y0)?
+        let y0 = (yCorrPos + topY * tankSize * squeezeFactor)
+                 - (1*tankSize*squeezeFactor);
         let x0 = ((xPos * squeezeFactor + topX * tankSize * squeezeFactor)
-                 -1) / squeezeFactor;
-        canvCtx2.fillStyle = "rgb(255,255,255)";
-                
+                 - (1*tankSize*squeezeFactor)) / squeezeFactor;
+
         return new Promise(resolve => {
             let startTime = performance.now();
+            canvCtx2.fillStyle = "rgb(255,255,255)";
             let missile = { x: x0, y: canvRef2.height - y0 };
-
             let dx = Math.cos(radianAngle) * this.power/20;
             let dy = Math.sin(radianAngle) * this.power/20;
-            
             let i = 0;
 
-            function drawProjectile(timeStamp) {
-                
+            async function drawProjectile(timeStamp) {
                 // Animation loops until something unsets the isBlocked flag
                 if ( isBlocked ) {
-
                     i++;
+                    
+                    if (prevMissile)
+                        clearMissile(prevMissile);
+
+                    // Draw current missile position
                     canvCtx2.fillRect(
                         missile.x * squeezeFactor,
                         canvRef2.height - missile.y,
-                        2, 2);
+                        2 * squeezeFactor * tankSize,
+                        2 * squeezeFactor * tankSize);
 
+                    prevMissile = { x: missile.x, y: missile.y };
                     missile.x = missile.x + dx / squeezeFactor;
                     missile.y = missile.y - dy - i*0.5;
 
                     // If a missile hits terrain or goes off screen...
                     if (missile.y <= pxMix[Math.round(Math.round(missile.x))]
-                        * squeezeFactor)
-                    {
-                        isBlocked = false;
-                        explosionOnGround(missile.x,
-                            missile.y/squeezeFactor, 250);
-                        resolve();
-                    } else if (missile.y < 0) {
-                        isBlocked = false;
-                        resolve();
-                    } else {
-                        requestAnimationFrame(drawProjectile);
+                       *squeezeFactor) {
+                            clearMissile(missile);
+                            await explosionOnGround(missile.x,
+                                missile.y/squeezeFactor, 250);
+                            resolve();
+                        } else if (missile.y < 0) {
+                            clearMissile(missile);
+                            resolve();
+                        } else {
+                             requestAnimationFrame(drawProjectile);
                     }
                 } else {
                     resolve();
+                }
+
+                /**
+                 * Clears a missile dot from a given position. Cleared area is
+                 * 1px wider than {missle size} to cover antialiasing artifacts
+                 * @param {*} prevMissle an object containing x & y coordinates
+                 */
+                function clearMissile(prevMissle) {
+                    canvCtx2.clearRect(
+                        (prevMissile.x * squeezeFactor) - 1,
+                        (canvRef2.height - prevMissile.y) -1,
+                        3 * squeezeFactor * tankSize,
+                        3 * squeezeFactor * tankSize);
                 }
             }
             requestAnimationFrame(drawProjectile);

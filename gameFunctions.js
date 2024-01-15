@@ -18,6 +18,7 @@ async function explosionOnGround(x, y, blastSize) {
     await drawDebris(debris, squeezeFactor, lowArc, blastSize);
     await carveArray(debris, squeezeFactor);
     drawTerrain(pxMix, squeezeFactor);
+    //tanks.forEach(t => t.recomputeY()); // TODO
     tanks.forEach(t => t.drawTank());
 }
 
@@ -142,7 +143,7 @@ function clearFireball(x, y, blastSqz) {
                         )
                     );
 
-                    // It takes 12 passes to erase all anti-aliasing leftovers
+                // It takes 12 passes to erase all anti-aliasing leftovers
                 for (let k = 0; k < 12; k++) {
                     for (let j = lastIndex; j < currentIndex; j++ ) {
                         canvCtx2.clearRect(
@@ -218,6 +219,9 @@ function drawDebris(debris, squeezeFactor, lowArc, blastSize) {
                 ((last.x - first.x) * sF) - 2,
                 canvRef2.height
             );
+            // Redraws tanks while animating terrain underneath them
+            tanks.forEach(t => t.drawTank());
+            canvCtx2.fillStyle = globalTerrainColor;
 
             // Redraws area above the explosion
             let changesCount = 0;
@@ -261,7 +265,6 @@ function drawDebris(debris, squeezeFactor, lowArc, blastSize) {
 }
 
 
-
 /**
  * Constructs an array of pixels describing a circle, one (x,y) pair per pixel
  * @param {*} radius 
@@ -301,6 +304,7 @@ function generateLowerArc(dx, dy, r) {
     return lowerArc;
 }
 
+
 /**
  * Creates a new player (Tank object) to be added to the array.
  * @param {*} r red
@@ -316,18 +320,25 @@ function spawnTank(r, g, b, name, xPerc, angle) {
     return tank;
 }
 
+
 /** Update power, angle, name and weapon stats */
 function updateStatusBar() {
+
     let displayAngle = tanks[whoseTurn].angle;
+    
     // Internally, angle ranges 0 to 180, but only shows 0-90
     if (displayAngle > 90)
         displayAngle = 180 - displayAngle;
     statusBar.children[0].innerHTML = "Power: " + tanks[whoseTurn].power;
     statusBar.children[1].innerHTML = "Angle: " + displayAngle;
+    
     // Player name (in plain text) matches it's tank's color
-    let styleString = "rgb(" + tanks[whoseTurn].r + ", "
-        + tanks[whoseTurn].g + ", "
-        + tanks[whoseTurn].b + ")";
+    let styleString = "rgb(" + (tanks[whoseTurn].r - 20) + ", "
+        + (tanks[whoseTurn].g - 20) + ", "
+        + (tanks[whoseTurn].b - 20) + ")";
     statusBar.children[2].style.color = styleString;
     statusBar.children[2].innerHTML = tanks[whoseTurn].name;
+    statusBar.children[2].style.letterSpacing = "0.05em";
+    statusBar.children[2].style.fontWeight = "bold";
+    
 }

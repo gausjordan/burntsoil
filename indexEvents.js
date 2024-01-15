@@ -2,16 +2,6 @@
 let posX = 0;
 let posY = 0;
 
-/*
-window.addEventListener("click", (ev) => {
-    canvCtx2.fillStyle = "rgb(255,255,255)";
-    canvCtx2.fillRect(0, 0, 200, 50);
-    posX = getMousePos(canvRef2, ev).x * ratio;
-    posY = getMousePos(canvRef2, ev).y * ratio;
-    colorValueAtPos = canvCtx2.getImageData(posX, posY, 1, 1).data;
-});
-*/
-
 
 /** On resize - reset */
 window.addEventListener("resize", (ev) => {
@@ -31,7 +21,18 @@ document.addEventListener('DOMContentLoaded', function() {
 
 /** Keyboard shortcuts */
 document.addEventListener('keydown', (event) => {
-    if (event.key == "s") {
-
+    switch (event.key) {
+        case "s":
+        case "S":
+            window.location.href = 'game.html';
+            break;
+        case "p":
+        case "P":
+            iterateNumberOfPlayers(event);
+            break;
+        case "T":
+        case "t":
+            iterateTankSize(event);
+            break;
     }
   }, false);

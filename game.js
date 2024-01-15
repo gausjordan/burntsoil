@@ -14,6 +14,7 @@ let normPoints1 = normalizeCps(rawPoints1, maxRes, false);
 let normPoints2 = normalizeCps(rawPoints2, maxRes, false);
 let pixels1 = cpsToPxs(normPoints1);
 let pixels2 = cpsToPxs(normPoints2);
+tankSize = localStorage.getItem('tankSize');
 
 // Two arrays of unscaled (pixel-defined) curves, combined into one
 let pxMix = pixels1.map( (e, index) => { return e + 0.2 * pixels2[index]; });
@@ -22,18 +23,40 @@ squeezeFactor = canvRef2.width / pxMix.length;
 // Backdrop always uses canvas1. Game elements use canvas2.
 drawBackdrop(canvRef1.width, canvRef1.height, "blue");
 
-// Hardcoded players for testing purposes
+let numberOfPlayers = localStorage.getItem('numberOfPlayers');
 let tanks = [];         // An array of tank objects (all players)
 let isBlocked = false;  // Block user controls while missiles fly
 let whoseTurn = 0;      // Points to the current player
 
-tanks.push(spawnTank(255, 0, 0, "Joe",
-           randomInteger(10, 30),
-           randomInteger(0,180) ));
+// Hardcoded players for testing purposes
+if (numberOfPlayers >= 2)
+    tanks.push(spawnTank(255, 0, 0, "Joe",
+            randomInteger(5, 10),
+            randomInteger(0,180) ));
 
-tanks.push(spawnTank(0, 160, 0, "Mike",
-           randomInteger(70, 90),
-           randomInteger(0, 180) ));
+if (numberOfPlayers >= 2)
+    tanks.push(spawnTank(0, 160, 0, "Mike",
+            randomInteger(85, 90),
+            randomInteger(0, 180) ));
+
+if (numberOfPlayers >= 3) {
+    tanks.push(spawnTank(180, 0, 180, "Sam",
+            randomInteger(40, 45),
+            randomInteger(0, 180) ));
+}
+
+if (numberOfPlayers >= 4) {
+    tanks.push(spawnTank(180, 180, 0, "Bob",
+            randomInteger(20, 25),
+            randomInteger(0, 180) ));
+}
+
+if (numberOfPlayers >= 5) {
+    tanks.push(spawnTank(0, 180, 180, "Will",
+            randomInteger(60, 65),
+            randomInteger(0, 180) ));
+}
+
 
 tanks.forEach(tank => tank.drawTank());
 
@@ -43,8 +66,8 @@ drawTerrain(pxMix, squeezeFactor);
 updateStatusBar();
 
 // Prevent page refreshing on "swipe down" gesture (mobile browsers)
-document.addEventListener('touchmove',(e)=>e.preventDefault(),{passive:false});
-    
+document.addEventListener('touchmove', (e) =>
+                          e.preventDefault(),{passive:false});
 
 // Set drag and touch events anywhere on screen
 document.addEventListener('mousedown', dragStart);
