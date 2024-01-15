@@ -25,25 +25,32 @@ document.addEventListener('keydown', keyDown);
 async function keyDown(event) {
     const code = event.code;
     switch (event.code) {
+        case "Numpad4":
         case "ArrowLeft":
             tanks[whoseTurn].angleInc();
             break;
+        case "Numpad6":
         case "ArrowRight":
             tanks[whoseTurn].angleDec();
             break;
+        case "Numpad8":
         case "ArrowUp":
             tanks[whoseTurn].powerInc();
             break;
+        case "Numpad2":    
         case "ArrowDown":
             tanks[whoseTurn].powerDec();
             break;
+        case "Numpad9": 
         case "PageUp":
             tanks[whoseTurn].powerInc(100);
             break;
+        case "Numpad3":
         case "PageDown":
             tanks[whoseTurn].powerDec(100);
             break;
         case "Enter":
+        case "NumpadEnter":
         case "Space":
             await tanks[whoseTurn].fire();
             break;

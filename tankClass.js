@@ -207,6 +207,9 @@ class Tank {
         // calculates new Y position values (for rendering purposes only).
         // Initial 'Y' coordinates of each tank remain intact.
         if (oldSqueezeFactor != null && oldSqueezeFactor != squeezeFactor) {
+            
+            drawTerrain(pxMix, squeezeFactor);
+
             this.yCorrPos = Math.round(
                 canvRef2.height
                 - (pxMix[Math.round(this.xPos + 15 * tankSize)] 
@@ -215,6 +218,7 @@ class Tank {
             );
         }
 
+        // TODO - Standing mid-air? If so - gotta fall.
         
         // Caterpillar tracks
         let styleString;
@@ -336,6 +340,30 @@ class Tank {
         canvCtx2.fill();
 
         canvCtx2.fillStyle = "rgb(0,255,255)";
+
+
+        // DEBUG Tank Bounding Box
+        // canvCtx2.fillStyle = "rgb(255,255,0)";
+        // canvCtx2.fillRect(
+        //     this.xPos * squeezeFactor,
+        //     this.yPos,
+        //     tankSize * squeezeFactor * 30,
+        //     1);
+        // canvCtx2.fillRect(
+        //     this.xPos * squeezeFactor,
+        //     this.yPos + (tankSize * squeezeFactor * 9),
+        //     tankSize * squeezeFactor * 30,
+        //     1);
+        // canvCtx2.fillRect(
+        //     this.xPos * squeezeFactor,
+        //     this.yPos,
+        //     1,
+        //     tankSize * squeezeFactor * 9);
+        // canvCtx2.fillRect(
+        //     (this.xPos + tankSize * 30) * squeezeFactor,
+        //     this.yPos,
+        //     1,
+        //     tankSize * squeezeFactor * 9);
 
     }
 

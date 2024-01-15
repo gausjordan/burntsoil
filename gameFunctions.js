@@ -17,9 +17,6 @@ async function explosionOnGround(x, y, blastSize) {
     let debris = collectDebris(upArc, lowArc, pxMix);
     await drawDebris(debris, squeezeFactor, lowArc, blastSize);
     await carveArray(debris, squeezeFactor);
-    drawTerrain(pxMix, squeezeFactor);
-    //tanks.forEach(t => t.recomputeY()); // TODO
-    tanks.forEach(t => t.drawTank());
 }
 
 
