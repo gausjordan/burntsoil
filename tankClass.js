@@ -197,6 +197,53 @@ class Tank {
     }
     
 
+    /** If solid ground underneath is gone, the tank falls down */
+    aftermathCheck() {
+        let begin = this.xPos;
+        let end = begin + (tankSize * 30);
+        let isGrounded = false;
+        let terrainLevel;
+        let tankBottom;
+        let highest = 0;
+
+        // Loop through the X (length) of a tank
+        // While at it, memorize the height of the highest peak
+        for (let i=begin; i < end; i++) {
+            
+            if (pxMix[i] > highest)
+                highest = pxMix[i];
+            
+            terrainLevel = canvRef2.height - pxMix[i]*squeezeFactor;
+            tankBottom = this.yPos + (squeezeFactor  * tankSize * 9);
+
+            // If there is ground directly below the tank at any point
+            if (Math.abs(terrainLevel - tankBottom) < 0.5) {
+                isGrounded = true;
+            }
+        }
+        
+        if (!isGrounded) {
+          
+            this.yPos = canvRef2.height - highest*squeezeFactor
+                        - (squeezeFactor  * tankSize * 9);
+            
+            canvCtx2.clearRect(
+                this.xPos * squeezeFactor,
+                //this.yPos,
+                this.yPos + (tankSize * squeezeFactor * 9),
+                tankSize * squeezeFactor * 30,
+                -1000);                        
+
+            this.drawTank();
+            
+            //canvCtx2.fillRect(0, canvRef2.height - (highest*squeezeFactor), 1000, 2);
+            
+        }
+    }
+
+
+
+
     drawTank() {
 
         // May be corrected for aspect ratio later, if required
@@ -217,8 +264,6 @@ class Tank {
             );
         }
 
-        // TODO - Standing mid-air? If so - gotta fall.
-        
         // Caterpillar tracks
         let styleString;
         let sF = squeezeFactor;

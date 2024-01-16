@@ -63,7 +63,7 @@ body {
 }
 
 ol {
-    padding: 10%;
+    padding: 5%;
     display: grid;
 }
 
@@ -213,7 +213,7 @@ main h2 {
 @media (orientation: landscape) {
 
     main {
-        flex: 1 1 70%;
+        flex: 1 10 78%;
     }
 
     main h1 {
