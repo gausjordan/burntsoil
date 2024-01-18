@@ -110,9 +110,7 @@ class Tank {
     }
     
     computeTrajectory(whoseTurn) {
-        // DELETE
-        // let cannonBase = {x: (xPos + 15 * tankSize), y: (yPos + 0  * tankSize) };
-        
+
         // Coordinates of the missile position in the previoes step
         let prevMissile;
 
@@ -123,31 +121,14 @@ class Tank {
         let xPos = this.xPos;
         let topX = 15 + Math.cos(Math.PI / 180 * angle) * 16.5
         let topY = 1  - Math.sin(Math.PI / 180 * angle) * 16.5
-
                 
         // Where the tip of the cannon's barrel is (the center).
         // "+ 1 * tankSize" compensates for missile width
         let muzzle = { x: (xPos + topX * tankSize),
                        y: (yPos - topY * tankSize) + 1 * tankSize };
         
-        let y0 = (yPos + topY * tankSize * squeezeFactor )
-                 - (1*tankSize*squeezeFactor);
-
-        let x0 = ((xPos * squeezeFactor + topX * tankSize * squeezeFactor)
-                 - (1*tankSize*squeezeFactor)) / squeezeFactor;
-
-        x0 = muzzle.x;
-        y0 = muzzle.y;
-
-
-        // DEBUG
-        // canvCtx2.fillRect(
-        //     (muzzle.x * squeezeFactor) - 1 * tankSize * squeezeFactor,
-        //     (canvRef2.height - (muzzle.y * squeezeFactor) - 1 * tankSize * squeezeFactor),
-        //     2 * tankSize * squeezeFactor,
-        //     2 * tankSize * squeezeFactor
-        // )
-
+        let x0 = muzzle.x;
+        let y0 = muzzle.y;
 
         return new Promise(resolve => {
             let startTime = performance.now();
@@ -157,13 +138,13 @@ class Tank {
             let dy = Math.sin(radianAngle) * this.power/5;
             let i = 0;
 
-            async function drawProjectile(timeStamp) {
+            const drawProjectile = async(timeStamp) => {
                 // Animation loops until something unsets the isBlocked flag
                 if ( isBlocked ) {
                     i++;
                     
                     if (prevMissile)
-                        //clearMissile(prevMissile);
+                        this.clearMissile(prevMissile);
 
                     // Draw current missile position
                     canvCtx2.fillRect(
@@ -173,49 +154,63 @@ class Tank {
                         2 * squeezeFactor * tankSize);
 
                     prevMissile = { x: missile.x, y: missile.y };
-                    // missile.x = missile.x + dx / squeezeFactor;
-                    // missile.y = missile.y - (dy/squeezeFactor) - i;
-
                     missile.x = missile.x + dx;
                     missile.y = missile.y - dy - i;
-
-                    // If a missile hits terrain or goes off screen...
-                    if (false && missile.y <= pxMix[Math.round(Math.round(missile.x))]
-                       *squeezeFactor) {
-                            clearMissile(missile);
-                            await explosionOnGround(missile.x,
-                                missile.y/squeezeFactor, 250);
-                            resolve();
-                        } else if (missile.y < 0) {
-                            clearMissile(missile);
-                            resolve();
-                        } else {
-                             requestAnimationFrame(drawProjectile);
-                    }
+                    
+                    await this.collisionDet(missile, prevMissile,
+                                        resolve, drawProjectile);
                 } else {
                     resolve();
                 }
 
-                /**
-                 * Clears a missile dot from a given position. Cleared area is
-                 * 1px wider than {missle size} to cover antialiasing artifacts
-                 * @param {*} prevMissle an object containing x & y coordinates
-                 */
-                function clearMissile(prevMissle) {
-                    canvCtx2.clearRect(
-                        (prevMissile.x * squeezeFactor) - 1,
-                        (canvRef2.height - prevMissile.y * squeezeFactor) -1,
-                        3 * squeezeFactor * tankSize,
-                        3 * squeezeFactor * tankSize);
-                }
             }
             requestAnimationFrame(drawProjectile);
         })
     }
     
 
-    /** If solid ground underneath is gone, the tank falls down */
+    /**
+     * Clears a missile dot from a given position. Cleared area is
+     * 1px wider than {missle size} to cover antialiasing artifacts
+     * @param {*} prevMissle an object containing x & y coordinates
+     */
+    clearMissile(prevMissile) {
+        canvCtx2.clearRect(
+            (prevMissile.x * squeezeFactor) - 1,
+            (canvRef2.height - prevMissile.y * squeezeFactor) -1,
+            3 * squeezeFactor * tankSize,
+            3 * squeezeFactor * tankSize);
+    }
+
+    /** Checks if a missle went off screen or hit something */
+    async collisionDet(missile, prevMissile, resolve, drawProjectile) {
+
+        // If a missile hits terrain or goes off screen...
+        if (missile.y <= pxMix[Math.round(Math.round(missile.x))]) {
+            this.clearMissile(prevMissile);
+            this.clearMissile(missile);
+            await explosionOnGround(missile.x, missile.y, blastSize);
+            resolve();
+
+        // If a missle fell on the flat ground without any terrain
+        } else if (missile.y < 0) {
+            this.clearMissile(prevMissile);            
+            await explosionOnGround(missile.x, missile.y, blastSize);
+            resolve();
+
+        // If a missile flew more than 1 blastSize off screen; left or right
+        } else if (missile.x < -blastSize || missile.x > maxRes + blastSize) {
+            this.clearMissile(missile);
+            resolve();
+
+        } else {
+            requestAnimationFrame(() => drawProjectile());
+        }
+    }
+
+    // If solid ground underneath is gone, the tank falls down.
     aftermathCheck() {
+            
         let begin = this.xPos;
         let end = begin + (tankSize * 30);
         let isGrounded = false;
@@ -223,25 +218,41 @@ class Tank {
         let tankBottom;
         let highest = 0;
 
-        // Loop through the X (length) of a tank
-        // While at it, memorize the height of the highest peak
-        for (let i=begin; i < end; i++) {
+        // Loop through the length of a tank. It doesn't matter if the
+        // front edge or the rear edge still clings on. Each tank is 30
+        // tankSize units long. Thus, ignore the first and the last five
+        // thirds. While looping, note the highest peak (find max).
+        for (let i=begin + 5 * tankSize; i < end - 5 * tankSize; i++) {
             
             if (pxMix[i] > highest)
                 highest = pxMix[i];
             
-            terrainLevel = canvRef2.height - pxMix[i];
-            tankBottom = this.yPos + tankSize * 9;
+            terrainLevel = pxMix[i];
+            tankBottom = this.yPos - tankSize * 9;
 
-            // If there is ground directly below the tank at any point
+            canvCtx2.fillStyle = "rgb(255,0,0)";
+            canvCtx2.fillRect(
+                i * squeezeFactor,
+                canvRef2.height - tankBottom * squeezeFactor,
+                1,
+                1);
+
+            canvCtx2.fillStyle = "rgb(255,0,255)";
+            canvCtx2.fillRect(
+                i * squeezeFactor,
+                canvRef2.height - pxMix[i] * squeezeFactor,
+                1,
+                1);
+
+            // If there is some ground below the tank, flag it 'grounded'
             if (Math.abs(terrainLevel - tankBottom) < 0.5) {
                 isGrounded = true;
             }
         }
         
-        if (!isGrounded) {
-          
-            this.yPos = highest - (tankSize * 9);
+        if (isGrounded === false) {
+
+            this.yPos = highest + 9 * tankSize;
             
             canvCtx2.clearRect(
                 this.xPos * squeezeFactor,
@@ -255,18 +266,9 @@ class Tank {
         }
     }
 
-    // DELETE
-    // calculateCorrectedY() {
+    tankFallsDownTo(yPosition) {
 
-    //     this.yPos = this.yPos;
-
-    //     this.yPos = Math.round(
-    //         canvRef2.height
-    //         - (pxMix[Math.round(this.xPos + 15 * tankSize)] 
-    //         + 9 * tankSize)
-    //         * squeezeFactor
-    //     );
-    // }
+    }
 
     drawTank() {
         

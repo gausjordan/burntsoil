@@ -76,6 +76,6 @@ async function keyDown(event) {
 //     corrY = (canvRef2.height - posY) / squeezeFactor;
 //     if (!lock) {
 //         lock = true;
-//         explosionOnGround(corrX, corrY, 250);        
+//         explosionOnGround(corrX, corrY, blastSize);        
 //     }
 // });
