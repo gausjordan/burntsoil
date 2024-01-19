@@ -209,7 +209,7 @@ class Tank {
     }
 
     // If solid ground underneath is gone, the tank falls down.
-    aftermathCheck() {
+    async aftermathCheck() {
             
         let begin = this.xPos;
         let end = begin + (tankSize * 30);
@@ -230,20 +230,6 @@ class Tank {
             terrainLevel = pxMix[i];
             tankBottom = this.yPos - tankSize * 9;
 
-            canvCtx2.fillStyle = "rgb(255,0,0)";
-            canvCtx2.fillRect(
-                i * squeezeFactor,
-                canvRef2.height - tankBottom * squeezeFactor,
-                1,
-                1);
-
-            canvCtx2.fillStyle = "rgb(255,0,255)";
-            canvCtx2.fillRect(
-                i * squeezeFactor,
-                canvRef2.height - pxMix[i] * squeezeFactor,
-                1,
-                1);
-
             // If there is some ground below the tank, flag it 'grounded'
             if (Math.abs(terrainLevel - tankBottom) < 0.5) {
                 isGrounded = true;
@@ -251,25 +237,51 @@ class Tank {
         }
         
         if (isGrounded === false) {
-
-            this.yPos = highest + 9 * tankSize;
-            
-            canvCtx2.clearRect(
-                this.xPos * squeezeFactor,
-                canvRef2.height - (this.yPos * squeezeFactor)
-                    + (tankSize * squeezeFactor * 7),
-                tankSize * squeezeFactor * 30,
-                -4000);                        
-
+            let oldYpos = this.yPos;
+            let newYpos = highest + 9 * tankSize;
+                        
+            // Clear the tank and everything above
+            this.partiallyClearTank();
             this.drawTank();
-            
+            await this.tankFallsDown(oldYpos, newYpos);  
         }
     }
 
-    tankFallsDownTo(yPosition) {
+    /** Animate a tank falling down (fps independent) */
+    async tankFallsDown(oldYpos, newYpos) {
+        return new Promise(resolve => {
 
+            let startTime = performance.now();
+            let deltaTime;
+
+            const tankDescends = async(timeStamp) => {
+                deltaTime = timeStamp - startTime;
+                if (this.yPos > newYpos) {    
+                    this.partiallyClearTank(this.x, this.y);
+                    this.yPos = Math.max(newYpos, this.yPos - deltaTime/2);
+                    this.drawTank();
+                    startTime = performance.now();
+                    requestAnimationFrame(tankDescends);
+                }
+                else resolve();
+            }
+            requestAnimationFrame(tankDescends);
+        })
     }
 
+
+    /** Clears full tank width up to the skies, leaving a small gap below */
+    partiallyClearTank(xPosition, yPosition) {
+        canvCtx2.clearRect(
+            this.xPos * squeezeFactor,
+            canvRef2.height - (this.yPos * squeezeFactor)
+                + (tankSize * squeezeFactor * 7),
+            tankSize * squeezeFactor * 30,
+            -200000); 
+    }
+
+
+    /** (Re)draws the tank */
     drawTank() {
         
         // tankSize relative to screen size
