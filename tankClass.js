@@ -15,13 +15,11 @@ class Tank {
         // Magic numbers 15 and 9 are expressed in "tankSize" units,
         // and represent width (15) and length (9) of a tank
         this.yPos = Math.round(
-                pxMix[Math.round(this.xPos + 15*tankSize)] + (9 * tankSize)
-            );
+            pxMix[Math.round(this.xPos + 15*tankSize)] + (9 * tankSize));
 
         // If the terrain is too low, raise the tank to a 0 ground level
-        if ( this.yPos < tankSize * 9 ) {
-            this.yPos = tankSize * 9;
-        }
+        if ( this.yPos < tankSize * 9 )
+             this.yPos = tankSize * 9;
             
         this.midBottomPoint = {
             x: (this.xPos +  15 * tankSize),
@@ -29,10 +27,10 @@ class Tank {
         }
 
         // Creates a hole in the terrain, in such a way that at least 50% of
-        // the tank's length lies on the flat ground. The loop overshoots by 10
-        // tankSize units in order to blend out sharp rectangular carves.
-        for (let i = -10 * tankSize; i < 30 * tankSize + 10 * tankSize; i++) {
-            
+        // the tank's length lies on the flat ground. The loop overshoots by
+        // 10 tankSize units in order to blend out sharp rectangular carves.
+        for (let i = -10 * tankSize; i < 30 * tankSize + 10 * tankSize; i++)
+        {
             let bottom = this.midBottomPoint.y;
             let top = pxMix[this.xPos + i];
             let weight1 = -i / (10 * tankSize); // Linear drops from 1 to 0
@@ -48,23 +46,23 @@ class Tank {
                 } else
                     pxMix[this.xPos + i] = bottom;
             }
-
         }
     }
 
+    
     angleInc() {
         if (this.angle == 180) {
             this.angle = 0;
             this.clearTank();
             this.drawTank();
-        }
-        else {
+        } else {
             this.angle += 1;
             updateStatusBar();
             this.clearTank();
             this.drawTank();
         }
     }
+
 
     angleDec() {
         if (this.angle == 0) {
@@ -79,6 +77,7 @@ class Tank {
         }
     }
 
+
     powerInc(value) {
         if (typeof value == "undefined")
             value = 2;
@@ -88,6 +87,7 @@ class Tank {
             this.power += value;
         updateStatusBar();
     }
+
 
     powerDec(value) {
         if (typeof value == "undefined")
@@ -99,114 +99,159 @@ class Tank {
         updateStatusBar();
     }
   
+
+    /** What happens when a tank fires a missile */
     async fire() {
         isBlocked = true;
         removeFireListeners();
-        await this.computeTrajectory();
+        let trajectory = this.computeTrajectory();
+        await this.animateMissile(trajectory[0]);
+        switch (trajectory[1]) {
+            case 1:
+            case 2:
+                await explosionOnGround(
+                    trajectory[0].at(-1).x,
+                    trajectory[0].at(-1).y,
+                    blastSize);
+                break;
+            case 3:
+                break;
+        }
+        
+            
+
         whoseTurn = (whoseTurn == numberOfPlayers - 1) ? 0 : (whoseTurn + 1);
         updateStatusBar();
         restoreFireListeners();
         isBlocked = false;
     }
-    
+
+
+    /**
+     * Computes complete path, which a fired missile will take
+     * @param {*} whoseTurn Current player [int], also 'tanks' array index
+     * @returns two objects: an array of x, y coordinates,
+     *  describing the missile's path; and a collision information object
+     */
     computeTrajectory(whoseTurn) {
+        let gravity = 0;
+        let radianAngle = -this.angle*Math.PI/180;        
+        let trajectory = [];  // Whole trajectory, pre-computed here
+        let topX = 15 + Math.cos(Math.PI / 180 * this.angle) * 18;
+        let topY =  1 - Math.sin(Math.PI / 180 * this.angle) * 18;
+        let dx = Math.cos(radianAngle) * this.power;
+        let dy = Math.sin(radianAngle) * this.power;
 
-        // Coordinates of the missile position in the previoes step
-        let prevMissile;
+        // Tip of the barrel (centerline). "+1" compensates for missile width
+        let muzzle = { x: (this.xPos + topX * tankSize),
+                       y: (this.yPos - topY * tankSize) + 1 * tankSize};
 
-        // Y position corrected for (new) aspect ratio after resizing
-        let yPos = this.yPos;
-        let angle = this.angle;
-        let radianAngle = -angle*Math.PI/180;
-        let xPos = this.xPos;
-        let topX = 15 + Math.cos(Math.PI / 180 * angle) * 16.5
-        let topY = 1  - Math.sin(Math.PI / 180 * angle) * 16.5
-                
-        // Where the tip of the cannon's barrel is (the center).
-        // "+ 1 * tankSize" compensates for missile width
-        let muzzle = { x: (xPos + topX * tankSize),
-                       y: (yPos - topY * tankSize) + 1 * tankSize };
-        
-        let x0 = muzzle.x;
-        let y0 = muzzle.y;
+        // Missile trajectory's starting point is the muzzle itself
+        let currentMissile = { x: muzzle.x, y: muzzle.y };
 
-        return new Promise(resolve => {
+        trajectory.push(currentMissile);
+        let collision = this.collisionDet(currentMissile.x, currentMissile.y);
+
+        while (collision == 0) {
+            gravity++;
+            trajectory.push({ x: trajectory.at(-1).x + (dx)/20,
+                              y: trajectory.at(-1).y - (dy + gravity)/20 });
+            collision = this.collisionDet(
+                            trajectory.at(-1).x, trajectory.at(-1).y);
+        }
+        return [trajectory, collision];
+    }
+
+    /** Animate an array of (x,y) positions */
+    async animateMissile(trajectory) {
+
+        return new Promise( resolve => {
+
+            let index = 0;
+            let oldIndex = 0;
+            let deltaTime;
             let startTime = performance.now();
-            canvCtx2.fillStyle = "rgb(255,255,255)";
-            let missile = { x: x0, y: y0 };
-            let dx = Math.cos(radianAngle) * this.power/5;
-            let dy = Math.sin(radianAngle) * this.power/5;
-            let i = 0;
 
-            const drawProjectile = async(timeStamp) => {
-                // Animation loops until something unsets the isBlocked flag
-                if ( isBlocked ) {
-                    i++;
-                    
-                    if (prevMissile)
-                        this.clearMissile(prevMissile);
-
-                    // Draw current missile position
-                    canvCtx2.fillRect(
-                        missile.x * squeezeFactor,
-                        canvRef2.height - missile.y * squeezeFactor,
-                        2 * squeezeFactor * tankSize,
-                        2 * squeezeFactor * tankSize);
-
-                    prevMissile = { x: missile.x, y: missile.y };
-                    missile.x = missile.x + dx;
-                    missile.y = missile.y - dy - i;
-                    
-                    await this.collisionDet(missile, prevMissile,
-                                        resolve, drawProjectile);
+            function move(timeStamp) {
+                
+                if (typeof trajectory.at(index) !== 'undefined') {
+                    if (index > 0) {
+                        tanks[whoseTurn].clearMissile(
+                            trajectory.at(oldIndex).x,
+                            trajectory.at(oldIndex).y);
+                    }
+                    tanks[whoseTurn].drawMissile(
+                        trajectory.at(index).x,
+                        trajectory.at(index).y);
+                    deltaTime = timeStamp - startTime;
+                    deltaTime = (deltaTime < 0) ? 0 : deltaTime;
+                    oldIndex = index;
+                    index += Math.round(deltaTime/3 + 1);
+                    startTime = performance.now();
+                    requestAnimationFrame(move);
                 } else {
                     resolve();
                 }
-
             }
-            requestAnimationFrame(drawProjectile);
-        })
+            requestAnimationFrame(move);
+        });
     }
-    
+
+
+    /**
+     * Draws a missile (a dot) on some given (unscaled) coordinates
+     * @param {*} x 
+     * @param {*} y 
+     */
+    async drawMissile(x, y) {
+        canvCtx2.fillRect(
+            x * squeezeFactor,
+            canvRef2.height - y * squeezeFactor,
+            2 * squeezeFactor * tankSize,
+            2 * squeezeFactor * tankSize);
+    }
+
 
     /**
      * Clears a missile dot from a given position. Cleared area is
      * 1px wider than {missle size} to cover antialiasing artifacts
-     * @param {*} prevMissle an object containing x & y coordinates
+     * @param {*} x unscaled missile x position
+     * @param {*} y unscaled missile y position
      */
-    clearMissile(prevMissile) {
+    async clearMissile(x, y) {
         canvCtx2.clearRect(
-            (prevMissile.x * squeezeFactor) - 1,
-            (canvRef2.height - prevMissile.y * squeezeFactor) -1,
-            3 * squeezeFactor * tankSize,
-            3 * squeezeFactor * tankSize);
+            (x * squeezeFactor) - 2,
+            (canvRef2.height - y * squeezeFactor) -2,
+            4 * squeezeFactor * tankSize,
+            4 * squeezeFactor * tankSize);
     }
 
-    /** Checks if a missle went off screen or hit something */
-    async collisionDet(missile, prevMissile, resolve, drawProjectile) {
 
-        // If a missile hits terrain or goes off screen...
-        if (missile.y <= pxMix[Math.round(Math.round(missile.x))]) {
-            this.clearMissile(prevMissile);
-            this.clearMissile(missile);
-            await explosionOnGround(missile.x, missile.y, blastSize);
-            resolve();
+    /**
+     * Checks whether a missle managed to hit something
+     * @param {*} x0 current missle x coordinate
+     * @param {*} y0 current missle y coordinate
+     * @returns 0 if nothing was hit, positive ints in other scenarios
+     */
+    collisionDet(x0, y0) {
+
+        // If a missile hits some terrain
+        if (y0 <= pxMix[Math.round(Math.round(x0))]) {
+            return 1;
 
         // If a missle fell on the flat ground without any terrain
-        } else if (missile.y < 0) {
-            this.clearMissile(prevMissile);            
-            await explosionOnGround(missile.x, missile.y, blastSize);
-            resolve();
+        } else if (y0 < 0) {
+            return 2;
 
-        // If a missile flew more than 1 blastSize off screen; left or right
-        } else if (missile.x < -blastSize || missile.x > maxRes + blastSize) {
-            this.clearMissile(missile);
-            resolve();
+        // If a missile ran more than 1 blastSize off screen; left or right
+        } else if (x0 < -blastSize || x0 > maxRes + blastSize) {
+            return 3;
 
         } else {
-            requestAnimationFrame(() => drawProjectile());
+            return 0;
         }
     }
+    
 
     // If solid ground underneath is gone, the tank falls down.
     async aftermathCheck() {

@@ -135,12 +135,8 @@ function clearFireball(x, y, blastSqz) {
             if ( lastIndex < blastSqz ) {
                    
                 lastIndex = currentIndex;
-                currentIndex = Math.round(
-                        Math.min(
-                            (timeStamp - startTime) / blowUpSpeed * blastSqz,
-                            blastSqz
-                        )
-                    );
+                currentIndex = Math.round(Math.min(
+                    (timeStamp - startTime) / blowUpSpeed*blastSqz, blastSqz));
 
                 // It takes 12 passes to erase all anti-aliasing leftovers
                 for (let k = 0; k < 12; k++) {
