@@ -59,10 +59,10 @@ function iterateTankSize(e) {
         initTankSize++;
     else if (e.key == 'T' || e.button === 2)
         initTankSize--;
-    if (initTankSize > 2)
+    if (initTankSize > 3)
         initTankSize = 0;
     else if (initTankSize < 0)
-        initTankSize = 2;
+        initTankSize = 3;
     setTankSize();    
 }
 
@@ -75,14 +75,18 @@ function setNumberOfPlayers() {
 function setTankSize() {
     switch (initTankSize) {
         case 0:
-            tankSizeButon.getElementsByTagName("span")[0].innerHTML = "Small";
-            localStorage.setItem('tankSize', 10);
+            tankSizeButon.getElementsByTagName("span")[0].innerHTML = "Tiny";
+            localStorage.setItem('tankSize', 8);
             break;
         case 1:
+            tankSizeButon.getElementsByTagName("span")[0].innerHTML = "Small";
+            localStorage.setItem('tankSize', 12);
+            break;
+        case 2:
             tankSizeButon.getElementsByTagName("span")[0].innerHTML = "Medium";
             localStorage.setItem('tankSize', 18);
             break;
-        case 2:
+        case 3:
             tankSizeButon.getElementsByTagName("span")[0].innerHTML = "Chonky ";
             localStorage.setItem('tankSize', 26);
             break;

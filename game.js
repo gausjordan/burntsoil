@@ -30,47 +30,33 @@ let isBlocked = false;  // Block user controls while missiles fly
 let whoseTurn = 0;      // Points to the current player
 
 // Hardcoded players for testing purposes
-// if (numberOfPlayers >= 2)
-//     tanks.push(spawnTank(255, 0, 0, "Joe",
-//             randomInteger(5, 10),
-//             randomInteger(0,180) ));
+if (numberOfPlayers >= 2)
+    tanks.push(spawnTank(255, 0, 0, "Joe",
+            randomInteger(5, 10),
+            randomInteger(0,180) ));
 
-// if (numberOfPlayers >= 2)
-//     tanks.push(spawnTank(0, 160, 0, "Mike",
-//             randomInteger(85, 90),
-//             randomInteger(0, 180) ));
+if (numberOfPlayers >= 2)
+    tanks.push(spawnTank(0, 160, 0, "Mike",
+            randomInteger(85, 90),
+            randomInteger(0, 180) ));
 
-// if (numberOfPlayers >= 3) {
-//     tanks.push(spawnTank(180, 0, 180, "Sam",
-//             randomInteger(40, 45),
-//             randomInteger(0, 180) ));
-// }
+if (numberOfPlayers >= 3) {
+    tanks.push(spawnTank(180, 0, 180, "Sam",
+            randomInteger(40, 45),
+            randomInteger(0, 180) ));
+}
 
-// if (numberOfPlayers >= 4) {
-//     tanks.push(spawnTank(180, 180, 0, "Bob",
-//             randomInteger(20, 25),
-//             randomInteger(0, 180) ));
-// }
+if (numberOfPlayers >= 4) {
+    tanks.push(spawnTank(180, 180, 0, "Bob",
+            randomInteger(20, 25),
+            randomInteger(0, 180) ));
+}
 
-// if (numberOfPlayers >= 5) {
-//     tanks.push(spawnTank(0, 180, 180, "Will",
-//             randomInteger(60, 65),
-//             randomInteger(0, 180) ));
-// }
-
-
-
-// DELETE
-
-tanks[0] = spawnTank(255, 0, 0, "Joe",
-        8,
-        90 );
-
-
-tanks[1] = spawnTank(0, 160, 0, "Mike",
-        85,
-        120 );
-
+if (numberOfPlayers >= 5) {
+    tanks.push(spawnTank(0, 180, 180, "Will",
+            randomInteger(60, 65),
+            randomInteger(0, 180) ));
+}
 
 
 tanks.forEach(tank => tank.drawTank());

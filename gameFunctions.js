@@ -19,6 +19,7 @@ async function explosionOnGround(x, y, blastSize) {
     await carveArray(debris, squeezeFactor);
     tanks.forEach(t => t.drawTank());
     tanks.forEach(t => t.aftermathCheck());
+    tanks.forEach(t => t.isShot(x,y));
 }
 
 
@@ -154,8 +155,8 @@ function clearFireball(x, y, blastSqz) {
                             1);
                     }
                 }
+                tanks.forEach((t) => t.drawTank());
                 requestAnimationFrame(animateFire);
-
             } else {
                 resolve();
             }
@@ -207,13 +208,15 @@ function drawDebris(debris, squeezeFactor, lowArc, blastSize) {
         let dropSpeed;
         
         function animateDebris(timeStamp) {
-            dropSpeed = (timeStamp - startTime) * blowUpSpeed / 1800;
+            dropSpeed = (timeStamp - startTime) * blowUpSpeed / 1200;
             canvCtx2.clearRect(
                 (first.x * sF) + 1,
                 0,
                 ((last.x - first.x) * sF) - 2,
                 canvRef2.height
             );
+
+            tanks.forEach((t) => t.drawTank());
 
             canvCtx2.fillStyle = globalTerrainColor;
 

@@ -68,7 +68,6 @@ async function keyDown(event) {
 
 
 // DEBUG - Do not delete / will be required
-
 // window.addEventListener("click", (ev) => {
 //     posX = getMousePos(canvRef2, ev).x * ratio;
 //     posY = getMousePos(canvRef2, ev).y * ratio;

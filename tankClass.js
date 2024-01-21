@@ -116,10 +116,10 @@ class Tank {
                 break;
             case 3:
                 break;
+            default:
+                alert(tanks[trajectory[1]-10].name + " was hit!");
+                tanks.forEach(t => t.drawTank());
         }
-        
-            
-
         whoseTurn = (whoseTurn == numberOfPlayers - 1) ? 0 : (whoseTurn + 1);
         updateStatusBar();
         restoreFireListeners();
@@ -150,7 +150,9 @@ class Tank {
         let currentMissile = { x: muzzle.x, y: muzzle.y };
 
         trajectory.push(currentMissile);
-        let collision = this.collisionDet(currentMissile.x, currentMissile.y);
+        let collision = this.collisionDet(
+                            currentMissile.x,
+                            currentMissile.y);
 
         while (collision == 0) {
             gravity++;
@@ -164,16 +166,13 @@ class Tank {
 
     /** Animate an array of (x,y) positions */
     async animateMissile(trajectory) {
-
         return new Promise( resolve => {
-
             let index = 0;
             let oldIndex = 0;
             let deltaTime;
             let startTime = performance.now();
 
             function move(timeStamp) {
-                
                 if (typeof trajectory.at(index) !== 'undefined') {
                     if (index > 0) {
                         tanks[whoseTurn].clearMissile(
@@ -190,6 +189,9 @@ class Tank {
                     startTime = performance.now();
                     requestAnimationFrame(move);
                 } else {
+                    tanks[whoseTurn].clearMissile(
+                        trajectory.at(oldIndex).x,
+                        trajectory.at(oldIndex).y);
                     resolve();
                 }
             }
@@ -201,8 +203,7 @@ class Tank {
     /**
      * Draws a missile (a dot) on some given (unscaled) coordinates
      * @param {*} x 
-     * @param {*} y 
-     */
+     * @param {*} y  */
     async drawMissile(x, y) {
         canvCtx2.fillRect(
             x * squeezeFactor,
@@ -216,8 +217,7 @@ class Tank {
      * Clears a missile dot from a given position. Cleared area is
      * 1px wider than {missle size} to cover antialiasing artifacts
      * @param {*} x unscaled missile x position
-     * @param {*} y unscaled missile y position
-     */
+     * @param {*} y unscaled missile y position */
     async clearMissile(x, y) {
         canvCtx2.clearRect(
             (x * squeezeFactor) - 2,
@@ -231,23 +231,43 @@ class Tank {
      * Checks whether a missle managed to hit something
      * @param {*} x0 current missle x coordinate
      * @param {*} y0 current missle y coordinate
-     * @returns 0 if nothing was hit, positive ints in other scenarios
-     */
+     * @returns
+     * 0 if nothing was hit (the missile keeps flying).
+     * 1 if some terrain was hit.
+     * 2 if bottom of the screen was reached.
+     * 3 if missile went off screen to the side.
+     * 10 if player 0 was hit.
+     * 11 if player 1 was hit, etc. */
     collisionDet(x0, y0) {
+
+        // Check if any of the tanks was hit
+        let hit = 0;
+        tanks.forEach((t, index) => {
+            if (t.isShot(x0, y0) == true) {
+                hit = 10 + index;
+            }
+        });
+        //console.log(hit);
 
         // If a missile hits some terrain
         if (y0 <= pxMix[Math.round(Math.round(x0))]) {
             return 1;
+        }
 
         // If a missle fell on the flat ground without any terrain
-        } else if (y0 < 0) {
+        else if (y0 < 0) {
             return 2;
+        }
 
         // If a missile ran more than 1 blastSize off screen; left or right
-        } else if (x0 < -blastSize || x0 > maxRes + blastSize) {
+        else if (x0 < -blastSize || x0 > maxRes + blastSize) {
             return 3;
+        }
 
-        } else {
+        else if (hit !== 0)
+            return hit;
+
+        else {
             return 0;
         }
     }
@@ -455,30 +475,88 @@ class Tank {
 
         canvCtx2.fillStyle = "rgb(0,255,255)";
 
+    }
 
-        // DEBUG Tank Bounding Box
-        // canvCtx2.fillStyle = "rgb(255,255,0)";
-        // canvCtx2.fillRect(
-        //     this.xPos * squeezeFactor,
-        //     this.yPos,
-        //     tankSize * squeezeFactor * 30,
-        //     1);
-        // canvCtx2.fillRect(
-        //     this.xPos * squeezeFactor,
-        //     this.yPos + (tankSize * squeezeFactor * 9),
-        //     tankSize * squeezeFactor * 30,
-        //     1);
-        // canvCtx2.fillRect(
-        //     this.xPos * squeezeFactor,
-        //     this.yPos,
-        //     1,
-        //     tankSize * squeezeFactor * 9);
-        // canvCtx2.fillRect(
-        //     (this.xPos + tankSize * 30) * squeezeFactor,
-        //     this.yPos,
-        //     1,
-        //     tankSize * squeezeFactor * 9);
+    /** Check if particular tank is to be found at given coordinates */
+    isShot(x, y) {
+        
+        let topLeft, topRight, bottomRight, bottomLeft;
+        
+        topLeft = [this.xPos + 2  * tankSize, this.yPos + 1 * tankSize];
+        topRight = [this.xPos + 28 * tankSize, this.yPos + 1 * tankSize];
+        bottomRight = [this.xPos + 28 * tankSize, this.yPos - (9 * tankSize)];
+        bottomLeft = [this.xPos + 2  * tankSize, this.yPos - (9 * tankSize)];
 
+        if ( (x > topLeft[0]) &&
+             (x < topRight[0]) &&
+             (y > bottomLeft[1]) &&
+             (y < topLeft[1]) ) {
+                    return true;
+        }
+        else
+        {
+            return false;
+        }
+
+
+        
+        // canvCtx2.fillStyle = "rgb(255,0,0)"; // Red
+        // canvCtx2.fillRect(
+        //     topLeft[0]*squeezeFactor,
+        //     canvRef2.height - topLeft[1]*squeezeFactor,
+        //     2, 2);
+
+        // canvCtx2.fillStyle = "rgb(0,255,255)"; // Cyan
+        // canvCtx2.fillRect(
+        //     topRight[0]*squeezeFactor,
+        //     canvRef2.height - topRight[1]*squeezeFactor,
+        //     2, 2);        
+
+        // canvCtx2.fillStyle = "rgb(255,255,0)"; // Yellow
+        // canvCtx2.fillRect(
+        //     bottomLeft[0]*squeezeFactor,
+        //     canvRef2.height - bottomLeft[1]*squeezeFactor,
+        //     2, 2);
+
+        // canvCtx2.fillStyle = "rgb(255,0,255)"; // Purple
+        // canvCtx2.fillRect(
+        //     bottomRight[0]*squeezeFactor,
+        //     canvRef2.height - bottomRight[1]*squeezeFactor,
+        //     2, 2);
+            
+
+    }
+
+    showBoundingBox() {
+        canvCtx2.fillStyle = "rgb(255,255,0)";
+        
+        // Gornji rub
+        canvCtx2.fillRect(
+            (this.xPos + 2*tankSize) * squeezeFactor,
+            canvRef2.height - (this.yPos + 1*tankSize) * squeezeFactor,
+            tankSize * squeezeFactor * 26,
+            1);
+
+        // Donji rub
+        canvCtx2.fillRect(
+            (this.xPos + 2*tankSize) * squeezeFactor,
+            canvRef2.height - this.yPos*squeezeFactor + (tankSize * squeezeFactor * 9),
+            tankSize * squeezeFactor * 26,
+            1);
+
+        // Lijevi rub
+        canvCtx2.fillRect(
+            (this.xPos + 2*tankSize) * squeezeFactor,
+            canvRef2.height - this.yPos * squeezeFactor,
+            1,
+            tankSize * squeezeFactor * 9);
+        
+        // Desni rub
+        canvCtx2.fillRect(
+            (this.xPos + tankSize * 28) * squeezeFactor,
+            canvRef2.height - this.yPos * squeezeFactor,
+            1,
+            tankSize * squeezeFactor * 9);        
     }
 
     clearTank() {

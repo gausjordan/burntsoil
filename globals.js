@@ -3,7 +3,7 @@
 let maxRes = 6000;
 let tankSize = 20;
 let blowUpSpeed = 500;
-let blastSize = 450;
+let blastSize = 250;
 let globalTerrainColor = "rgba(0, 255, 0, 1)";
 let colorValueAtPos = null;
 let ratio = Math.ceil(window.devicePixelRatio);
@@ -14,4 +14,4 @@ let canvCtx2 = canvRef2.getContext('2d');
 let oldSqueezeFactor; // Old aspect ratio (before resizing)
 let squeezeFactor; // Current aspect Ratio
 let initPlayersNum = 2;
-let initTankSize = 1;
+let initTankSize = 2;
