@@ -179,6 +179,7 @@ class Tank {
                             trajectory.at(oldIndex).x,
                             trajectory.at(oldIndex).y);
                     }
+                    canvCtx2.fillStyle = "rgba(255,255,255,1)";
                     tanks[whoseTurn].drawMissile(
                         trajectory.at(index).x,
                         trajectory.at(index).y);
