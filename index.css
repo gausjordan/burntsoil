@@ -62,16 +62,21 @@ body {
     overflow: hidden;
 }
 
-ol {
-    padding: 5%;
-    display: grid;
-}
-
 a {
     text-decoration: none;
     color: black;
-    width: 100%;
+    width: 95%;
+    cursor: default;
     display: flexbox;
+}
+
+ol {
+    /* padding: 5%; */
+    /* margin: 8%; */
+    display: grid;
+    cursor: default;
+    /* box-sizing: border-box; */
+    /* box-sizing: content-box; */
 }
 
 ol li {
@@ -82,6 +87,7 @@ ol li {
     font-family: Arial, Helvetica, sans-serif;
     transform: scaleY(0.8);
     margin: 0.3em 0em;
+    
     padding: 0.3em 0.3em;
     font-size: 2.2vmin;
     display: inline;
@@ -223,6 +229,13 @@ main h2 {
     main h2 {
         font-size: 2.2vmin;
     }
+
+    ol {
+        /* padding: 5%; */
+        margin: 8%;
+        display: grid;
+    }
+
 }
 
 

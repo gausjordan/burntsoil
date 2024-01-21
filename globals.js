@@ -14,4 +14,5 @@ let canvCtx2 = canvRef2.getContext('2d');
 let oldSqueezeFactor; // Old aspect ratio (before resizing)
 let squeezeFactor; // Current aspect Ratio
 let initPlayersNum = 2;
-let initTankSize = 2;
+let initTankSize = 1;
+let initBlastSize = 1;

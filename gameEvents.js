@@ -12,15 +12,6 @@ window.addEventListener("resize", (ev) => {
     drawBackdrop(canvRef1.width, canvRef1.height, "blue");
     drawTerrain(pxMix, squeezeFactor);
     tanks.forEach(tank => tank.drawTank());
-
-            // DEBUG
-            // canvCtx2.fillStyle = "rgba(255,255,255,1)";
-            // canvCtx2.fillRect(
-            //     tanks[0].midBottomPoint.x * squeezeFactor,
-            //     canvRef2.height - tanks[0].midBottomPoint.y * squeezeFactor,
-            //     2,
-            //     2);
-
 });
 
 
@@ -52,11 +43,11 @@ async function keyDown(event) {
             break;
         case "Numpad9": 
         case "PageUp":
-            tanks[whoseTurn].powerInc(100);
+            tanks[whoseTurn].powerInc(50);
             break;
         case "Numpad3":
         case "PageDown":
-            tanks[whoseTurn].powerDec(100);
+            tanks[whoseTurn].powerDec(50);
             break;
         case "Enter":
         case "NumpadEnter":

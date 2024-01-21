@@ -25,6 +25,7 @@ canvCtx1.font = "16px sans-serif";
 
 const playersNumButton = document.getElementById("playersNum");
 const tankSizeButon = document.getElementById("tankSize");
+const blastSizeButon = document.getElementById("blastSize");
 
 playersNumButton.getElementsByTagName("span")[0].innerHTML = initPlayersNum;
 playersNumButton.addEventListener("contextmenu", iterateNumberOfPlayers);
@@ -34,8 +35,13 @@ tankSizeButon.getElementsByTagName("span")[0].innerHTML = initTankSize;
 tankSizeButon.addEventListener("contextmenu", iterateTankSize);
 tankSizeButon.addEventListener("click", iterateTankSize);
 
+blastSizeButon.getElementsByTagName("span")[0].innerHTML = initBlastSize;
+blastSizeButon.addEventListener("contextmenu", iterateBlastSize);
+blastSizeButon.addEventListener("click", iterateBlastSize);
+
 setNumberOfPlayers();
 setTankSize();
+setBlastSize();
 
 /** Allow 2 to 5 players, for now */
 function iterateNumberOfPlayers(e) {
@@ -51,8 +57,7 @@ function iterateNumberOfPlayers(e) {
     setNumberOfPlayers();
 }
 
-
-/** Allow 3 tank sizes */
+/** Allow 4 tank sizes */
 function iterateTankSize(e) {
     e.preventDefault();
     if (e.key == 't' || e.button === 0)
@@ -65,6 +70,22 @@ function iterateTankSize(e) {
         initTankSize = 3;
     setTankSize();    
 }
+
+/** Allow 3 blast sizes */
+function iterateBlastSize(e) {
+    e.preventDefault();
+    if (e.key == 'b' || e.button === 0)
+        initBlastSize++;
+    else if (e.key == 'B' || e.button === 2)
+        initBlastSize--;
+    if (initBlastSize > 2)
+        initBlastSize = 0;
+    else if (initBlastSize < 0)
+        initBlastSize = 2;
+    setBlastSize();
+}
+
+
 
 function setNumberOfPlayers() {
     playersNumButton.getElementsByTagName("span")[0].innerHTML = initPlayersNum;
@@ -91,8 +112,26 @@ function setTankSize() {
             localStorage.setItem('tankSize', 26);
             break;
     }
-    
 }
+
+
+function setBlastSize() {
+    switch (initBlastSize) {
+        case 0:
+            blastSizeButon.getElementsByTagName("span")[0].innerHTML = "Small";
+            localStorage.setItem('blastSize', 100);
+            break;
+        case 1:
+            blastSizeButon.getElementsByTagName("span")[0].innerHTML = "Medium";
+            localStorage.setItem('blastSize', 200);
+            break;
+        case 2:
+            blastSizeButon.getElementsByTagName("span")[0].innerHTML = "Big";
+            localStorage.setItem('blastSize', 300);
+            break;
+    }
+}
+
 
 function doDraw() {
     canvCtx2.font = "16px Arial";

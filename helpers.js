@@ -33,7 +33,7 @@ function randomInteger(lower, upper) {
 /**
  * Takes four points (on a single axis, x or y) - in.
  * Returns an interpolated value between point a1 and a2, at position t=[0-1].
- * TODO: can be optimized by splitting the work in two correlated functions
+ * TODO: can be optimized by splitting the work into two correlated functions
  */
 function cubicInterpolate(y0, y1, y2, y3, t) {
     let a0, a1, a2, a3, t2;

@@ -78,7 +78,6 @@ function collectDebris(upArc, lowArc, pxMix, blastSize) {
  * @returns 
  */
 function drawFireball(x, y, blastSize) {
-
     let grad = canvCtx2.createRadialGradient(
                xSqz, ySqz, 0, xSqz, ySqz, blastSqz);
     grad.addColorStop(0, "red");
