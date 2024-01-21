@@ -248,7 +248,6 @@ class Tank {
                 hit = 10 + index;
             }
         });
-        //console.log(hit);
 
         // If a missile hits some terrain
         if (y0 <= pxMix[Math.round(Math.round(x0))]) {
@@ -261,7 +260,7 @@ class Tank {
         }
 
         // If a missile ran more than 1 blastSize off screen; left or right
-        else if (x0 < -blastSize || x0 > maxRes + blastSize) {
+        else if ( x0 < -blastSize || x0 > (maxRes + blastSize)) {
             return 3;
         }
 

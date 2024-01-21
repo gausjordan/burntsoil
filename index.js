@@ -123,11 +123,11 @@ function setBlastSize() {
             break;
         case 1:
             blastSizeButon.getElementsByTagName("span")[0].innerHTML = "Medium";
-            localStorage.setItem('blastSize', 200);
+            localStorage.setItem('blastSize', 220);
             break;
         case 2:
             blastSizeButon.getElementsByTagName("span")[0].innerHTML = "Big";
-            localStorage.setItem('blastSize', 300);
+            localStorage.setItem('blastSize', 400);
             break;
     }
 }

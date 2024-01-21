@@ -15,8 +15,8 @@ let normPoints1 = normalizeCps(rawPoints1, maxRes, false);
 let normPoints2 = normalizeCps(rawPoints2, maxRes, false);
 let pixels1 = cpsToPxs(normPoints1);
 let pixels2 = cpsToPxs(normPoints2);
-tankSize = localStorage.getItem('tankSize');
-blastSize = localStorage.getItem('blastSize');
+tankSize = parseInt(localStorage.getItem('tankSize'));
+blastSize = parseInt(localStorage.getItem('blastSize'));
 
 // Two arrays of unscaled (pixel-defined) curves, combined into one
 let pxMix = pixels1.map( (e, index) => { return e + 0.2 * pixels2[index]; });
