@@ -36,8 +36,17 @@
 }
 
 #statusBar {
-    gap: 40px;
+    gap: 2em;
     user-select: none;
+}
+
+#playerName {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    letter-spacing: 0.05em;
+    font-weight: bold;
+    max-width: 10em;
 }
 
 header {
@@ -105,6 +114,10 @@ main nav div div {
     font-weight: bolder;
     font-size: x-large;
     font-stretch: narrower;
+}
+
+main nav div div:enabled {
+    background-color: yellow;
 }
 
 #leftButtonCluster {

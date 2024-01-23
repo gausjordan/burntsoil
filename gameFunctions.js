@@ -334,7 +334,4 @@ function updateStatusBar() {
         + (tanks[whoseTurn].b - 20) + ")";
     statusBar.children[2].style.color = styleString;
     statusBar.children[2].innerHTML = tanks[whoseTurn].name;
-    statusBar.children[2].style.letterSpacing = "0.05em";
-    statusBar.children[2].style.fontWeight = "bold";
-    
 }

@@ -54,11 +54,21 @@ nav form {
 
 nav form input[type="text"] {
     background-color: rgb(180,180,180);
-    border-width: 1px;
+    border-width: 2px;
     height: 2em;
     width: 70%;
     border-color: black white white dimgrey;
+    padding: 3px;
+    font-size: 1em;    
 }
+
+
+nav form input[type="text"]:focus {
+    outline-width: 0px;
+    outline-color: transparent;
+    outline: none;
+}
+
 
 #done {
     display: table-cell;
@@ -70,10 +80,19 @@ nav form input[type="text"] {
     left: 10em;
     height: 1.75em;
     box-sizing: border-box;
+    user-select: none;
     border-color:   var(--up-bord-color)
                     var(--right-bord-color)
                     var(--bottom-bord-color)
-                    var(--left-bord-color);    
+                    var(--left-bord-color);
+}
+
+#done:hover {
+    background-color: silver;
+}
+
+#done:active {
+    border-color: dimgrey white white dimgrey;
 }
 
 canvas {
@@ -83,5 +102,5 @@ canvas {
     width: 100dvw;
     --width: 50%;
     --height: 50%;
-    background-color: yellow;
+    background-color: rgba(255,255,0,0.5);
 }

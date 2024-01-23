@@ -82,6 +82,7 @@ navBar.addEventListener('touchstart', fineTuneButtons);
 
 /** Do stuff, depending on what was touched or clicked */
 async function fineTuneButtonAction(e) {
+
     if (e.srcElement.id == 'rotateCCW') {
         tanks[whoseTurn].angleInc(1);
     } else if (e.srcElement.id == 'rotateCW') {
