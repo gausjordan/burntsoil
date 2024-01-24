@@ -6,12 +6,6 @@ let canvCtx1 = canvRef1.getContext('2d');
 let canvCtx2 = canvRef2.getContext('2d');
 */
 
-// Off topic
-let funk = 505;
-let varName = "funk";
-console.log(window[funk]);
-
-
 // Resize screen height and re-center vertically on resize (virual keyboard)
 let mainElement = document.getElementsByTagName("main")[0];
 let canv = document.getElementById("canv");
@@ -26,7 +20,6 @@ canv.height = mHeight;
 ctx.width = mWidth / ratio + "px";
 ctx.height = mHeight / ratio + "px";
 
-
 window.addEventListener('resize', function() {
     document.body.style.height = window.innerHeight + 'px';
     document.body.style.height = window.visualViewport.height + 'px';
@@ -39,50 +32,73 @@ window.addEventListener('resize', function() {
     ctx.height = canv.height;
 });
 
+drawHorizontalBars(0, 175, 175, 16, 20, 12);
 
-let r = 0;
-let g = 175;
-let b = 175;
+/**
+ *  Draws animated horizontal bars of selected color
+ * @param {*} r color component
+ * @param {*} g color component
+ * @param {*} b color component
+ * @param {*} decrement how darker each bar gets
+ * @param {*} threshold how dark is it going to get  */
+function drawHorizontalBars(r, g, b, decrement, threshold, barWidth) {
 
-drawHorizontalBars(r, g, b);
+    let initGradient1 = generateColorGradient(r, g, b, decrement, threshold);
+    let initGradient2 = structuredClone(initGradient1);
+    initGradient2.shift();
+    initGradient2.pop();
+    let gradient = initGradient1.concat(initGradient2.reverse());
+    let colorsNum = gradient.length;
+    let i = 0;
 
-
-function drawHorizontalBars(r, g, b) {
-
-    let gradient = generateColorGradient(r,g,b, 18, 15);
-
-    // TODO
-    gradient.forEach((color, index) => {
-        ctx.fillStyle = `rgb(${color[0]},${color[1]},${color[2]})`;
-        ctx.fillRect(index*20, 0, 20, 16000);
-    });
-
+    while ( (i * barWidth) < (mWidth) ) {
+        ctx.fillStyle = `rgb(${gradient.at(i%colorsNum)[0]},
+                             ${gradient.at(i%colorsNum)[1]},
+                             ${gradient.at(i%colorsNum)[2]})`;
+        ctx.fillRect(i*barWidth, 0, barWidth, 16000);
+        i++;
+        //console.log(i);
+    }
+    
 }
 
-/** Returns an array of colors, each being another array containing 3 "ints"
- * (R,G,B values). Initial values are decremented in each step, until either
- * shade turns darker than 'treshold' parameter.
- * @param {*} r red component [0-255]
- * @param {*} g green component [0-255]
- * @param {*} b blue component [0-255]
- * @param {*} decrement step (how darker each step gets)
- * @returns an array of triples
+
+/** Generates a gradient of colors, gradually turning dark
+ * @param {*} r color component
+ * @param {*} g color component
+ * @param {*} b color component
+ * @param {*} decrement how rapid each step is
+ * @param {*} threshold how dark will it ultimately get
+ * @returns array of RGB [0-255] integer triples
  */
 function generateColorGradient(r, g, b, decrement, threshold) {
-    let gradient = [];
-
-    if (!decrement)
-        decrement = 20;
-
-    if (!threshold)
-        threshold = 20;
-
-    while (r > threshold || g > threshold || b > threshold) {
-        r = (r != 0) ? r -= decrement : r = 0;
-        g = (g != 0) ? g -= decrement : g = 0;
-        b = (b != 0) ? b -= decrement : b = 0;
-        gradient.push([r, g, b]);
+    let result = [[r, g, b]];
+    let tempTriple = [];
+    while (!canGoOn(result, threshold)) {
+        tempTriple = [];
+        result.at(-1).forEach( c => {
+            if (c < threshold) {
+                tempTriple.push(c);
+            } else {
+                if ( (c - decrement) > threshold) {
+                    tempTriple.push(c - decrement);
+                } else {
+                    tempTriple.push(threshold);
+                }
+            }
+        });
+        result.push(tempTriple);
     }
+    return result;
+}
 
-    return gradient;
+
+/** Returns "true" when any of the three color components,
+ * unless it was zero to begin with, reaches the "threshold"
+ * (lower limit of darkness).
+ */
+function canGoOn(gradient, threshold) {
+    return gradient.at(-1)
+        .filter(component => component !== 0)
+        .some(component => (component == threshold));
 }
