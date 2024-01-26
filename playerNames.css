@@ -18,8 +18,6 @@
 
 main {
     height: 100svh;
-    --border: 3px solid green;
-    --background-color: aquamarine;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -44,7 +42,6 @@ nav div {
 }
 
 nav form {
-    
     height: calc(100% - 4.7rem);
     padding: 0.8em;
     border: 2px solid;
@@ -52,7 +49,7 @@ nav form {
     border-color: dimgrey white white dimgrey;
 }
 
-nav form input[type="text"] {
+nav form input[type="search"] {
     background-color: rgb(180,180,180);
     border-width: 2px;
     height: 2em;
@@ -63,7 +60,7 @@ nav form input[type="text"] {
 }
 
 
-nav form input[type="text"]:focus {
+nav form input[type="search"]:focus {
     outline-width: 0px;
     outline-color: transparent;
     outline: none;
@@ -103,4 +100,81 @@ canvas {
     --width: 50%;
     --height: 50%;
     background-color: rgba(255,255,0,0.5);
+}
+
+
+@media screen and (max-height: 160px)  {
+    
+    nav {
+        z-index: 1;
+        background-color:rgb(180,180,180);
+        padding: 0.5em 1em;
+        width: 20rem;
+        height: 6.5rem;
+        border: 3px outset;
+        border-color:   var(--up-bord-color)
+                        var(--right-bord-color)
+                        var(--bottom-bord-color)
+                        var(--left-bord-color);    
+    }
+    
+    nav div {
+        text-align: center;
+        margin: 0 0 0.05em 0;
+    }
+    
+    nav form {
+        height: calc(100% - 4.7rem);
+        padding: 0.8em;
+        height: 3.75em;
+        border: 2px solid;
+        box-sizing: border-box;
+        border-color: dimgrey white white dimgrey;
+    }
+    
+    nav form input[type="search"] {
+        background-color: rgb(180,180,180);
+        border-width: 2px;
+        height: 2em;
+        width: 70%;
+        border-color: black white white dimgrey;
+        padding: 3px;
+        font-size: 1em;    
+    }
+    
+    nav form input[type="search"]:focus {
+        outline-width: 0px;
+        outline-color: transparent;
+        outline: none;
+    }
+    
+    
+    #done {
+        visibility: hidden;
+        display: table-cell;
+        vertical-align: middle;
+        position: relative;
+        border: 3px outset;
+        width: 7rem;
+        top: 1em;
+        left: 10em;
+        height: 1.75em;
+        box-sizing: border-box;
+        user-select: none;
+        border-color:   var(--up-bord-color)
+                        var(--right-bord-color)
+                        var(--bottom-bord-color)
+                        var(--left-bord-color);
+    }
+    
+    #done:hover {
+        background-color: silver;
+    }
+    
+    #done:active {
+        border-color: dimgrey white white dimgrey;
+    }
+
+
+
 }

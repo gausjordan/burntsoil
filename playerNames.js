@@ -1,11 +1,3 @@
-/*
-let ratio = Math.ceil(window.devicePixelRatio);
-let canvRef1 = document.getElementById("canvas1");
-let canvRef2 = document.getElementById("canvas2");
-let canvCtx1 = canvRef1.getContext('2d');
-let canvCtx2 = canvRef2.getContext('2d');
-*/
-
 // Resize screen height and re-center vertically on resize (virual keyboard)
 let mainElement = document.getElementsByTagName("main")[0];
 let canv = document.getElementById("canv");
@@ -13,26 +5,36 @@ let mHeight = mainElement.getBoundingClientRect().height;
 let mWidth = mainElement.getBoundingClientRect().width;
 let ctx = canv.getContext('2d');
 let ratio = Math.ceil(window.devicePixelRatio);
+let inputBar = document.getElementById("fname");
 
 canv.width = mWidth;
 canv.height = mHeight;
-
 ctx.width = mWidth / ratio + "px";
 ctx.height = mHeight / ratio + "px";
 
 window.addEventListener('resize', function() {
-    document.body.style.height = window.innerHeight + 'px';
-    document.body.style.height = window.visualViewport.height + 'px';
-    
+    mHeight = mainElement.getBoundingClientRect().height;
+    mWidth = mainElement.getBoundingClientRect().width;
     mainElement.style.height = window.visualViewport.height + 'px';
+    let screenHeight = Math.round(window.visualViewport.height);
+    let formSize = Math.round(mainElement
+                            .getElementsByClassName("frame")[0]
+                            .getBoundingClientRect().height);
     
-    canv.width = mWidth + "px";
-    canv.height = mHeight + "px";
-    ctx.width = canv.width;
-    ctx.height = canv.height;
+    // In landscape mode, keyboard may take up too much screen estate
+    // For the time being, this is done via CSS.
+    if (formSize > window.visualViewport.height) {}
+
+    canv.width = mWidth;
+    canv.height = mHeight;
+    ctx.width = mWidth / ratio + "px";
+    ctx.height = mHeight / ratio + "px";
+
 });
 
-drawHorizontalBars(0, 175, 175, 16, 20, 12);
+
+drawVerticalBars(255, 0, 0, 10, 20, 12);
+
 
 /**
  *  Draws animated horizontal bars of selected color
@@ -41,7 +43,7 @@ drawHorizontalBars(0, 175, 175, 16, 20, 12);
  * @param {*} b color component
  * @param {*} decrement how darker each bar gets
  * @param {*} threshold how dark is it going to get  */
-function drawHorizontalBars(r, g, b, decrement, threshold, barWidth) {
+function drawVerticalBars(r, g, b, decrement, threshold, barWidth) {
 
     let initGradient1 = generateColorGradient(r, g, b, decrement, threshold);
     let initGradient2 = structuredClone(initGradient1);
@@ -51,16 +53,41 @@ function drawHorizontalBars(r, g, b, decrement, threshold, barWidth) {
     let colorsNum = gradient.length;
     let i = 0;
 
-    while ( (i * barWidth) < (mWidth) ) {
-        ctx.fillStyle = `rgb(${gradient.at(i%colorsNum)[0]},
-                             ${gradient.at(i%colorsNum)[1]},
-                             ${gradient.at(i%colorsNum)[2]})`;
-        ctx.fillRect(i*barWidth, 0, barWidth, 16000);
-        i++;
-        //console.log(i);
+    drawBarset();
+
+    // Repeat forever
+    setInterval( () => {
+        gradientShift();
+        drawBarset();
+    }, 50);
+    
+    
+    // Shift color palette
+    function gradientShift() {
+        let firstElement = gradient.shift();
+        gradient.push(firstElement);
     }
     
+    // Draw one frame of vertical bars
+    function drawBarset() {
+        i = 0;
+        while ( (i * barWidth) < (mWidth) ) {
+            ctx.fillStyle = `rgb(${gradient.at(i%colorsNum)[0]},
+                                 ${gradient.at(i%colorsNum)[1]},
+                                 ${gradient.at(i%colorsNum)[2]})`;
+            ctx.fillRect(i*barWidth, 0, barWidth, 16000);
+            i++;
+        }
+    }
+
+
+
+
+
+
+
 }
+
 
 
 /** Generates a gradient of colors, gradually turning dark
