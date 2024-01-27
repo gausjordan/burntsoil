@@ -160,6 +160,7 @@ canvas {
 
 
 #curtain {
+    animation-fill-mode: forwards;
     box-sizing: content-box;
     margin: 5px;
     z-index: 2;
@@ -167,8 +168,7 @@ canvas {
     background-color: rgb(180,180,180);
     width: 0px;
     height: 0px;
-    animation: 1s linear 0s 1 slideAway;
-    animation-fill-mode: forwards;
+    animation: slideAway 1s linear 0.1s 1 forwards running;
 }
 
 
@@ -179,9 +179,9 @@ canvas {
     }
 
     100% {
-      transform-origin: top right;
-      transform: scaleX(0%);
-    }
+        transform-origin: top right;
+        transform: scaleX(0%);
+      }
   }
 
 
@@ -236,7 +236,6 @@ main h2 {
     }
 
 }
-
 
 
 @media (orientation: portrait) {

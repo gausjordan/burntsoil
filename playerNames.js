@@ -6,11 +6,33 @@ let mWidth = mainElement.getBoundingClientRect().width;
 let ctx = canv.getContext('2d');
 let ratio = Math.ceil(window.devicePixelRatio);
 let inputBar = document.getElementById("fname");
+let doneButton = document.getElementById("done");
 
 canv.width = mWidth;
 canv.height = mHeight;
 ctx.width = mWidth / ratio + "px";
 ctx.height = mHeight / ratio + "px";
+
+window.addEventListener('keypress', (ev) => {
+    ev.stopPropagation();
+    if (ev.key == "Enter") {
+        alert("Enter");
+    }
+    if (ev.key == "n" || ev.key == "N") {
+        // if input isn't focused, gets it focused
+        if (document.activeElement !== inputBar) {
+            ev.stopPropagation();
+            ev.preventDefault();
+            inputBar.focus();
+        }
+    }
+});
+
+doneButton.addEventListener('click', (ev) => {
+    location.href = "http://www.bug.hr";
+});
+
+
 
 window.addEventListener('resize', function() {
     mHeight = mainElement.getBoundingClientRect().height;
@@ -20,11 +42,9 @@ window.addEventListener('resize', function() {
     let formSize = Math.round(mainElement
                             .getElementsByClassName("frame")[0]
                             .getBoundingClientRect().height);
-    
     // In landscape mode, keyboard may take up too much screen estate
-    // For the time being, this is done via CSS.
+    // For now, this is done via CSS (Done button disappears).
     if (formSize > window.visualViewport.height) {}
-
     canv.width = mWidth;
     canv.height = mHeight;
     ctx.width = mWidth / ratio + "px";
@@ -32,9 +52,7 @@ window.addEventListener('resize', function() {
 
 });
 
-
 drawVerticalBars(255, 0, 0, 10, 20, 12);
-
 
 /**
  *  Draws animated horizontal bars of selected color
@@ -44,7 +62,6 @@ drawVerticalBars(255, 0, 0, 10, 20, 12);
  * @param {*} decrement how darker each bar gets
  * @param {*} threshold how dark is it going to get  */
 function drawVerticalBars(r, g, b, decrement, threshold, barWidth) {
-
     let initGradient1 = generateColorGradient(r, g, b, decrement, threshold);
     let initGradient2 = structuredClone(initGradient1);
     initGradient2.shift();
@@ -68,7 +85,7 @@ function drawVerticalBars(r, g, b, decrement, threshold, barWidth) {
         gradient.push(firstElement);
     }
     
-    // Draw one frame of vertical bars
+    // Draw one full frame of vertical bars
     function drawBarset() {
         i = 0;
         while ( (i * barWidth) < (mWidth) ) {
@@ -79,13 +96,6 @@ function drawVerticalBars(r, g, b, decrement, threshold, barWidth) {
             i++;
         }
     }
-
-
-
-
-
-
-
 }
 
 
@@ -122,8 +132,7 @@ function generateColorGradient(r, g, b, decrement, threshold) {
 
 /** Returns "true" when any of the three color components,
  * unless it was zero to begin with, reaches the "threshold"
- * (lower limit of darkness).
- */
+ * (lower limit of darkness). */
 function canGoOn(gradient, threshold) {
     return gradient.at(-1)
         .filter(component => component !== 0)

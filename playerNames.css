@@ -30,6 +30,7 @@ nav {
     width: 20rem;
     height: 10rem;
     border: 3px outset;
+    user-select: none;
     border-color:   var(--up-bord-color)
                     var(--right-bord-color)
                     var(--bottom-bord-color)
@@ -39,6 +40,11 @@ nav {
 nav div {
     text-align: center;
     margin: 0 0 0.5em 0;
+}
+
+em {
+    font-style: normal;
+    color: cyan;
 }
 
 nav form {
@@ -99,7 +105,7 @@ canvas {
     width: 100dvw;
     --width: 50%;
     --height: 50%;
-    background-color: rgba(255,255,0,0.5);
+    background-color: rgba(20,20,20,1);
 }
 
 
