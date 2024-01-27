@@ -16,3 +16,5 @@ let squeezeFactor; // Current aspect Ratio
 let initPlayersNum = 2;
 let initTankSize = 1;
 let initBlastSize = 1;
+const playerColors = [[255, 0, 0], [0, 160, 0], [180, 0, 180],
+                     [180, 180, 0], [0, 180, 180]];

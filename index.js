@@ -10,6 +10,14 @@ let normPoints2 = normalizeCps(rawPoints2, maxRes, false);
 let pixels1 = cpsToPxs(normPoints1);
 let pixels2 = cpsToPxs(normPoints2);
 
+localStorage.clear();
+
+// Brave Browser CSS animation quirk fix: turns curtain transparent (if stuck)
+let curtain = document.getElementById('curtain');
+curtain.addEventListener("animationend", function() {
+    curtain.style.background = "rgba(255,255,255,0)";
+});
+
 // Two sets of (pixel-defined) curves merged into one
 let pxMix = pixels1.map( (e, index) => { return e + 0.2 * pixels2[index]; });
 squeezeFactor = canvRef2.width / pxMix.length;

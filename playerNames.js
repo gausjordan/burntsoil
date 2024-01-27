@@ -7,16 +7,24 @@ let ctx = canv.getContext('2d');
 let ratio = Math.ceil(window.devicePixelRatio);
 let inputBar = document.getElementById("fname");
 let doneButton = document.getElementById("done");
+let backgroundAnimation;
+let currPlayer;
+let playersNum;
+const playerColors = [[255, 0, 0], [0, 160, 0], [180, 0, 180],
+                     [180, 180, 0], [0, 180, 180]];
 
 canv.width = mWidth;
 canv.height = mHeight;
 ctx.width = mWidth / ratio + "px";
 ctx.height = mHeight / ratio + "px";
 
+// Do something when user is done inputting by hitting "enter"
 window.addEventListener('keypress', (ev) => {
     ev.stopPropagation();
     if (ev.key == "Enter") {
-        alert("Enter");
+        ev.stopPropagation();
+        ev.preventDefault();
+        nextStep();
     }
     if (ev.key == "n" || ev.key == "N") {
         // if input isn't focused, gets it focused
@@ -29,8 +37,52 @@ window.addEventListener('keypress', (ev) => {
 });
 
 doneButton.addEventListener('click', (ev) => {
-    location.href = "http://www.bug.hr";
+    ev.stopPropagation();
+    ev.preventDefault();
+    nextStep();
+    inputSequence();
 });
+
+
+function inputSequence() {
+
+    currPlayer = Number(localStorage.getItem("currPlayer"));
+    playersNum = Number(localStorage.getItem("numberOfPlayers"));
+
+    if ( !playersNum || typeof playersNum == 'undefined')
+    playersNum = 2;
+
+    if (!currPlayer || typeof currPlayer == 'undefined') {
+        currPlayer = 0;
+        localStorage.setItem("currPlayer", currPlayer);
+    }
+
+    document.getElementById("currentPlayerInput").innerHTML = currPlayer + 1;
+    document.getElementById("initPlayersNum").innerHTML = playersNum;
+
+    if (backgroundAnimation)
+        clearInterval(backgroundAnimation);
+
+    drawVerticalBars(playerColors[currPlayer][0],
+                     playerColors[currPlayer][1],
+                     playerColors[currPlayer][2],
+                     10, 20, 12);
+}
+
+
+
+
+
+function nextStep() {
+    if (currPlayer + 1 < playersNum) {
+        currPlayer++;
+        localStorage.setItem("currPlayer", currPlayer);
+        inputSequence();
+    }
+    else {
+        window.location.href = 'game.html';
+    }
+}
 
 
 
@@ -52,7 +104,7 @@ window.addEventListener('resize', function() {
 
 });
 
-drawVerticalBars(255, 0, 0, 10, 20, 12);
+
 
 /**
  *  Draws animated horizontal bars of selected color
@@ -73,7 +125,7 @@ function drawVerticalBars(r, g, b, decrement, threshold, barWidth) {
     drawBarset();
 
     // Repeat forever
-    setInterval( () => {
+    backgroundAnimation = setInterval( () => {
         gradientShift();
         drawBarset();
     }, 50);
@@ -138,3 +190,11 @@ function canGoOn(gradient, threshold) {
         .filter(component => component !== 0)
         .some(component => (component == threshold));
 }
+
+
+// Illegal state; clear memory
+if (currPlayer > playersNum)
+    localStorage.clear();
+
+// Entry point    
+inputSequence();
