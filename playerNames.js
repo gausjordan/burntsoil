@@ -18,7 +18,7 @@ canv.height = mHeight;
 ctx.width = mWidth / ratio + "px";
 ctx.height = mHeight / ratio + "px";
 
-// Do something when user is done inputting by hitting "enter"
+// Do the next step when user is done by hitting "enter"
 window.addEventListener('keypress', (ev) => {
     ev.stopPropagation();
     if (ev.key == "Enter") {
@@ -36,6 +36,7 @@ window.addEventListener('keypress', (ev) => {
     }
 });
 
+// Do the next step when user is done by clicking "Done"
 doneButton.addEventListener('click', (ev) => {
     ev.stopPropagation();
     ev.preventDefault();
@@ -46,17 +47,9 @@ doneButton.addEventListener('click', (ev) => {
 
 function inputSequence() {
 
-    currPlayer = Number(localStorage.getItem("currPlayer"));
-    playersNum = Number(localStorage.getItem("numberOfPlayers"));
 
-    if ( !playersNum || typeof playersNum == 'undefined')
-    playersNum = 2;
 
-    if (!currPlayer || typeof currPlayer == 'undefined') {
-        currPlayer = 0;
-        localStorage.setItem("currPlayer", currPlayer);
-    }
-
+    // Update status bar
     document.getElementById("currentPlayerInput").innerHTML = currPlayer + 1;
     document.getElementById("initPlayersNum").innerHTML = playersNum;
 
@@ -70,16 +63,19 @@ function inputSequence() {
 }
 
 
-
-
-
 function nextStep() {
-    if (currPlayer + 1 < playersNum) {
-        currPlayer++;
+    console.log("currPlayer+1 = " + (currPlayer+1) + ", playersNum = " + playersNum);
+    if (currPlayer+1 < playersNum) {
         localStorage.setItem("currPlayer", currPlayer);
+        localStorage.setItem("name" + currPlayer, inputBar.value);
+        inputBar.value = "";
+        currPlayer++;
+        console.log("currPlayer+1 = " + (currPlayer) + ", playersNum = " + playersNum);
         inputSequence();
     }
-    else {
+    else if ((currPlayer + 1) >= playersNum) {
+        localStorage.setItem("currPlayer", currPlayer);
+        localStorage.setItem("name" + currPlayer, inputBar.value);
         window.location.href = 'game.html';
     }
 }
@@ -124,7 +120,7 @@ function drawVerticalBars(r, g, b, decrement, threshold, barWidth) {
 
     drawBarset();
 
-    // Repeat forever
+    // Repeat background animation forever
     backgroundAnimation = setInterval( () => {
         gradientShift();
         drawBarset();
@@ -137,7 +133,8 @@ function drawVerticalBars(r, g, b, decrement, threshold, barWidth) {
         gradient.push(firstElement);
     }
     
-    // Draw one full frame of vertical bars
+
+    /** Draws one full frame of vertical bars  */
     function drawBarset() {
         i = 0;
         while ( (i * barWidth) < (mWidth) ) {
@@ -149,7 +146,6 @@ function drawVerticalBars(r, g, b, decrement, threshold, barWidth) {
         }
     }
 }
-
 
 
 /** Generates a gradient of colors, gradually turning dark
@@ -191,10 +187,15 @@ function canGoOn(gradient, threshold) {
         .some(component => (component == threshold));
 }
 
+// Get local storage
+currPlayer = Number(localStorage.getItem("currPlayer"));
+playersNum = Number(localStorage.getItem("numberOfPlayers"));
 
-// Illegal state; clear memory
-if (currPlayer > playersNum)
-    localStorage.clear();
+
+// Illegal state; go to main menu
+if (currPlayer+1 > playersNum) {
+    window.location.href = 'index.html';
+}
 
 // Entry point    
 inputSequence();

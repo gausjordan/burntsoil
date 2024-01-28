@@ -25,36 +25,36 @@ squeezeFactor = canvRef2.width / pxMix.length;
 // Backdrop always uses canvas1. Game elements use canvas2.
 drawBackdrop(canvRef1.width, canvRef1.height, "blue");
 
-let numberOfPlayers = localStorage.getItem('numberOfPlayers');
+let numberOfPlayers = parseInt(localStorage.getItem('numberOfPlayers'));
 let tanks = [];         // An array of tank objects (all players)
 let isBlocked = false;  // Block user controls while missiles fly
 let whoseTurn = 0;      // Points to the current player
 
 // Hardcoded players for testing purposes
 if (numberOfPlayers >= 2)
-    tanks.push(spawnTank(255, 0, 0, "Joe",
+    tanks.push(spawnTank(255, 0, 0, localStorage.getItem("name0"),
             randomInteger(5, 10),
             randomInteger(0,180) ));
 
 if (numberOfPlayers >= 2)
-    tanks.push(spawnTank(0, 160, 0, "Mike",
+    tanks.push(spawnTank(0, 160, 0, localStorage.getItem("name1"),
             randomInteger(85, 90),
             randomInteger(0, 180) ));
 
 if (numberOfPlayers >= 3) {
-    tanks.push(spawnTank(180, 0, 180, "Sam",
+    tanks.push(spawnTank(180, 0, 180, localStorage.getItem("name2"),
             randomInteger(40, 45),
             randomInteger(0, 180) ));
 }
 
 if (numberOfPlayers >= 4) {
-    tanks.push(spawnTank(180, 180, 0, "Bob",
+    tanks.push(spawnTank(180, 180, 0, localStorage.getItem("name3"),
             randomInteger(20, 25),
             randomInteger(0, 180) ));
 }
 
 if (numberOfPlayers >= 5) {
-    tanks.push(spawnTank(0, 180, 180, "Will",
+    tanks.push(spawnTank(0, 180, 180, localStorage.getItem("name4"),
             randomInteger(60, 65),
             randomInteger(0, 180) ));
 }
