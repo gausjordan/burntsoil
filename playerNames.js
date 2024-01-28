@@ -197,5 +197,14 @@ if (currPlayer+1 > playersNum) {
     window.location.href = 'index.html';
 }
 
+
+// User came here manually via back button
+// Allow renaming in the future, bounce for now
+if (currPlayer != 0) {
+    currPlayer = 0;
+    window.location.href = 'index.html';
+}
+
+
 // Entry point    
 inputSequence();
