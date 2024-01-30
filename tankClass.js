@@ -117,13 +117,21 @@ class Tank {
             case 3:
                 break;
             default:
-                alert(tanks[trajectory[1]-10].name + " was hit!");
+                tanks[trajectory[1]-10].clearTank();
+                tanks.splice(trajectory[1]-10, 1);
+                numberOfPlayers--;
                 tanks.forEach(t => t.drawTank());
         }
-        whoseTurn = (whoseTurn == numberOfPlayers - 1) ? 0 : (whoseTurn + 1);
-        updateStatusBar();
-        restoreFireListeners();
-        isBlocked = false;
+        if (numberOfPlayers == 1) {
+            alert(tanks[0].name + " won!");
+            window.location.href = 'index.html';            
+        } else {
+            whoseTurn = (whoseTurn == numberOfPlayers - 1) ? 0 : (whoseTurn + 1);
+            updateStatusBar();
+            restoreFireListeners();
+            isBlocked = false;
+        }
+
     }
 
 
@@ -341,7 +349,8 @@ class Tank {
             this.xPos * squeezeFactor,
             canvRef2.height - (this.yPos * squeezeFactor)
                 + (tankSize * squeezeFactor * 7),
-            tankSize * squeezeFactor * 30,
+            // +1 clears up anti-aliasing artefacts
+            (tankSize * squeezeFactor * 30) + 1,
             -200000); 
     }
 
@@ -559,13 +568,23 @@ class Tank {
             tankSize * squeezeFactor * 9);        
     }
 
-    clearTank() {
-        canvCtx2.clearRect(
-            this.xPos * squeezeFactor,
-            // -2px overhead clears antialiasing residue
-            (canvRef2.height - this.yPos*squeezeFactor)
-            - (14 * tankSize * squeezeFactor) - 2,
-            30 * tankSize * squeezeFactor,
-            22.5 * tankSize * squeezeFactor);
+    clearTank(wide) {
+        if (!wide) {
+            canvCtx2.clearRect(
+                (this.xPos * squeezeFactor) - 1,
+                // -2px overhead clears antialiasing residue
+                (canvRef2.height - this.yPos*squeezeFactor)
+                - (14 * tankSize * squeezeFactor) - 2,
+                (30 * tankSize * squeezeFactor) +2,
+                (22.5 * tankSize * squeezeFactor) +2 ) ;
+        } else {
+            canvCtx2.clearRect(
+                this.xPos * squeezeFactor,
+                // -2px overhead clears antialiasing residue
+                (canvRef2.height - this.yPos*squeezeFactor)
+                - (14 * tankSize * squeezeFactor) - 2,
+                30 * tankSize * squeezeFactor,
+                22.5 * tankSize * squeezeFactor);
+        }
     }
 }
