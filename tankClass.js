@@ -117,6 +117,7 @@ class Tank {
             case 3:
                 break;
             default:
+                await this.drawFire(trajectory[1]-10);
                 tanks[trajectory[1]-10].clearTank();
                 tanks.splice(trajectory[1]-10, 1);
                 numberOfPlayers--;
@@ -533,7 +534,92 @@ class Tank {
         //     canvRef2.height - bottomRight[1]*squeezeFactor,
         //     2, 2);
             
+    }
 
+    async drawFire(idx) {
+
+        return new Promise( resolve => {
+            
+            let minAge = 20;
+            let maxAge = 250;
+            
+            class Particle {
+                constructor(x, y) {
+                    this.x = x,
+                    this.y = y,
+                    this.currentAge = 0;
+                    this.maxAge = randomInteger(minAge, maxAge);
+                }
+                stepForward() {
+                    if (this.currentAge > 0) {
+                        this.currentAge--;
+                    }
+                }
+            }
+            
+            // Particle collection
+            let particles = [];
+
+            // Horizontal tank span (displayed, scaled)
+            let xStart = Math.round( tanks[idx].xPos * squeezeFactor) ;
+            let xEnd = Math.round((tanks[idx].xPos+30*tankSize)*squeezeFactor);
+            
+            // The height at which the fenders are located (displayed, scaled)
+            let yFender = Math.round((tanks[idx].yPos-2.5*tankSize) * squeezeFactor);
+
+            // Initialize particles
+            for (let i = xStart; i < xEnd; i++) {
+                    particles.push( new Particle(i, yFender) );
+            }
+            
+            let fR = 255;
+            let fG = 255;
+            let fB = 0;
+
+            function animate(timeStamp) {
+                
+                particles.forEach((p) => {
+                    p.y += 2*Math.random();
+                    fR -= 0.1;
+                    fG -= 0.2;
+                    tanks[idx].r -= 0.04;
+                    tanks[idx].g -= 0.04;
+                    tanks[idx].b -= 0.04;
+                    canvCtx2.fillStyle = `rgb(${fR}, ${fG}, ${fB})`;
+                    canvCtx2.fillRect(
+                        p.x,
+                        canvRef2.height - p.y,
+                        1,
+                        1
+                    )
+                });
+                
+                tanks[idx].drawTank();
+                if (particles[0].y < (yFender + 30*tankSize*squeezeFactor)) {
+                    requestAnimationFrame(animate);
+                } else {
+                    canvCtx2.clearRect(
+                        xStart,
+                        canvRef2.height - yFender,
+                        xEnd - xStart,
+                        -16000
+                    )
+                    resolve();
+                }
+            }
+            
+            requestAnimationFrame(animate);
+
+        })
+
+        // canvCtx2.fillRect(
+        //     this.xPos * squeezeFactor,
+        //     (canvRef2.height - this.yPos*squeezeFactor)
+        //     - (14 * tankSize * squeezeFactor),
+        //     30 * tankSize * squeezeFactor,
+        //     22.5 * tankSize * squeezeFactor);
+        //     this.drawTank();
+    
     }
 
     showBoundingBox() {
