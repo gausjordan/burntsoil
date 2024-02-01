@@ -107,6 +107,8 @@ class Tank {
         let trajectory = this.computeTrajectory();
         await this.animateMissile(trajectory[0]);
         switch (trajectory[1]) {
+            
+            // Terrain blast
             case 1:
             case 2:
                 await explosionOnGround(
@@ -114,15 +116,21 @@ class Tank {
                     trajectory[0].at(-1).y,
                     blastSize);
                 break;
+            
+            // Missile went way off-screen, does nothing
             case 3:
                 break;
+            
+            // Someone was hit
             default:
                 await this.drawFire(trajectory[1]-10);
                 tanks[trajectory[1]-10].clearTank();
                 tanks.splice(trajectory[1]-10, 1);
                 numberOfPlayers--;
-                tanks.forEach(t => t.drawTank());
+                tanks.forEach(t => t.drawTank());       
         }
+
+        // If there's only one player left; that's our winner
         if (numberOfPlayers == 1) {
             alert(tanks[0].name + " won!");
             window.location.href = 'index.html';            

@@ -64,7 +64,7 @@ function inputSequence() {
 
 
 function nextStep() {
-    console.log("currPlayer+1 = " + (currPlayer+1) + ", playersNum = " + playersNum);
+   
     if (currPlayer+1 < playersNum) {
         localStorage.setItem("currPlayer", currPlayer);
         localStorage.setItem("name" + currPlayer, inputBar.value);
