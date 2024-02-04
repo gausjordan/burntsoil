@@ -123,10 +123,10 @@ class Tank {
             
             // Someone was hit
             default:
+                numberOfPlayers--;
                 await this.drawFire(trajectory[1]-10);
                 tanks[trajectory[1]-10].clearTank();
                 tanks.splice(trajectory[1]-10, 1);
-                numberOfPlayers--;
                 tanks.forEach(t => t.drawTank());       
         }
 
@@ -135,7 +135,7 @@ class Tank {
             alert(tanks[0].name + " won!");
             window.location.href = 'index.html';            
         } else {
-            whoseTurn = (whoseTurn == numberOfPlayers - 1) ? 0 : (whoseTurn + 1);
+            whoseTurn = (whoseTurn >= numberOfPlayers - 1) ? 0 : (whoseTurn + 1);
             updateStatusBar();
             restoreFireListeners();
             isBlocked = false;
