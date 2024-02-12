@@ -67,7 +67,7 @@ let navBar = document.getElementsByTagName('nav')[0];
 drawTerrain(pxMix, squeezeFactor);
 updateStatusBar();
 
-//tanks[0].drawFire();
+//tanks[0].drawFire(0);
 
 // Prevent page refreshing on "swipe down" gesture (mobile browsers)
 document.addEventListener('touchmove', (e) =>

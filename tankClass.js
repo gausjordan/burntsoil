@@ -515,53 +515,76 @@ class Tank {
         {
             return false;
         }
-
-
-        
-        // canvCtx2.fillStyle = "rgb(255,0,0)"; // Red
-        // canvCtx2.fillRect(
-        //     topLeft[0]*squeezeFactor,
-        //     canvRef2.height - topLeft[1]*squeezeFactor,
-        //     2, 2);
-
-        // canvCtx2.fillStyle = "rgb(0,255,255)"; // Cyan
-        // canvCtx2.fillRect(
-        //     topRight[0]*squeezeFactor,
-        //     canvRef2.height - topRight[1]*squeezeFactor,
-        //     2, 2);        
-
-        // canvCtx2.fillStyle = "rgb(255,255,0)"; // Yellow
-        // canvCtx2.fillRect(
-        //     bottomLeft[0]*squeezeFactor,
-        //     canvRef2.height - bottomLeft[1]*squeezeFactor,
-        //     2, 2);
-
-        // canvCtx2.fillStyle = "rgb(255,0,255)"; // Purple
-        // canvCtx2.fillRect(
-        //     bottomRight[0]*squeezeFactor,
-        //     canvRef2.height - bottomRight[1]*squeezeFactor,
-        //     2, 2);
-            
     }
+
 
     async drawFire(idx) {
 
         return new Promise( resolve => {
             
             let minAge = 20;
-            let maxAge = 250;
-            
+            let maxAge = 120;
+            let initPartCount = Math.round(200 * tankSize * squeezeFactor);
+            let tS = tankSize;
+            let sF = squeezeFactor;
+
             class Particle {
                 constructor(x, y) {
                     this.x = x,
                     this.y = y,
                     this.currentAge = 0;
                     this.maxAge = randomInteger(minAge, maxAge);
+                    this.lifePercent = 100;
+                    this.r = 255;
+                    this.g = 255;
+                    this.b = 0;
+                    this.a = 1;
                 }
                 stepForward() {
-                    if (this.currentAge > 0) {
-                        this.currentAge--;
+                    if (this.currentAge < this.maxAge) {
+                        this.currentAge++;
+                        this.lifePercent = 1000 - Math.round(
+                                this.currentAge / this.maxAge * 1000);
+                        // Rise particle
+                        this.y += (Math.random()-0.2) * tS * sF;
+                        // Jitter particle horizontally
+                        this.x += 0.3*(Math.random() - 0.5) * tS * sF;
+                        
+                        // Make sure that flames don't spread
+                        if (this.x < tanks[idx].xPos * sF)
+                            this.x += 1.5*(Math.random()) * tS * sF;
+                        if (this.x > (tanks[idx].xPos + 29 * tS) * sF)
+                            this.x -= 1.5*(Math.random()) * tS * sF;
+
+                        let temp = this.makeGradient(this.r, this.g,
+                                          this.b, this.lifePercent);
+                        this.r = temp[0];
+                        this.g = temp[1];
+                        this.b = temp[2];
+                        this.a = temp[3];
                     }
+                }
+                makeGradient(r, g, b, lifePercent) {
+                    let a;
+                    let perc = 100 - (lifePercent / 10);
+
+                    if (perc > 80) {
+                        r = 255 - 100*((perc - 80) / 20);
+                        g = 255 - 255*((perc - 80) / 20);
+                        b = 0;
+                        a = 1 - ((perc - 80) / 20);
+                    } else if (perc > 40) {
+                        r = 255;
+                        g = 255 - 200*((perc - 40) / 40);;
+                        b = 0;
+                        a = 1;
+                    } else {
+                        r = 255;
+                        g = 255;
+                        b = 0;
+                        a = 1;
+                    }           
+                    return [r, g, b, a];
                 }
             }
             
@@ -569,31 +592,68 @@ class Tank {
             let particles = [];
 
             // Horizontal tank span (displayed, scaled)
-            let xStart = Math.round( tanks[idx].xPos * squeezeFactor) ;
-            let xEnd = Math.round((tanks[idx].xPos+30*tankSize)*squeezeFactor);
+            let xStart = Math.round( tanks[idx].xPos * sF) ;
+            let xEnd = Math.round( (tanks[idx].xPos + 30 * tankSize) * sF);
             
             // The height at which the fenders are located (displayed, scaled)
-            let yFender = Math.round((tanks[idx].yPos-2.5*tankSize) * squeezeFactor);
+            let yFender = Math.round((tanks[idx].yPos - 3 * tS) * sF);
 
-            // Initialize particles
-            for (let i = xStart; i < xEnd; i++) {
-                    particles.push( new Particle(i, yFender) );
-            }
+            // Initialize particles (following tank's fender contour)
+            // While loop may generate more than {partCount} particles,
+            // but no more than [{partCount} + {tankSize * squeezeFactor}]
             
-            let fR = 255;
-            let fG = 255;
-            let fB = 0;
+            while (particles.length < initPartCount) {
+            
+                for (let i=xStart, j=0, k=xEnd-xStart; i < xEnd; i++,j++,k--) {
+                    if (i < xStart + 0.3 * tS * sF) {
+                        particles.push(
+                            new Particle(i, (j*1.65 + yFender) - 1.78 * tS*sF)
+                        );
+                    }
+                    else if ((i < xStart + 2 * tS * sF)) {
+                        particles.push(
+                            new Particle(i, (j*0.8 + yFender) - 1.47 * tS*sF)
+                        );
+                    }
+                    else if ((i < xStart + 28 * tS * sF)) {
+                        particles.push(
+                            new Particle(i, yFender + 0.08 * tS * sF) );
+                    }
+                    else if ((i < xStart + 29.65 * tS * sF)) {
+                        particles.push(
+                            new Particle(i, (k*0.8 + yFender) - (1.5 * tS*sF))
+                        );
+                    }
+                    else {
+                        particles.push(
+                            new Particle(i, (k*1.6 + yFender) - (1.8 * tS*sF))
+                        );
+                    }
+                }
+            }
+
 
             function animate(timeStamp) {
                 
+                canvCtx2.clearRect(
+                    (tanks[idx].xPos * squeezeFactor) - 2,
+                    0,
+                    (30 * tankSize * squeezeFactor) + 2,
+                    canvRef2.height - ((tanks[idx].yPos - 5 * tankSize ) * squeezeFactor));
+                
+
                 particles.forEach((p) => {
-                    p.y += 2*Math.random();
-                    fR -= 0.1;
-                    fG -= 0.2;
-                    tanks[idx].r -= 0.04;
-                    tanks[idx].g -= 0.04;
-                    tanks[idx].b -= 0.04;
-                    canvCtx2.fillStyle = `rgb(${fR}, ${fG}, ${fB})`;
+
+                    p.stepForward();
+
+                    canvCtx2.fillStyle = `rgba(
+                        ${p.r},
+                        ${p.g},
+                        ${p.b},
+                        ${p.a})`;
+
+                    //canvCtx2.fillStyle = 
+
                     canvCtx2.fillRect(
                         p.x,
                         canvRef2.height - p.y,
@@ -603,15 +663,16 @@ class Tank {
                 });
                 
                 tanks[idx].drawTank();
-                if (particles[0].y < (yFender + 30*tankSize*squeezeFactor)) {
+
+                                
+                if (particles.length > 10) {
+                    for (let i = 0; i < particles.length; i++) {
+                        if (particles[i].lifePercent == 0) {
+                            particles.splice(i, 1);
+                        }
+                    }
                     requestAnimationFrame(animate);
                 } else {
-                    canvCtx2.clearRect(
-                        xStart,
-                        canvRef2.height - yFender,
-                        xEnd - xStart,
-                        -16000
-                    )
                     resolve();
                 }
             }
