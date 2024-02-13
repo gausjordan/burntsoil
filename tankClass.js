@@ -540,17 +540,21 @@ class Tank {
                     this.b = 0;
                     this.a = 1;
                 }
-                stepForward() {
+
+                /** Computes a new location and color for a single particle */
+                async stepForward(deltaTime) {
+
                     if (this.currentAge < this.maxAge) {
                         this.currentAge++;
                         this.lifePercent = 1000 - Math.round(
                                 this.currentAge / this.maxAge * 1000);
-                        // Rise particle
-                        this.y += (Math.random()-0.2) * tS * sF;
-                        // Jitter particle horizontally
+                        // Elevate particle position
+                        this.y += (Math.random() * tS * sF)
+                                  * Math.abs(deltaTime/10);
+                        // Jitter particle position horizontally
                         this.x += 0.3*(Math.random() - 0.5) * tS * sF;
                         
-                        // Make sure that flames don't spread
+                        // Making sure that flames don't spread outwards
                         if (this.x < tanks[idx].xPos * sF)
                             this.x += 1.5*(Math.random()) * tS * sF;
                         if (this.x > (tanks[idx].xPos + 29 * tS) * sF)
@@ -564,6 +568,8 @@ class Tank {
                         this.a = temp[3];
                     }
                 }
+
+                /** Determine particles color depending on it's age */
                 makeGradient(r, g, b, lifePercent) {
                     let a;
                     let perc = 100 - (lifePercent / 10);
@@ -632,62 +638,50 @@ class Tank {
                 }
             }
 
+            let endTime = performance.now();
+            let deltaTime = 1;
 
             function animate(timeStamp) {
                 
-                canvCtx2.clearRect(
-                    (tanks[idx].xPos * squeezeFactor) - 2,
-                    0,
-                    (30 * tankSize * squeezeFactor) + 2,
-                    canvRef2.height - ((tanks[idx].yPos - 5 * tankSize ) * squeezeFactor));
-                
-
+                // Draws all particles
                 particles.forEach((p) => {
-
-                    p.stepForward();
-
+                    p.stepForward(deltaTime);
                     canvCtx2.fillStyle = `rgba(
                         ${p.r},
                         ${p.g},
                         ${p.b},
                         ${p.a})`;
-
-                    //canvCtx2.fillStyle = 
-
-                    canvCtx2.fillRect(
-                        p.x,
-                        canvRef2.height - p.y,
-                        1,
-                        1
-                    )
+                    canvCtx2.fillRect(p.x, canvRef2.height - p.y, 1, 1)
                 });
                 
+                // Darkens a burning tank
+                tanks[idx].r -= 2;
+                tanks[idx].g -= 2;
+                tanks[idx].b -= 2;
                 tanks[idx].drawTank();
 
-                                
+                // Removes dead particles
                 if (particles.length > 10) {
                     for (let i = 0; i < particles.length; i++) {
                         if (particles[i].lifePercent == 0) {
                             particles.splice(i, 1);
                         }
                     }
+                                        
+                    deltaTime = timeStamp - endTime;
+                    endTime = performance.now();
                     requestAnimationFrame(animate);
                 } else {
+                    canvCtx2.clearRect(
+                    (tanks[idx].xPos * squeezeFactor) - 2, 0,
+                    (30 * tankSize * squeezeFactor) + 2,
+                    canvRef2.height - ((tanks[idx].yPos -
+                        5 * tankSize) * squeezeFactor));
                     resolve();
                 }
             }
-            
             requestAnimationFrame(animate);
-
         })
-
-        // canvCtx2.fillRect(
-        //     this.xPos * squeezeFactor,
-        //     (canvRef2.height - this.yPos*squeezeFactor)
-        //     - (14 * tankSize * squeezeFactor),
-        //     30 * tankSize * squeezeFactor,
-        //     22.5 * tankSize * squeezeFactor);
-        //     this.drawTank();
     
     }
 
@@ -704,7 +698,8 @@ class Tank {
         // Donji rub
         canvCtx2.fillRect(
             (this.xPos + 2*tankSize) * squeezeFactor,
-            canvRef2.height - this.yPos*squeezeFactor + (tankSize * squeezeFactor * 9),
+            canvRef2.height - this.yPos*squeezeFactor
+                + (tankSize * squeezeFactor * 9),
             tankSize * squeezeFactor * 26,
             1);
 
