@@ -18,6 +18,8 @@ canv.height = mHeight;
 ctx.width = mWidth / ratio + "px";
 ctx.height = mHeight / ratio + "px";
 
+localStorage.setItem("isOnlineGame", false);
+
 // Do the next step when user is done by hitting "enter"
 window.addEventListener('keypress', (ev) => {
     ev.stopPropagation();
