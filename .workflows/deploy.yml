@@ -1,0 +1,24 @@
+name: Deploy to InfinityFree
+
+on:
+  push:
+    branches:
+      - main  # Change this to the branch you want to trigger the deploy
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Deploy to InfinityFree
+      uses: SamKirkland/FTP-Deploy-Action@4.1.0
+      with:
+        server: ${{ secrets.FTP_HOST }}
+        username: ${{ secrets.FTP_USERNAME }}
+        password: ${{ secrets.FTP_PASSWORD }}
+        local-dir: ./  # Adjust this if your build output is in a different directory
+        server-dir: /htdocs  # Adjust this to the directory you want to deploy to
+        method: ftp
