@@ -6,7 +6,7 @@
         <meta name="viewport" content="initial-scale=1.0 , minimum-scale=1.0 , maximum-scale=1.0" />
         <link rel="icon" type="image/x-icon" href="#">
         <link rel="stylesheet" href="game.css">
-        <title id="title">Burnt Soil</title>
+        <title id="title">Burnt Soil JS test</title>
     </head>
    
     <body>
@@ -49,13 +49,44 @@
             <aside class="common-element">
             </aside>
 
-            <script src="globals.js"></script>
-            <script src="gameEvents.js"></script>
-            <script src="tankClass.js"></script>
-            <script src="helpers.js"></script>
-            <script src="commonFunctions.js"></script>
-            <script src="gameFunctions.js"></script>
-            <script src="game.js"></script>
+            <!-- Disable caching / force JS loading each time -->
+            <script>
+
+                var script = document.createElement('script');
+                var timestamp = new Date().getTime();
+
+                script.src = 'globals.js?v=' + timestamp;
+                document.head.appendChild(script);
+
+                script.src = 'gameEvents.js?v=' + timestamp;
+                document.head.appendChild(script);
+
+                script.src = 'tankClass.js?v=' + timestamp;
+                document.head.appendChild(script);
+
+                script.src = 'helpers.js?v=' + timestamp;
+                document.head.appendChild(script);
+
+                script.src = 'commonFunctions.js?v=' + timestamp;
+                document.head.appendChild(script);
+
+                script.src = 'gameFunctions.js?v=' + timestamp;
+                document.head.appendChild(script);
+                
+                script.src = 'game.js?v=' + timestamp;
+                document.head.appendChild(script);
+
+            </script>
+
+            <!--
+                <script src="globals.js"></script>
+                <script src="gameEvents.js"></script>
+                <script src="tankClass.js"></script>
+                <script src="helpers.js"></script>
+                <script src="commonFunctions.js"></script>
+                <script src="gameFunctions.js"></script>
+                <script src="game.js"></script>
+            -->
 
         </div>
     </body>
