@@ -6,7 +6,7 @@
         <meta name="viewport" content="initial-scale=1.0 , minimum-scale=1.0 , maximum-scale=1.0" />
         <link rel="icon" type="image/x-icon" href="#">
         <link rel="stylesheet" href="game.css">
-        <title id="title">Burnt Soil JS test</title>
+        <title id="title">Burnt Soil JS test</title>            
     </head>
    
     <body>
@@ -49,35 +49,7 @@
             <aside class="common-element">
             </aside>
 
-            <!-- Disable caching / force JS loading each time -->
-            <script>
-
-                var script = document.createElement('script');
-                var timestamp = new Date().getTime();
-
-                script.src = 'globals.js?v=' + timestamp;
-                document.head.appendChild(script);
-
-                script.src = 'gameEvents.js?v=' + timestamp;
-                document.head.appendChild(script);
-
-                script.src = 'tankClass.js?v=' + timestamp;
-                document.head.appendChild(script);
-
-                script.src = 'helpers.js?v=' + timestamp;
-                document.head.appendChild(script);
-
-                script.src = 'commonFunctions.js?v=' + timestamp;
-                document.head.appendChild(script);
-
-                script.src = 'gameFunctions.js?v=' + timestamp;
-                document.head.appendChild(script);
-                
-                script.src = 'game.js?v=' + timestamp;
-                document.head.appendChild(script);
-
-            </script>
-
+            <!-- Static .js loading -->
             <!--
                 <script src="globals.js"></script>
                 <script src="gameEvents.js"></script>
@@ -87,6 +59,40 @@
                 <script src="gameFunctions.js"></script>
                 <script src="game.js"></script>
             -->
+
+            <!-- Dynamic .js loading / cache busting / force reload  -->
+            <script>
+                async function loadScriptsSequentially(scripts) {
+                    for (let src of scripts) {
+                        await loadScript(src);
+                    }
+                }
+            
+                function loadScript(src) {
+                    return new Promise(function(resolve, reject) {
+                        var script = document.createElement('script');
+                        script.src = src;
+                        script.onload = resolve;
+                        script.onerror = reject;
+                        document.head.appendChild(script);
+                    });
+                }
+            
+                var timestamp = new Date().getTime();
+                var scripts = [
+                    'globals.js?t=' + timestamp,
+                    'gameEvents.js?t=' + timestamp,
+                    'tankClass.js?t=' + timestamp,
+                    'helpers.js?t=' + timestamp,
+                    'commonFunctions.js?t=' + timestamp,
+                    'gameFunctions.js?t=' + timestamp,
+                    'game.js?t=' + timestamp
+                ];
+            
+                loadScriptsSequentially(scripts).catch(function(error) {
+                    console.error('Script loading failed:', error);
+                });
+            </script>
 
         </div>
     </body>

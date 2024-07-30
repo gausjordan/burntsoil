@@ -99,7 +99,6 @@ async function fineTuneButtonAction(e) {
         await tanks[whoseTurn].fire();
     }
 }
-    
 
 /** Define how buttons respond to either long press or long click */
  function fineTuneButtons(e) {
